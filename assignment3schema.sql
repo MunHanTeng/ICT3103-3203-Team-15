@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 09, 2017 at 04:33 PM
+-- Generation Time: Oct 16, 2017 at 07:35 AM
 -- Server version: 10.1.19-MariaDB
 -- PHP Version: 7.0.9
 
@@ -33,26 +33,25 @@ CREATE TABLE `booking` (
   `showInfo_row` varchar(1000) NOT NULL,
   `showInfo_column` varchar(1000) NOT NULL,
   `movie_id` int(11) NOT NULL,
-  `booking_hashvalue` varchar(100) NOT NULL
+  `booking_hashvalue` varchar(100) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `CreditCardNum` varchar(1000) NOT NULL,
+  `CreditCardName` varchar(1000) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `booking`
 --
 
-INSERT INTO `booking` (`booking_id`, `showInfo_id`, `seat_no`, `showInfo_row`, `showInfo_column`, `movie_id`, `booking_hashvalue`) VALUES
-(1, 1, '0', '2', '8', 1, ''),
-(2, 1, '0', '2', '9', 1, ''),
-(3, 1, '0', '3', '4', 1, ''),
-(4, 1, '0', '3', '5', 1, ''),
-(5, 1, '0', '3', '6', 1, ''),
-(6, 1, '0', '3', '7', 1, ''),
-(7, 1, '0', '3', '8', 1, ''),
-(8, 1, '0', '0', '2', 1, ''),
-(9, 1, '0', '0', '3', 1, ''),
-(10, 1, 'A7', '0', '7', 1, ''),
-(11, 1, 'A8', '0', '8', 1, ''),
-(12, 1, 'A9', '0', '9', 1, '');
+INSERT INTO `booking` (`booking_id`, `showInfo_id`, `seat_no`, `showInfo_row`, `showInfo_column`, `movie_id`, `booking_hashvalue`, `user_id`, `CreditCardNum`, `CreditCardName`) VALUES
+(20, 15, 'E8', '4', '8', 1, '', 21, '0', ''),
+(21, 15, 'E10', '4', '1', 1, '', 21, '0', ''),
+(22, 15, 'C8', '2', '8', 1, '', 21, '0', ''),
+(23, 15, 'C10', '2', '1', 1, '', 21, '0', ''),
+(24, 15, 'C8', '2', '8', 1, '', 21, '2147483647', 'Test'),
+(25, 15, 'C10', '2', '1', 1, '', 21, '2147483647', 'Test'),
+(26, 10, 'E9', '4', '9', 1, '', 21, '4966157046708890', 'test'),
+(27, 10, 'E10', '4', '1', 1, '', 21, '4966157046708890', 'test');
 
 -- --------------------------------------------------------
 
@@ -236,7 +235,8 @@ INSERT INTO `user_list` (`user_id`, `username`, `user_email`, `password`, `user_
 (17, 'lala', 'lala3@hotmail.com', '25d55ad283aa400af464c76d713c07ad', 'User', 0, '999'),
 (18, 'lalaland', 'lala4@hotmail.com', '25d55ad283aa400af464c76d713c07ad', 'User', 12345678, '888'),
 (19, 'testPhone', 'testPhone@gmail.com', '827ccb0eea8a706c4c34a16891f84e7b', 'Admin', 12345678, '12345678'),
-(20, 'testUser', 'testUser@gmail.com', '25d55ad283aa400af464c76d713c07ad', 'User', 12345678, '12345567');
+(20, 'testUser', 'testUser@gmail.com', '25d55ad283aa400af464c76d713c07ad', 'User', 12345678, '12345567'),
+(21, 'user', 'user@gmail.com', '827ccb0eea8a706c4c34a16891f84e7b', 'User', 1234567, '');
 
 --
 -- Indexes for dumped tables
@@ -248,7 +248,8 @@ INSERT INTO `user_list` (`user_id`, `username`, `user_email`, `password`, `user_
 ALTER TABLE `booking`
   ADD PRIMARY KEY (`booking_id`),
   ADD KEY `fk_showInfo` (`showInfo_id`),
-  ADD KEY `fk_movie_id` (`movie_id`);
+  ADD KEY `fk_movie_id` (`movie_id`),
+  ADD KEY `fk_booking_userID` (`user_id`);
 
 --
 -- Indexes for table `cinema`
@@ -316,7 +317,7 @@ ALTER TABLE `user_list`
 -- AUTO_INCREMENT for table `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 --
 -- AUTO_INCREMENT for table `cinema`
 --
@@ -336,12 +337,12 @@ ALTER TABLE `movie`
 -- AUTO_INCREMENT for table `promotion`
 --
 ALTER TABLE `promotion`
-  MODIFY `promotion_id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `promotion_id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 --
 -- AUTO_INCREMENT for table `promotioncinema`
 --
 ALTER TABLE `promotioncinema`
-  MODIFY `promotionCinema_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `promotionCinema_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `showinfo`
 --
@@ -356,7 +357,7 @@ ALTER TABLE `ticketcollection`
 -- AUTO_INCREMENT for table `user_list`
 --
 ALTER TABLE `user_list`
-  MODIFY `user_id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `user_id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 --
 -- Constraints for dumped tables
 --
@@ -365,6 +366,7 @@ ALTER TABLE `user_list`
 -- Constraints for table `booking`
 --
 ALTER TABLE `booking`
+  ADD CONSTRAINT `fk_booking_userID` FOREIGN KEY (`user_id`) REFERENCES `user_list` (`user_id`),
   ADD CONSTRAINT `fk_movie_id` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`),
   ADD CONSTRAINT `fk_showInfo` FOREIGN KEY (`showInfo_id`) REFERENCES `showinfo` (`showInfo_id`);
 
