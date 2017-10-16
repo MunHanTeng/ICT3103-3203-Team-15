@@ -189,22 +189,23 @@
                   
                     <hr>
                   
-                  <div id="StartBooking">
-                        <table>
+                  <div id="StartBooking" style="overflow-x:auto;">
+                        <table style="width: 100%">
                             <tr>
-                                <td><h5 id="Pay">Ticket Type</h5></td>
+                                <td><h5 style="margin-left: 5px" id="Pay">Ticket Type</h5></td>
                                 <td><h5 id="Pay">Ticket Price</h5></td>
                                 <td><h5 id="Pay">Qty</h5></td>
                                 <td><h5 id="Pay">Total Amount</h5></td>
                             </tr>
                             <tr>
-                                <td><h5 id="TicketType" class="popup"></h5></td>
+                                <td><h5 style="margin-left: 5px" id="TicketType" class="popup"></h5></td>
                                 <td><h5 id="TicketPrice" class="popup">Ticket Price</h5></td>
                                 <td><h5 id="Qty" class="popup">Qty</h5></td>
                                 <td><h5 id="TotalAmount" class="popup">Total Amount</h5></td>
                             </tr>
                         </table>    
                       <input type="hidden" name="show_id" value="<?php echo $showinfo['showInfo_id']?>">
+                      <br>
                       <button type="submit" name="submit" class="btn btn-primary">Start Payment</button>
                     </div>
                    </div>

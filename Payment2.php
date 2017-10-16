@@ -27,7 +27,7 @@
         $Name = $_SESSION['name'];
         $Email = $_SESSION['email'];
         if($_SERVER['REQUEST_METHOD'] == "POST"){
-            $_SESSION['CCN'] =  $_SESSION['CCE'] =  $_SESSION['CVV2'] = "";
+            $_SESSION['CCN'] =  $_SESSION['CCE'] =  $_SESSION['CVV2'] = $_SESSION['CCName'] = "";
         }
         
         ?>
@@ -36,6 +36,7 @@
         $showinfo = mysqli_fetch_assoc($result);
 
         $result2 = mysqli_query($MySQLiconn, "SELECT * FROM `movie` WHERE movie_id ='" . $showinfo['movie_id'] . "'");
+        $_SESSION['movie_id'] = $showinfo['movie_id'];
         $result3 = mysqli_query($MySQLiconn, "SELECT * FROM `cinema` WHERE cinema_id ='" . $showinfo['cinema_id'] . "'");
         $movie = mysqli_fetch_assoc($result2);
         $cinema = mysqli_fetch_assoc($result3);
@@ -93,7 +94,7 @@
 
                 <div class="row"> 
                     <div class="container-fluid" style="background-color:#303030 ;padding-bottom: 10px;text-align: left;">
-                        <form action="test.php" method="POST">
+                        <form action="creditCardValidate.php" method="POST">
                             <input type="hidden" name="email" id="email" value="<?php echo $Email ?>">
                             <div class="form-group" >
                                 <label for="CreditCardNo" style="color:white; text-align: right;float:left;">Credit Card No.:</label>
@@ -109,8 +110,21 @@
                                     ?></span>
                             </div>
                             <div class="form-group" >
+                                <label for="CreditCardName" style="color:white; text-align: right;float:left;">Name as in Credit Card:</label>
+                                <input type="text" class="form-control" id="CreditCardName" name="CreditCardName" placeholder="Credit Card Name">
+
+                                <span class="text-danger">
+                                    <?php
+                                    if ($_SESSION['CCName'] == "") {
+                                        echo "";
+                                    } else {
+                                        echo $_SESSION['CCName'];
+                                    }
+                                    ?></span>
+                            </div>
+                            <div class="form-group" >
                                 <label for="CreditCardExpiry" style="color:white; text-align: right;float:left;">Credit Card Expiry Date</label>
-                                <input type="input" class="form-control" id="CreditCardExpiry" name="CreditCardExpiry" placeholder="yyyy-mm">
+                                <input type="input" class="form-control" id="CreditCardExpiry" name="CreditCardExpiry" placeholder="mm/yy">
                                 <span class="text-danger"> <?php
                                     if ($_SESSION['CCE'] == "") {
                                         echo "";

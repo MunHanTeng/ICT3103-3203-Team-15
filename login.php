@@ -1,9 +1,7 @@
 <?php
 include_once 'dbconnect.php';
 session_start();
-if (isset($_SESSION['user']) != "") {
-    header("Location: index.php");
-}
+
 // Declare some variable for error message
 $emailErr = null;
 $passwordErr = null;
@@ -39,5 +37,5 @@ if (isset($_POST["submit"])) {
     }
 }
  
-header("Location: index.php");
+//header("Location: index.php");
 ?>
