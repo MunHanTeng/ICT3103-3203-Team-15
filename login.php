@@ -1,4 +1,5 @@
 <?php
+
 include_once 'dbconnect.php';
 session_start();
 if (isset($_SESSION['user']) != "") {
@@ -20,24 +21,58 @@ if (isset($_POST["submit"])) {
         $okay = False;
     }
     if ($okay) {
+        //echo '<script type="text/javascript">alert("hello!");</script>';
         $username = mysqli_real_escape_string($MySQLiconn, $_POST['email']);
         $upass = mysqli_real_escape_string($MySQLiconn, $_POST['pwd']);
-        $res = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE user_email='$username' and user_role='User'");
+
+        //Delete rows older than 5 minutes
+        $res = mysqli_query($MySQLiconn, "DELETE FROM failed_logins WHERE User='$username' and Timestamp<= (now() - interval 2 minute)");
+
+        //Check row count of failed login, if >5, notify user login attempts too many
+        $res = mysqli_query($MySQLiconn, "SELECT COUNT(User) as userFails FROM failed_logins WHERE User='$username'");
         $row = mysqli_fetch_array($res);
-        if ($row['password'] == md5($upass)) {
-            $_SESSION['user'] = $row['user_id'];
-            $_SESSION['name'] = $row['username'];
-            $_SESSION['email'] = $row['user_email'];
-            header("Location: index.php");
-        } else {
-            $passwordErr = "Incorrect Username/Password or Account has not been activated yet";
-            ?>
-            <script>alert('Incorrect Password or Username');</script>
- 
-            <?php
+        $userFails = $row['userFails'];
+        if ($userFails >= 5) {
+            echo "<script>";
+            echo "alert('Incorrect Username or Password, please try again later');";
+            echo 'window.location = "index.php";';
+            echo '</script>';
+        }
+        //$data['userFails']
+        else {
+            $res = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE user_email='$username' and user_role='User'");
+            $row = mysqli_fetch_array($res);
+            if ($row['password'] == md5($upass)) {
+                $_SESSION['user'] = $row['user_id'];
+                $_SESSION['name'] = $row['username'];
+                $_SESSION['email'] = $row['user_email'];
+                //If login successful, delete from fail logins
+                $res = mysqli_query($MySQLiconn, "DELETE FROM failed_logins WHERE User='$username'");
+                echo "<script>";
+                echo "alert('Login successful');";
+                echo 'window.location = "index.php";';
+                echo '</script>';
+            } else {
+                //If login not successful, create new row in fail logins
+                $existsQuery = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE user_email='$username'");
+                if (mysqli_num_rows($existsQuery) > 0) {
+                    $remainingTry = 5 - ($userFails + 1);
+                    $res = mysqli_query($MySQLiconn, "INSERT INTO failed_logins(User,Timestamp) VALUES('$username',now())");
+                    echo "<script>";
+                    echo "alert('Incorrect Username or Password, $remainingTry attempts left');";
+                    echo 'window.location = "index.php";';
+                    echo '</script>';
+                } else {
+                    $passwordErr = "Incorrect Username/Password or Account has not been activated yet";
+                    echo "<script>";
+                    echo "alert('Incorrect Username or Password');";
+                    echo 'window.location = "index.php";';
+                    echo '</script>';
+                }
+            }
         }
     }
 }
- 
-header("Location: index.php");
+
+//header("Location: index.php");
 ?>
