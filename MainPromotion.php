@@ -14,7 +14,7 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
-        $resultPromotion = mysqli_query($MySQLiconn, "SELECT * FROM promotioninfo");
+        $resultPromotion = mysqli_query($MySQLiconn, "SELECT * FROM promotion");
         ?>
         <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>
@@ -34,7 +34,7 @@
                 echo '<div class="col-md-4 col-sm-4 col-height">';
                     echo '<div class="promotion">';
                         echo '<h2>'.$row['promotionInfo_title'].'</h2>';
-                        echo '<p><img src="data:image/jpeg;base64,' . base64_encode($row['promotionInfo_image']) . '">'.$row['promotionInfo_Description'].'</p>';
+                        echo '<p><img src="data:image/jpeg;base64,' . base64_encode($row['promotionInfo_image']) . '">'.$row['promotionInfo_description'].'</p>';
                         echo '<div class="col-bottom">';
                             echo '<a class="btn btn-primary" data-toggle="modal" data-target="#myModal'.$promotionNo.'">View Detail</a>';
                             echo '<!--Modal-->';
@@ -50,9 +50,9 @@
                                     if (!empty($row['promotionInfo_2ndImage'])) {
                                         echo '<img src="data:image/jpeg;base64,'. base64_encode($row['promotionInfo_2ndImage']).'">';
                                     }
-                                    if (!empty($row['promotionInfo_Details'])) {
+                                    if (!empty($row['promotionInfo_details'])) {
                                         echo '<h4>PROMOTION DETAILS</h4>';
-                                        echo '<p>'.$row['promotionInfo_Details'].'</p>';
+                                        echo '<p>'.$row['promotionInfo_details'].'</p>';
                                     }
                                     echo '</div>'; //modal-body
                                     echo '<div class="modal-footer">';

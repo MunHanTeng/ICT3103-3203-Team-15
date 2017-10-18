@@ -5,7 +5,12 @@
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
         <link href="images/gv32x32.ico" rel="shortcut icon" />
-
+        <script type= "text/javascript">
+            function redirectMoviePage(movId){
+                document.cookie = "movID =" + movId;
+                window.location = "movie.php";
+            }
+        </script>
     </head>
     <body>
         <script src="js/jquery.min.js"></script>
@@ -33,11 +38,11 @@
                 }
                 echo '<div class="col-md-4 col-sm-4">';
                 echo '<div class="item">';
-                echo '<a href="movie.php?q=' . $row['movie_id'] . '"><img class="smallposter" src="data:image/jpeg;base64,' . base64_encode($row['movie_poster']) . '"></a>';
+                echo '<a href="javascript:redirectMoviePage('. $row['movie_id'] .')"><img class="smallposter" src="data:image/jpeg;base64,' . base64_encode($row['movie_poster']) . '"></a>';
                 echo '<p>' . $row["movie_name"] . '</p>';
                 echo '<p class="Rating">' . $row["movie_type"] . '</p>';
                 echo '<p>' . $row["movie_runningTime"] . '</p>';
-                echo '<a class="btn btn-primary" href="movie.php?q=' . $row['movie_id'] . '">Buy Tickets</a>';
+                echo '<a class="btn btn-primary" href="javascript:redirectMoviePage('. $row['movie_id'] .')">Buy Tickets</a>';
                 echo '</div></div>';
                 if ($position == 2) {
                     echo '</div>';

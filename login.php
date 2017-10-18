@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 
 include_once 'dbconnect.php';
@@ -73,6 +74,4 @@ if (isset($_POST["submit"])) {
         }
     }
 }
-
-//header("Location: index.php");
 ?>
