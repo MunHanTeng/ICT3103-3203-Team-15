@@ -14,7 +14,7 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
-        $result = mysqli_query($MySQLiconn, "SELECT * FROM `movie` WHERE movie_id ='" . $_COOKIE['movID'] . "'");
+        $result = mysqli_query($MySQLiconn, "SELECT * FROM movie WHERE movie_id ='" . $_COOKIE['movID'] . "'");
         $movie = mysqli_fetch_assoc($result);
         ?>
 

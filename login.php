@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 
 include_once 'dbconnect.php';
@@ -43,7 +42,7 @@ if (isset($_POST["submit"])) {
         else {
             $res = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE user_email='$username' and user_role='User'");
             $row = mysqli_fetch_array($res);
-            if ($row['password'] == md5($upass)) {
+            if ((password_verify($upass, $row['password']))) {
                 $_SESSION['user'] = $row['user_id'];
                 $_SESSION['name'] = $row['username'];
                 $_SESSION['email'] = $row['user_email'];

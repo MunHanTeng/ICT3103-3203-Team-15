@@ -2,8 +2,10 @@
 session_start();
 
 include_once 'dbconnect.php';
-$nameErr = $emailErr = $passwordErr = $confirmPwdErr = $phoneNoErr = "";
-if (isset($_POST['submit'])) {
+$nameErr = $emailErr = $passwordErr = $confirmPwdErr = $phoneNoErr = $NRIC = "";
+$regularExpNRIC = "/^[STFG]\d{7}[A-Z]$/";
+if (isset($_POST['submit'])) 
+{
     $okay = True;
     if (empty($_POST["name"])) {
         $nameErr = "Name is required";
@@ -45,6 +47,16 @@ if (isset($_POST['submit'])) {
         $phoneNoErr = "The number need to be 8 digits";
         $okay = False;
     }
+    if (empty($_POST["nric"])) {
+        $NRIC = "NRIC is required";
+        $okay = False;
+    }
+    
+    if (!preg_match($regularExpNRIC, $_POST["nric"]))
+    {
+        $NRIC = "NRIC format incorrect";
+        $okay = False;
+    }
     
     $email = mysqli_real_escape_string($MySQLiconn, $_POST['email']);
     $result = mysqli_query($MySQLiconn, "SELECT COUNT(*) As RegisteredEmail FROM user_list where user_email='".$email."'");
@@ -57,10 +69,11 @@ if (isset($_POST['submit'])) {
     //if (mysqli_query("SELECT COUNT(* "))
     if ($okay) {
         $uname = mysqli_real_escape_string($MySQLiconn, $_POST['name']); 
-        $uphone = mysqli_real_escape_string($MySQLiconn, $_POST['phone']);      
-        $upass = md5(mysqli_real_escape_string($MySQLiconn, $_POST['pwd']));
-        $hash = md5(rand(0,1000));
-        if (mysqli_query($MySQLiconn, "INSERT INTO user_list(username,user_email,password,user_role,phone) VALUES('$uname','$email','$upass','User', '$uphone')")) {
+        $uphone = mysqli_real_escape_string($MySQLiconn, $_POST['phone']); 
+        $unric = mysqli_real_escape_string($MySQLiconn, $_POST['nric']);
+        $upass = password_hash($_POST['pwd'], PASSWORD_DEFAULT);
+        //$hash = md5(rand(0,1000));
+        if (mysqli_query($MySQLiconn, "INSERT INTO user_list(username,user_email,password,user_role,phone,user_nric) VALUES('$uname','$email','$upass','User', '$uphone','$unric')")) {
             ?>
             <script>alert('Successfully registered!');
                 window.location.href='index.php'</script>
@@ -93,7 +106,7 @@ if (isset($_POST['submit'])) {
                     <h1>Register</h1>
                     <form class="form-horizontal" role ="form" method = "post" action="">
                         <div class="form-group">
-                            <label class="control-label col-md-3" for="firstname"><p>Name:</p></label>
+                            <label class="control-label col-md-3" for="firstname"><p>Username:</p></label>
                             <div class="col-md-9">
                                 <input type="text" class="form-control" name ="name" >
                                 <span class="text-danger"><?php echo $nameErr; ?></span>
@@ -125,6 +138,13 @@ if (isset($_POST['submit'])) {
                             <div class="col-md-9">          
                                 <input type="number" class="form-control" name="phone" maxlength="8">
                                 <span class="text-danger"><?php echo $phoneNoErr; ?></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="nric"><p>NRIC :</p></label>
+                            <div class="col-md-9">          
+                                <input type="text" class="form-control" name="nric" maxlength="9">
+                                <span class="text-danger"><?php echo $NRIC; ?></span>
                             </div>
                         </div>
                         <div class="form-group"> 
