@@ -28,12 +28,38 @@ function check($CCN, $CCED, $CVV2)
     }else{
         return FALSE;
     }
-    
 }
+
+require('mod10.php');
+function validate($CCN, $CCED, $CVV2)
+{
+    $CARDTYPE=$ErrArr=NULL;
+    $expm = substr($CCED, 0, 2);
+    $expy = substr($CCED, 3, 4);
+    $cc = new CCVal($CCN, $expm, $expy, $CVV2);
+
+    $cstatus=$cc->IsValid();
+    //echo $expy;
+
+    if($cstatus[0]=="valid") {
+        $CARDTYPE=$cstatus[1];
+	$_POST["card_number"]=$cstatus[2];
+	$_POST["card_cvv2"]=$cstatus[3];
+        return true;
+    }
+    else 
+    {
+        $ErrArr=$cstatus;
+        $_SESSION['message1'] =  $cstatus[0];
+        return false;
+    }
+ 
+}
+
 
 include_once 'dbconnect.php';
 session_start();
-    echo $_POST['CreditCardNo'];
+    //echo $_POST['CreditCardNo'];
      if(isset($_POST['submit'])){
         
          $okay = TRUE;
@@ -79,43 +105,50 @@ session_start();
          }
          
          if($okay){
-            if(check($_POST['CreditCardNo'], $_POST['CreditCardExpiry'], $_POST['CVV2'])){
+            if(validate($_POST['CreditCardNo'], $_POST['CreditCardExpiry'], $_POST['CVV2'])){
                 $dic = array( 'A'=> 0, 'B'=>1, 'C'=>2, 'D'=>3, 'E'=>4);
-                echo '<br>';
-                echo 'PaymentMode: '. $_SESSION['PaymentMode'];
-                echo '<br>';
-                echo 'Seats selected: '.implode(', ', $_SESSION['check_list']);
-                echo '<br>';
-                echo 'show id: '. $_SESSION['show_id'];
-                echo '<br>';
+                //echo '<br>';
+                //echo 'PaymentMode: '. $_SESSION['PaymentMode'];
+                //echo '<br>';
+                //echo 'Seats selected: '.implode(', ', $_SESSION['check_list']);
+                //echo '<br>';
+                //echo 'show id: '. $_SESSION['show_id'];
+                //echo '<br>';
                 foreach ($_SESSION['check_list'] as $seat){
-                    echo '<br>';
+                    //echo '<br>';
                     $row = $dic[$seat[0]];
-                    echo 'Row: '. $dic[$seat[0]];
-                    echo '<br>';
-                    echo 'col: '. $seat[1];
+                    //echo 'Row: '. $dic[$seat[0]];
+                    //echo '<br>';
+                    //echo 'col: '. $seat[1];
                     $col = $seat[1];
-                    echo '<br>';
-                    echo 'seat: '. $seat;
+                    //echo '<br>';
+                    //echo 'seat: '. $seat;
                     
-                    echo '<br>';
+                    //echo '<br>';
 		    $showInfoID = $_SESSION['show_id'];
                     $movieID = $_SESSION['movie_id'];
                     $userid = $_SESSION['user'];
-                    echo 'User id '.$_SESSION['user'];
-                    echo 'show info id: '. $showInfoID;
-                    echo 'show movie id: '. $movieID;
+                    //echo 'User id '.$_SESSION['user'];
+                    //echo 'show info id: '. $showInfoID;
+                    //echo 'show movie id: '. $movieID;
                     $CCNum = $_POST['CreditCardNo'];
                     $CCName = $_POST['CreditCardName'];
                     $sql_query=$MySQLiconn->query("INSERT INTO booking( showInfo_id, seat_no, showInfo_row, showInfo_column, user_id, movie_id, CreditCardNum, CreditCardName) VALUES ('$showInfoID','$seat','$row','$col', '$userid', '$movieID', '$CCNum', '$CCName')");
                     mysqli_query($MySQLiconn, $sql_query);
                 }
-                
-                $_SESSION['message2'] = 'Success! Your movie tickets will emailed to you!';
-                header("Location: Success.php");
+                echo '<script language="javascript">';
+                echo 'alert("Success! We will be sendig an email to you shortly");';
+                echo 'window.location.href = "Success.php";';
+                echo '</script>';
+                $_SESSION['message2'] = 'Success! We will be sendig an email to you shortly!';
+                //header("Location: Success.php");
             }else{
-              $_SESSION['message1'] = 'The details you have provided were not valid!';
-              header("Location: Payment2.php");  
+                echo '<script language="javascript">';
+                echo 'alert("Please ensure that all details are correct");';
+                echo 'window.location.href = "Payment2.php";';
+                echo '</script>';
+                echo $_SESSION['message1'];
+                //header("Location: Payment2.php");  
             }
          }
          
