@@ -79,6 +79,7 @@
                 <div class="row">  
                     <?php
                     $TotAmnt = $PaymentModeValue[$PaymentMode] * count($check_list);
+                    $_SESSION['price'] = $TotAmnt;
                     echo '<p style="text-align:left;" >Total Amount: &nbsp<span style="font-size:1.5em;color:yellow;">S$' . $TotAmnt . '</span></p>';
                     ?>
                 </div>
@@ -98,7 +99,7 @@
                             <input type="hidden" name="email" id="email" value="<?php echo $Email ?>">
                             <div class="form-group" >
                                 <label for="CreditCardNo" style="color:white; text-align: right;float:left;">Credit Card No.:</label>
-                                <input type="text" class="form-control" id="CreditCardNo" name="CreditCardNo" placeholder="Credit Card No">
+                                <input type="number" class="form-control" id="CreditCardNo" name="CreditCardNo" placeholder="Credit Card No">
 
                                 <span class="text-danger">
                                     <?php
