@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 19, 2017 at 03:53 PM
+-- Generation Time: Oct 23, 2017 at 04:45 PM
 -- Server version: 10.1.19-MariaDB
 -- PHP Version: 7.0.9
 
@@ -29,29 +29,20 @@ SET time_zone = "+00:00";
 CREATE TABLE `booking` (
   `booking_id` int(11) NOT NULL,
   `showInfo_id` int(11) NOT NULL,
-  `seat_no` varchar(11) NOT NULL,
-  `showInfo_row` varchar(1000) NOT NULL,
-  `showInfo_column` varchar(1000) NOT NULL,
   `movie_id` int(11) NOT NULL,
-  `booking_hashvalue` varchar(100) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `CreditCardNum` varchar(1000) NOT NULL,
-  `CreditCardName` varchar(1000) NOT NULL
+  `seat_no` varchar(100) NOT NULL,
+  `showInfo_row` int(11) NOT NULL,
+  `showInfo_column` int(11) NOT NULL,
+  `collection_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `booking`
 --
 
-INSERT INTO `booking` (`booking_id`, `showInfo_id`, `seat_no`, `showInfo_row`, `showInfo_column`, `movie_id`, `booking_hashvalue`, `user_id`, `CreditCardNum`, `CreditCardName`) VALUES
-(20, 15, 'E8', '4', '8', 1, '', 21, '0', ''),
-(21, 15, 'E10', '4', '1', 1, '', 21, '0', ''),
-(22, 15, 'C8', '2', '8', 1, '', 21, '0', ''),
-(23, 15, 'C10', '2', '1', 1, '', 21, '0', ''),
-(24, 15, 'C8', '2', '8', 1, '', 21, '2147483647', 'Test'),
-(25, 15, 'C10', '2', '1', 1, '', 21, '2147483647', 'Test'),
-(26, 10, 'E9', '4', '9', 1, '', 21, '4966157046708890', 'test'),
-(27, 10, 'E10', '4', '1', 1, '', 21, '4966157046708890', 'test');
+INSERT INTO `booking` (`booking_id`, `showInfo_id`, `movie_id`, `seat_no`, `showInfo_row`, `showInfo_column`, `collection_id`) VALUES
+(1, 12, 1, 'E9', 4, 9, 1),
+(2, 12, 1, 'E10', 4, 1, 2);
 
 -- --------------------------------------------------------
 
@@ -206,10 +197,23 @@ INSERT INTO `showinfo` (`showInfo_id`, `showInfo_date`, `showInfo_time`, `cinema
 
 CREATE TABLE `ticketcollection` (
   `collection_id` int(11) NOT NULL,
-  `booking_id` int(11) NOT NULL,
-  `showinfo_id` int(11) NOT NULL,
-  `ticket_collected` int(11) NOT NULL
+  `booking_time` time NOT NULL,
+  `booking_date` date NOT NULL,
+  `CreditCardNum` varchar(100) NOT NULL,
+  `CreditCardName` varchar(1000) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `qrValue` varchar(1000) NOT NULL,
+  `ticket_collected` int(11) NOT NULL,
+  `time_collected` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `ticketcollection`
+--
+
+INSERT INTO `ticketcollection` (`collection_id`, `booking_time`, `booking_date`, `CreditCardNum`, `CreditCardName`, `user_id`, `qrValue`, `ticket_collected`, `time_collected`) VALUES
+(1, '12:00:00', '2017-09-30', '4242424242424242', 'test', 23, '', 0, '00:00:00'),
+(2, '12:00:00', '2017-09-30', '4242424242424242', 'test', 23, '', 0, '00:00:00');
 
 -- --------------------------------------------------------
 
@@ -243,7 +247,8 @@ INSERT INTO `user_list` (`user_id`, `username`, `user_email`, `password`, `user_
 (18, 'lalaland', 'lala4@hotmail.com', '25d55ad283aa400af464c76d713c07ad', 'User', 12345678, '888'),
 (19, 'testPhone', 'testPhone@gmail.com', '827ccb0eea8a706c4c34a16891f84e7b', 'Admin', 12345678, '12345678'),
 (20, 'testUser', 'testUser@gmail.com', '25d55ad283aa400af464c76d713c07ad', 'User', 12345678, '12345567'),
-(21, 'user', 'user@gmail.com', '827ccb0eea8a706c4c34a16891f84e7b', 'User', 1234567, '');
+(21, 'user', 'user@gmail.com', '827ccb0eea8a706c4c34a16891f84e7b', 'User', 1234567, ''),
+(23, 'testEmail', 'tengmunhan_32@hotmail.com', '$2y$10$HyKrWe2Jm.C5WGseF8VQZuPKC9hqfvmy41egCnXVvbVyCvr9/Xiaq', 'User', 12345678, 'S0987656Y');
 
 --
 -- Indexes for dumped tables
@@ -254,9 +259,9 @@ INSERT INTO `user_list` (`user_id`, `username`, `user_email`, `password`, `user_
 --
 ALTER TABLE `booking`
   ADD PRIMARY KEY (`booking_id`),
-  ADD KEY `fk_showInfo` (`showInfo_id`),
-  ADD KEY `fk_movie_id` (`movie_id`),
-  ADD KEY `fk_booking_userID` (`user_id`);
+  ADD KEY `fk_SIid` (`showInfo_id`),
+  ADD KEY `fk_MVid` (`movie_id`),
+  ADD KEY `fk_Cid` (`collection_id`);
 
 --
 -- Indexes for table `cinema`
@@ -297,8 +302,7 @@ ALTER TABLE `showinfo`
 --
 ALTER TABLE `ticketcollection`
   ADD PRIMARY KEY (`collection_id`),
-  ADD KEY `booking_id` (`booking_id`),
-  ADD KEY `showinfo_id` (`showinfo_id`);
+  ADD KEY `fk_uid` (`user_id`);
 
 --
 -- Indexes for table `user_list`
@@ -314,7 +318,7 @@ ALTER TABLE `user_list`
 -- AUTO_INCREMENT for table `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `cinema`
 --
@@ -344,15 +348,23 @@ ALTER TABLE `showinfo`
 -- AUTO_INCREMENT for table `ticketcollection`
 --
 ALTER TABLE `ticketcollection`
-  MODIFY `collection_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `collection_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `user_list`
 --
 ALTER TABLE `user_list`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `booking`
+--
+ALTER TABLE `booking`
+  ADD CONSTRAINT `fk_Cid` FOREIGN KEY (`collection_id`) REFERENCES `ticketcollection` (`collection_id`),
+  ADD CONSTRAINT `fk_MVid` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`),
+  ADD CONSTRAINT `fk_SIid` FOREIGN KEY (`showInfo_id`) REFERENCES `showinfo` (`showInfo_id`);
 
 --
 -- Constraints for table `promotioncinema`
@@ -372,8 +384,7 @@ ALTER TABLE `showinfo`
 -- Constraints for table `ticketcollection`
 --
 ALTER TABLE `ticketcollection`
-  ADD CONSTRAINT `ticketcollection_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`booking_id`),
-  ADD CONSTRAINT `ticketcollection_ibfk_2` FOREIGN KEY (`showinfo_id`) REFERENCES `showinfo` (`showInfo_id`);
+  ADD CONSTRAINT `fk_uid` FOREIGN KEY (`user_id`) REFERENCES `user_list` (`user_id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
