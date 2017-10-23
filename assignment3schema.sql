@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 16, 2017 at 07:35 AM
+-- Generation Time: Oct 19, 2017 at 03:53 PM
 -- Server version: 10.1.19-MariaDB
 -- PHP Version: 7.0.9
 
@@ -88,10 +88,16 @@ INSERT INTO `cinema` (`cinema_id`, `cinema_name`, `No_Of_Screen`, `cinema_addres
 --
 
 CREATE TABLE `failed_logins` (
-  `failed_login_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `TimeStamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `User` varchar(255) NOT NULL,
+  `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `failed_logins`
+--
+
+INSERT INTO `failed_logins` (`User`, `Timestamp`) VALUES
+('testPWD@gmail.com', '2017-10-19 06:47:01');
 
 -- --------------------------------------------------------
 
@@ -132,7 +138,7 @@ INSERT INTO `movie` (`movie_id`, `movie_name`, `movie_type`, `movie_cast`, `movi
 --
 
 CREATE TABLE `promotion` (
-  `promotion_id` int(2) NOT NULL,
+  `promotion_id` int(11) NOT NULL,
   `promotionInfo_title` varchar(1000) NOT NULL,
   `promotionInfo_image` longblob NOT NULL,
   `promotionInfo_description` varchar(1000) NOT NULL,
@@ -212,7 +218,7 @@ CREATE TABLE `ticketcollection` (
 --
 
 CREATE TABLE `user_list` (
-  `user_id` int(2) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `username` varchar(100) NOT NULL,
   `user_email` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
@@ -226,6 +232,7 @@ CREATE TABLE `user_list` (
 --
 
 INSERT INTO `user_list` (`user_id`, `username`, `user_email`, `password`, `user_role`, `phone`, `user_nric`) VALUES
+(1, 'testPWD', 'testPWD@gmail.com', '$2y$10$GZr9BHFAIvsUiP9gZUxrTeY/8lRCLLC/kDgllug3wUUNNXEY.Wjou', 'User', 12345678, 'S1234567J'),
 (4, 'Admin', 'Admin@gv.com', '161ebd7d45089b3446ee4e0d86dbcf92', 'Admin', 12345679, '789'),
 (9, 'Joel Teo', 'orangecola3@gmail.com', '1046d9e03eee1c3273d460deb8591d05', 'User', 0, '456'),
 (10, 'lala', 'lala@hotmail.com', '25f9e794323b453885f5181f1b624d0b', 'User', 0, '123'),
@@ -258,13 +265,6 @@ ALTER TABLE `cinema`
   ADD PRIMARY KEY (`cinema_id`);
 
 --
--- Indexes for table `failed_logins`
---
-ALTER TABLE `failed_logins`
-  ADD PRIMARY KEY (`failed_login_id`),
-  ADD KEY `fk_userid_fl` (`user_id`);
-
---
 -- Indexes for table `movie`
 --
 ALTER TABLE `movie`
@@ -281,8 +281,8 @@ ALTER TABLE `promotion`
 --
 ALTER TABLE `promotioncinema`
   ADD PRIMARY KEY (`promotionCinema_id`),
-  ADD KEY `fk_pc_promotionid` (`promotion_id`),
-  ADD KEY `fk_pc_cid` (`cinema_id`);
+  ADD KEY `promotion_id` (`promotion_id`),
+  ADD KEY `cinema_id` (`cinema_id`);
 
 --
 -- Indexes for table `showinfo`
@@ -290,24 +290,21 @@ ALTER TABLE `promotioncinema`
 ALTER TABLE `showinfo`
   ADD PRIMARY KEY (`showInfo_id`),
   ADD KEY `cinema_id` (`cinema_id`),
-  ADD KEY `cinema_id_2` (`cinema_id`),
-  ADD KEY `fk_movieid` (`movie_id`);
+  ADD KEY `movie_id` (`movie_id`);
 
 --
 -- Indexes for table `ticketcollection`
 --
 ALTER TABLE `ticketcollection`
   ADD PRIMARY KEY (`collection_id`),
-  ADD KEY `fk_tc_bookId` (`booking_id`),
-  ADD KEY `fk_tc_showInfo` (`showinfo_id`);
+  ADD KEY `booking_id` (`booking_id`),
+  ADD KEY `showinfo_id` (`showinfo_id`);
 
 --
 -- Indexes for table `user_list`
 --
 ALTER TABLE `user_list`
-  ADD PRIMARY KEY (`user_id`),
-  ADD UNIQUE KEY `user_nric` (`user_nric`),
-  ADD UNIQUE KEY `user_nric_2` (`user_nric`);
+  ADD PRIMARY KEY (`user_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -324,11 +321,6 @@ ALTER TABLE `booking`
 ALTER TABLE `cinema`
   MODIFY `cinema_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
--- AUTO_INCREMENT for table `failed_logins`
---
-ALTER TABLE `failed_logins`
-  MODIFY `failed_login_id` int(11) NOT NULL AUTO_INCREMENT;
---
 -- AUTO_INCREMENT for table `movie`
 --
 ALTER TABLE `movie`
@@ -337,7 +329,7 @@ ALTER TABLE `movie`
 -- AUTO_INCREMENT for table `promotion`
 --
 ALTER TABLE `promotion`
-  MODIFY `promotion_id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `promotion_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 --
 -- AUTO_INCREMENT for table `promotioncinema`
 --
@@ -357,45 +349,31 @@ ALTER TABLE `ticketcollection`
 -- AUTO_INCREMENT for table `user_list`
 --
 ALTER TABLE `user_list`
-  MODIFY `user_id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 --
 -- Constraints for dumped tables
 --
 
 --
--- Constraints for table `booking`
---
-ALTER TABLE `booking`
-  ADD CONSTRAINT `fk_booking_userID` FOREIGN KEY (`user_id`) REFERENCES `user_list` (`user_id`),
-  ADD CONSTRAINT `fk_movie_id` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`),
-  ADD CONSTRAINT `fk_showInfo` FOREIGN KEY (`showInfo_id`) REFERENCES `showinfo` (`showInfo_id`);
-
---
--- Constraints for table `failed_logins`
---
-ALTER TABLE `failed_logins`
-  ADD CONSTRAINT `fk_userid_fl` FOREIGN KEY (`user_id`) REFERENCES `user_list` (`user_id`);
-
---
 -- Constraints for table `promotioncinema`
 --
 ALTER TABLE `promotioncinema`
-  ADD CONSTRAINT `fk_pc_cid` FOREIGN KEY (`cinema_id`) REFERENCES `cinema` (`cinema_id`),
-  ADD CONSTRAINT `fk_pc_promotionid` FOREIGN KEY (`promotion_id`) REFERENCES `promotion` (`promotion_id`);
+  ADD CONSTRAINT `promotioncinema_ibfk_1` FOREIGN KEY (`promotion_id`) REFERENCES `promotion` (`promotion_id`),
+  ADD CONSTRAINT `promotioncinema_ibfk_2` FOREIGN KEY (`cinema_id`) REFERENCES `cinema` (`cinema_id`);
 
 --
 -- Constraints for table `showinfo`
 --
 ALTER TABLE `showinfo`
-  ADD CONSTRAINT `fk_cinema` FOREIGN KEY (`cinema_id`) REFERENCES `cinema` (`cinema_id`),
-  ADD CONSTRAINT `fk_movieid` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`);
+  ADD CONSTRAINT `showinfo_ibfk_1` FOREIGN KEY (`cinema_id`) REFERENCES `cinema` (`cinema_id`),
+  ADD CONSTRAINT `showinfo_ibfk_2` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`);
 
 --
 -- Constraints for table `ticketcollection`
 --
 ALTER TABLE `ticketcollection`
-  ADD CONSTRAINT `fk_tc_bookId` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`booking_id`),
-  ADD CONSTRAINT `fk_tc_showInfo` FOREIGN KEY (`showinfo_id`) REFERENCES `showinfo` (`showInfo_id`);
+  ADD CONSTRAINT `ticketcollection_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`booking_id`),
+  ADD CONSTRAINT `ticketcollection_ibfk_2` FOREIGN KEY (`showinfo_id`) REFERENCES `showinfo` (`showInfo_id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
