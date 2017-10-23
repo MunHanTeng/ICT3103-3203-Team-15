@@ -5,7 +5,12 @@
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
         <link href="images/gv32x32.ico" rel="shortcut icon" />
-
+        <script type= "text/javascript">
+            function redirectPaymentPage(showInfoid){
+                document.cookie = "showinfoID =" + showInfoid;
+                window.location = "bookTicket.php";
+            }
+        </script>
     </head>
     <body>
         <script src="js/jquery.min.js"></script>
@@ -147,7 +152,8 @@
                                 $sqlTime = "Select * from showinfo where movie_id='".$_COOKIE['movID']."' and cinema_id='".$row['cinema_id']."' and showInfo_date='".$date['showInfo_date']."'";
                                 $resultTime = mysqli_query($MySQLiconn, $sqlTime);
                                 while ($time = mysqli_fetch_assoc($resultTime)) {
-                                    echo '<a href="bookTicket.php?q='.$time['showInfo_id'].'" class="btn btn-primary">'.$time['showInfo_time'].'</a>';
+                                    echo '<a href="javascript:redirectPaymentPage('. $time['showInfo_id'] .')" class="btn btn-primary">'.$time['showInfo_time'].'</a>';
+                                    //echo '<a href="bookTicket.php?q='.$time['showInfo_id'].'" class="btn btn-primary">'.$time['showInfo_time'].'</a>';
                                 }
                                 echo '</td></tr>';
                             }

@@ -21,7 +21,7 @@
             echo '</script>';
         }
         include_once 'dbconnect.php';
-        $showInfoID = $_GET['q'];
+        $showInfoID = $_COOKIE['showinfoID'];
         echo $showInfoID;
         $result = mysqli_query($MySQLiconn, "SELECT * FROM `showinfo` WHERE showInfo_id ='" . $showInfoID . "'");
         $showinfo = mysqli_fetch_assoc($result);

@@ -126,8 +126,24 @@ if (isset($_POST['submit'])) {
                 //echo 'show movie id: '. $movieID;
                 $CCNum = $_POST['CreditCardNo'];
                 $CCName = $_POST['CreditCardName'];
-                $sql_query = $MySQLiconn->query("INSERT INTO booking( showInfo_id, seat_no, showInfo_row, showInfo_column, user_id, movie_id, CreditCardNum, CreditCardName) VALUES ('$showInfoID','$seat','$row','$col', '$userid', '$movieID', '$CCNum', '$CCName')");
-                mysqli_query($MySQLiconn, $sql_query);
+                $date = $_SESSION['BookTime'];
+                $timeType = explode(" ", $date);
+                $timeItems = explode(":", $timeType[0]);
+                if($timeType[1] == "PM"){
+                    $timeItems[0] += 12;
+                }
+                $Formattime = implode(":", $timeItems);
+                $Formattime .= ":00";
+                $Formaydate = $_SESSION['BookDate'];
+                
+                $sql_queryticketCollect = $MySQLiconn->query("INSERT INTO ticketcollection( ticket_collected, booking_time, CreditCardNum, CreditCardName, user_id, booking_date) VALUES (0, '$Formattime', '$CCNum', '$CCName', '$userid', '$Formaydate')");
+                mysqli_query($MySQLiconn, $sql_queryticketCollect);
+                $id = mysqli_insert_id($MySQLiconn);
+                                
+                $sql_querybooking = $MySQLiconn->query("INSERT INTO booking( showInfo_id, seat_no, showInfo_row, showInfo_column, movie_id, collection_id) VALUES ('$showInfoID','$seat','$row','$col', '$movieID', '$id')");
+                $result = mysqli_query($MySQLiconn, $sql_querybooking);
+                
+                echo $result;
             }
 
             $result = mysqli_query($MySQLiconn, "SELECT * FROM `showinfo` WHERE showInfo_id ='" . $_SESSION['show_id'] . "'");

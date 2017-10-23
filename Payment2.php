@@ -67,10 +67,12 @@
                         <?php
                         echo '<h5>You have selected &nbsp<span style="font-size:2.5em;color:yellow;">' . $movie['movie_name'] . ' </span></h5>';
                         echo '<hr>';
+                        $_SESSION['BookDate'] = $showinfo['showInfo_date'];
                         $timestamp = strtotime($showinfo['showInfo_date']);
                         $day = date('l', $timestamp);
                         echo '<p>Date:<span style="font-size:1em;color:yellow;">' . $day . ',' . $showinfo['showInfo_date'] . '</span>&nbsp&nbsp&nbsp&nbsp&nbsp';
                         echo 'Time:<span style="font-size:1em;color:yellow;">' . $showinfo['showInfo_time'] . '</span>&nbsp&nbsp&nbsp&nbsp&nbsp';
+                        $_SESSION['BookTime'] = $showinfo['showInfo_time'];
                         echo 'Cinema:<span style="font-size:1em;color:yellow;">' . $cinema['cinema_name'] . '</span></p>';
                         echo '<p>Seats Selected:<span style="font-size:1em;color:yellow;">' . implode(', ', $check_list) . '</span></p>';
                         ?>
