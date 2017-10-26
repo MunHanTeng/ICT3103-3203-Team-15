@@ -1,6 +1,4 @@
 <?php
-include "phpqrcode/qrlib.php";
-
 
 function validateDate($date, $format = 'Y-m') {
     $d = DateTime::createFromFormat($format, $date);
@@ -123,22 +121,35 @@ if (isset($_POST['submit'])) {
                 $showInfoID = $_SESSION['show_id'];
                 $movieID = $_SESSION['movie_id'];
                 $userid = $_SESSION['user'];
-				$qrcode = $_SESSION['user'] + $_SESSION['movie_id'] + $_SESSION['show_id'] + $movie;                //qrcode making unencrypted
-				
                 //echo 'User id '.$_SESSION['user'];
                 //echo 'show info id: '. $showInfoID;
                 //echo 'show movie id: '. $movieID;
                 $CCNum = $_POST['CreditCardNo'];
                 $CCName = $_POST['CreditCardName'];
-                $sql_query = $MySQLiconn->query("INSERT INTO booking( showInfo_id, seat_no, showInfo_row, showInfo_column, user_id, movie_id, CreditCardNum, CreditCardName) VALUES ('$showInfoID','$seat','$row','$col', '$userid', '$movieID', '$CCNum', '$CCName')");
-                mysqli_query($MySQLiconn, $sql_query);
+                $date = $_SESSION['BookTime'];
+                $timeType = explode(" ", $date);
+                $timeItems = explode(":", $timeType[0]);
+                if($timeType[1] == "PM"){
+                    $timeItems[0] += 12;
+                }
+                $Formattime = implode(":", $timeItems);
+                $Formattime .= ":00";
+                $Formaydate = $_SESSION['BookDate'];
+                
+                $sql_queryticketCollect = $MySQLiconn->query("INSERT INTO ticketcollection( ticket_collected, booking_time, CreditCardNum, CreditCardName, user_id, booking_date) VALUES (0, '$Formattime', '$CCNum', '$CCName', '$userid', '$Formaydate')");
+                mysqli_query($MySQLiconn, $sql_queryticketCollect);
+                $id = mysqli_insert_id($MySQLiconn);
+                                
+                $sql_querybooking = $MySQLiconn->query("INSERT INTO booking( showInfo_id, seat_no, showInfo_row, showInfo_column, movie_id, collection_id) VALUES ('$showInfoID','$seat','$row','$col', '$movieID', '$id')");
+                mysqli_query($MySQLiconn, $sql_querybooking);
+                
+                //echo $result;
             }
 
             $result = mysqli_query($MySQLiconn, "SELECT * FROM `showinfo` WHERE showInfo_id ='" . $_SESSION['show_id'] . "'");
             $showinfo = mysqli_fetch_assoc($result);
             $result2 = mysqli_query($MySQLiconn, "SELECT * FROM `movie` WHERE movie_id ='" . $showinfo['movie_id'] . "'");
             $movie = mysqli_fetch_assoc($result2);
-			
             // EMAIL
             require 'email/PHPMailerAutoload.php';
 
@@ -163,9 +174,6 @@ if (isset($_POST['submit'])) {
                                     <p>Booked Date: ' . date("d-m-y", strtotime($showinfo['showInfo_date'])) . '</p> 
                                     <p>Booked Time: ' . $showinfo['showInfo_time'] . '</p>
                                     <p>Your seat(s) is/are ' . implode(', ', $_SESSION['check_list']) . ' with a total price of $' . $_SESSION['price'] . '</p>';
-									
-									
-									 QRcode::png(qrcode); //qr genration of codes
             if (!$mail->send()) {
                 echo 'Movie tickets details could not be sent.';
                 echo 'Mailer Error: ' . $mail->ErrorInfo;
