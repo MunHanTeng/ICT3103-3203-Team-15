@@ -26,7 +26,7 @@ if (isset($_POST["submit"])) {
         $upass = mysqli_real_escape_string($MySQLiconn, $_POST['pwd']);
 
         //Delete rows older than 5 minutes
-        $res = mysqli_query($MySQLiconn, "DELETE FROM failed_logins WHERE User='$username' and Timestamp<= (now() - interval 2 minute)");
+        $res = mysqli_query($MySQLiconn, "DELETE FROM failed_logins WHERE User='$username' and Timestamp<= (now() - interval 15 minute)");
 
         //Check row count of failed login, if >5, notify user login attempts too many
         $res = mysqli_query($MySQLiconn, "SELECT COUNT(User) as userFails FROM failed_logins WHERE User='$username'");
