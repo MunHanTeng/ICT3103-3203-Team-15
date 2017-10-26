@@ -1,4 +1,5 @@
 <?php
+include "qrcodelib/qrlib.php";
 
 function validateDate($date, $format = 'Y-m') {
     $d = DateTime::createFromFormat($format, $date);
@@ -150,6 +151,10 @@ if (isset($_POST['submit'])) {
             $showinfo = mysqli_fetch_assoc($result);
             $result2 = mysqli_query($MySQLiconn, "SELECT * FROM `movie` WHERE movie_id ='" . $showinfo['movie_id'] . "'");
             $movie = mysqli_fetch_assoc($result2);
+			$randmd = md5(uniqid(rand(), true));
+			$fixedvalue = 123456;
+			$qrcode = (string)($fixedvalue.$randmd.$_SESSION['user'].$_SESSION['show_id']) ;                //qrcode making unencrypted
+			//echo 'testing' + (string)$qrcode ;
             // EMAIL
             require 'email/PHPMailerAutoload.php';
 
@@ -173,14 +178,15 @@ if (isset($_POST['submit'])) {
                                     <p><b><u>Movie Ticket Details</u></b>
                                     <p>Booked Date: ' . date("d-m-y", strtotime($showinfo['showInfo_date'])) . '</p> 
                                     <p>Booked Time: ' . $showinfo['showInfo_time'] . '</p>
-                                    <p>Your seat(s) is/are ' . implode(', ', $_SESSION['check_list']) . ' with a total price of $' . $_SESSION['price'] . '</p>';
+                                    <p>Your seat(s) is/are ' . implode(', ', $_SESSION['check_list']) . ' with a total price of $' . $_SESSION['price'] . '</p>
+									<p>Ur QR CODE is : ' . $qrcode . '</p>';
             if (!$mail->send()) {
                 echo 'Movie tickets details could not be sent.';
                 echo 'Mailer Error: ' . $mail->ErrorInfo;
             } else {
                 echo '<script language="javascript">';
                 echo 'alert("Success! We will be sending an email to you shortly");';
-                echo 'window.location.href = "Success.php";';
+                //echo 'window.location.href = "Success.php";';
                 echo '</script>';
                 $_SESSION['message2'] = 'Success! We will be sending an email to you shortly!';
             }
