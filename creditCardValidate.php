@@ -1,33 +1,6 @@
 <?php
 include "qrcodelib/qrlib.php";
 
-function validateDate($date, $format = 'Y-m') {
-    $d = DateTime::createFromFormat($format, $date);
-    return $d && $d->format($format) == $date;
-}
-
-function check($CCN, $CCED, $CVV2) {
-    $checksum = 0;
-    $array = str_split($CCN, 4);
-    foreach ($array as $value) {
-        //echo 'value: '.$value;
-        $checksum += $value;
-        //echo '<br>';
-    }
-    //$year = date('y', strtotime($CCED));
-    $year = str_replace('/', '', $CCED);
-    $checksum += $year;
-    //$month = date('m', strtotime($CCED));
-    //$d= ($month*100)+$year;
-    //$checksum += $d;
-    //echo 'checksum: '. $checksum;
-    $check = str_split($checksum, 3);
-    if ($check[0] == $CVV2) {
-        return TRUE;
-    } else {
-        return FALSE;
-    }
-}
 
 require('mod10.php');
 
@@ -75,11 +48,7 @@ if (isset($_POST['submit'])) {
         $_SESSION['CCE'] = 'Credit Card Expiry date is Empty!';
         $okay = FALSE;
         header("Location: Payment2.php");
-    } elseif (var_dump(validateDate($_POST['CreditCardExpiry']))) {
-        $_SESSION['CCE'] = 'Please enter a valid Credit Card No Expiry date!';
-        $okay = FALSE;
-        header("Location: Payment2.php");
-    }
+    } 
     if (empty($_POST['CVV2'])) {
         $_SESSION['CVV2'] = 'CVV2 is Empty!';
         $okay = FALSE;
@@ -186,7 +155,7 @@ if (isset($_POST['submit'])) {
             } else {
                 echo '<script language="javascript">';
                 echo 'alert("Success! We will be sending an email to you shortly");';
-                //echo 'window.location.href = "Success.php";';
+                echo 'window.location.href = "Success.php";';
                 echo '</script>';
                 $_SESSION['message2'] = 'Success! We will be sending an email to you shortly!';
             }
