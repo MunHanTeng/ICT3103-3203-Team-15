@@ -122,8 +122,11 @@ if (isset($_POST['submit'])) {
             $movie = mysqli_fetch_assoc($result2);
 			$randmd = md5(uniqid(rand(), true));
 			$fixedvalue = 123456;
-			$qrcode = (string)($fixedvalue.$randmd.$_SESSION['user'].$_SESSION['show_id']) ;                //qrcode making unencrypted
-			//echo 'testing' + (string)$qrcode ;
+			$qrcode = (string)($fixedvalue.$randmd.$_SESSION['user'].$_SESSION['show_id']. $_SESSION['name']) ;                //qrcode making unencrypted
+			$tempDir = 'qrcodelib/image/';
+			$hashedfile = hash("sha256", $qrcode);
+			$fileurl = '/checkQRCode.php?qrCode="'.$hashedfile.'"';
+
             // EMAIL
             require 'email/PHPMailerAutoload.php';
 
@@ -148,7 +151,7 @@ if (isset($_POST['submit'])) {
                                     <p>Booked Date: ' . date("d-m-y", strtotime($showinfo['showInfo_date'])) . '</p> 
                                     <p>Booked Time: ' . $showinfo['showInfo_time'] . '</p>
                                     <p>Your seat(s) is/are ' . implode(', ', $_SESSION['check_list']) . ' with a total price of $' . $_SESSION['price'] . '</p>
-									<p>Ur QR CODE is : ' . $qrcode . '</p>';
+									<p>our QR : <img src= https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' . $fileurl .'></p>';
             if (!$mail->send()) {
                 echo 'Movie tickets details could not be sent.';
                 echo 'Mailer Error: ' . $mail->ErrorInfo;
