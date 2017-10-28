@@ -117,7 +117,7 @@ if (isset($_POST['submit'])) {
                 $fixedvalue = 123456;
                 $qrcode = (string) ($fixedvalue . $randmd . $_SESSION['user'] . $_SESSION['show_id'] . $_SESSION['name']);                //qrcode making unencrypted
                 $hashedfile = hash("sha256", $qrcode);
-                $fileurl = 'Theipaddress/checkQRCode.php?qrCode="' . $hashedfile . '"';
+                $fileurl = '128.199.217.166/checkQRCode.php?qrCode="' . $hashedfile . '"';
                 $sql_qradd = $MySQLiconn->query("UPDATE ticketcollection SET qrValue='$hashedfile' WHERE collection_id='$id'");
                 /* $collectid = mysqli_query($MySQLiconn, "SELECT collection_id FROM ticketcollection WHERE user_id ='". $userid. "'" );
                   echo $showtheid; //the problem is here
