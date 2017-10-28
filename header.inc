@@ -10,6 +10,12 @@ if(session_status() == PHP_SESSION_NONE) {
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
+            <script type= "text/javascript">
+                function redirectCinemaPage(cinemaid){
+                    document.cookie = "cinemaid =" + cinemaid;
+                    window.location = "cinema.php";
+                }
+            </script>
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-controls="navbar">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
@@ -31,15 +37,19 @@ if(session_status() == PHP_SESSION_NONE) {
                         <?php
                         while ($row = mysqli_fetch_assoc($result)) {
                             if (strpos($directoryURI,'cinema.php') !== false) {   
-                                if (strpos($_GET['q'], $row['cinema_id']) !== false) {
-                                        echo '<li class="active"><a href="cinema.php?q='.$row['cinema_id'].'">'.$row['cinema_name'].'</a></li>';
+                                if (strpos($_COOKIE['cinemaid'], $row['cinema_id']) !== false) {
+                                        echo '<li class="active"><a href="javascript:redirectCinemaPage('. $row['cinema_id'] .')" >'.$row['cinema_name'].'</a></li>';
+                                        //echo '<li class="active"><a href="cinema.php?q='.$row['cinema_id'].'">'.$row['cinema_name'].'</a></li>';
                                     }
                                     else {
-                                        echo '<li><a href="cinema.php?q='.$row['cinema_id'].'">'.$row['cinema_name'].'</a></li>';
+                                        echo '<li><a href="javascript:redirectCinemaPage('. $row['cinema_id'] .')" >'.$row['cinema_name'].'</a></li>';
+                                        //echo '<li><a href="cinema.php?q='.$row['cinema_id'].'">'.$row['cinema_name'].'</a></li>';
                                     }
                                 }
                             else {
-                                echo '<li><a href="cinema.php?q='.$row['cinema_id'].'">'.$row['cinema_name'].'</a></li>';
+                                echo '<li><a href="javascript:redirectCinemaPage('. $row['cinema_id'] .')" >'.$row['cinema_name'].'</a></li>';
+
+                                //echo '<li><a href="cinema.php?q='.$row['cinema_id'].'">'.$row['cinema_name'].'</a></li>';
                             }
                         }
 ?>

@@ -47,12 +47,12 @@
                                         echo '<h4 class="modal-title">'.$row['promotionInfo_title'].'</h4>';
                                     echo '</div>'; //modal-header
                                     echo '<div class="modal-body">';
-                                    if (!empty($row['promotionInfo_2ndImage'])) {
-                                        echo '<img src="data:image/jpeg;base64,'. base64_encode($row['promotionInfo_2ndImage']).'">';
+                                    if (!empty($row['promotionInfo_image'])) {
+                                        echo '<img src="data:image/jpeg;base64,'. base64_encode($row['promotionInfo_image']).'">';
                                     }
-                                    if (!empty($row['promotionInfo_details'])) {
+                                    if (!empty($row['promotionInfo_description'])) {
                                         echo '<h4>PROMOTION DETAILS</h4>';
-                                        echo '<p>'.$row['promotionInfo_details'].'</p>';
+                                        echo '<p>'.$row['promotionInfo_description'].'</p>';
                                     }
                                     echo '</div>'; //modal-body
                                     echo '<div class="modal-footer">';
