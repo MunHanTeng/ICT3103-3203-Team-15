@@ -117,7 +117,7 @@ if (isset($_POST['submit'])) {
                 $fixedvalue = 123456;
                 $qrcode = (string) ($fixedvalue . $randmd . $_SESSION['user'] . $_SESSION['show_id'] . $_SESSION['name']);                //qrcode making unencrypted
                 $hashedfile = hash("sha256", $qrcode);
-                $fileurl = '128.199.217.166/checkQRCode.php?qrCode="' . $hashedfile . '"';
+                $fileurl = '128.199.217.166/checkQRCode.php?qrCode=' . $hashedfile . '';
                 $sql_qradd = $MySQLiconn->query("UPDATE ticketcollection SET qrValue='$hashedfile' WHERE collection_id='$id'");
                 /* $collectid = mysqli_query($MySQLiconn, "SELECT collection_id FROM ticketcollection WHERE user_id ='". $userid. "'" );
                   echo $showtheid; //the problem is here
@@ -158,7 +158,8 @@ if (isset($_POST['submit'])) {
                                     <p>Booked Date: ' . date("d-m-y", strtotime($showinfo['showInfo_date'])) . '</p> 
                                     <p>Booked Time: ' . $showinfo['showInfo_time'] . '</p>
                                     <p>Your seat(s) is/are ' . implode(', ', $_SESSION['check_list']) . ' with a total price of $' . $_SESSION['price'] . '</p>
-									<p>Your QR : <img src= https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' . $fileurl . '></p>';
+                                    <p>Your QR:
+                                    <p><img src= https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' . $fileurl . '></p>';
                 if (!$mail->send()) {
                     echo 'Movie tickets details could not be sent.';
                     echo 'Mailer Error: ' . $mail->ErrorInfo;
