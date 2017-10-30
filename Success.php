@@ -15,6 +15,13 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
+        
+        //For tfa 
+        require_once 'loader.php';
+        Loader::register('lib','RobThree\\Auth');
+        use \RobThree\Auth\TwoFactorAuth;
+        $tfa = new TwoFactorAuth('ICT3203');
+        
           $UserId = $_SESSION['user'];
           $check_list = $_SESSION['check_list'];
           $PaymentMode = $_SESSION['PaymentMode'];
@@ -51,7 +58,7 @@
                     <a class="btn btn-default" href="<?php echo $movie['movie_websiteLink']; ?>">Website</a>
            </div>
            <div class="col-md-8 text-center">
-           <div class="container-fluid" style="background-color:#303030 ;padding-bottom: 10px">
+            <div class="container-fluid" style="background-color:#303030 ;padding-bottom: 10px">
                <div class="row"> 
                <?php
                  echo '<h5>You have selected &nbsp<span style="font-size:2.5em;color:yellow;">'. $movie['movie_name'].' </span></h5>';
@@ -64,26 +71,74 @@
                  echo '<p>Seats Selected:<span style="font-size:1em;color:yellow;">'.implode(', ', $check_list).'</span></p>';    
                ?>
               </div> 
-          </div>
-              <div class="row">  
+            </div>
+            <div class="row">  
                 <?php
                 $TotAmnt = $PaymentModeValue[$PaymentMode]*count($check_list);
                  echo '<p style="text-align:left;" >Total Amount: &nbsp<span style="font-size:1.5em;color:yellow;">S$'.$TotAmnt.'</span></p>';
                 ?>
-              </div>
-              <div class="row"> 
+            </div>
+            <div class="row"> 
                 <div class="container-fluid" style="background-color:#303030 ;padding-bottom: 10px;text-align: left;">
                     <p>Name: <span style="font-size:1.5em;color:yellow;"><?php echo $Name?></span></p>
                     <hr>
                     <p>Email: <span style="font-size:1.5em;color:yellow;"><?php echo $Email?></span></p>
                 </div>
-              </div>
-               <?php
+            </div>
+            <?php
                    if(!empty($_SESSION['message2'])) {
                        echo '<h4>'.$_SESSION['message2'].'</h4>';
                    } 
-               ?>
-        </div> 
+            ?>
+            </div> 
         </div>
+        
+        <!-- <form action="<?=$_SERVER['PHP_SELF']?>" method="POST">
+            <input type="text" id="otpcode" name="otpcode">
+            <input type="submit" name="submit" value="Submit">
+        </form> -->
+        <?php
+            //if(isset($_POST['submit'])) {
+                //$result = ($tfa->verifyCode($_SESSION['QRCODE'], $_POST['otpcode']) === true ? 'OK' : 'Wrong OTP');
+                // alert for testing purpose, real operation should be storing the secret into the database together with user account from session.
+                //echo '<script type="text/javascript">alert("' . $result . '");</script>';
+            //}
+            require 'email/PHPMailerAutoload.php';
+                $result = mysqli_query($MySQLiconn, "SELECT * FROM `showinfo` WHERE showInfo_id ='" . $_SESSION['show_id'] . "'");
+                $showinfo = mysqli_fetch_assoc($result);
+                $result2 = mysqli_query($MySQLiconn, "SELECT * FROM `movie` WHERE movie_id ='" . $showinfo['movie_id'] . "'");
+                $movie = mysqli_fetch_assoc($result2);
+            
+                //For Ticket collection
+                $mail = new PHPMailer;
+                $mail->isSMTP();                                      // Set mailer to use SMTP
+                $mail->Host = 'smtp.gmail.com';                       // Specify main and backup SMTP servers
+                $mail->SMTPAuth = true;                               // Enable SMTP authentication
+                $mail->Username = '3103.3203.team15@gmail.com';       // SMTP username
+                $mail->Password = 'te@m15ssd';                        // SMTP password
+                $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+                $mail->Port = 587;                                    // TCP port to connect to
+
+                $mail->setFrom('from@example.com', 'Golden Village');
+                $mail->addAddress('' . $_SESSION['email'] . '');      // Add a recipient
+                $mail->isHTML(true);                                  // Set email format to HTML
+
+                $mail->Subject = 'Ticket is ready for collection';
+                $mail->Body = '<p>Dear ' . $_SESSION['name'] . ',</p>
+                                    <p>Please be informed that your ticket is ready for redeemption and remember to collect it</p>
+                                    <p><b><u>Movie Ticket Details</u></b>
+                                    <p>Booked Date: ' . date("d-m-y", strtotime($showinfo['showInfo_date'])) . '</p> 
+                                    <p>Booked Time: ' . $showinfo['showInfo_time'] . '</p>
+                                    <p>Your seat(s) is/are ' . implode(', ', $_SESSION['check_list']) . ' with a total price of $' . $_SESSION['price'] . '</p>
+                                    <p>Please click on the link to collect your ticket</p><a href="http://localhost:8086/1004ProjectFinal/scanningQRCode.php">Redeem Ticket</a>';
+                
+                if (!$mail->send()) {
+                    echo 'Movie tickets collection could not be sent.';
+                    echo 'Mailer Error: ' . $mail->ErrorInfo;
+                }
+        ?>
+        
+        
+        
     </body>
 </html>
