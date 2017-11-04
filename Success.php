@@ -5,8 +5,8 @@
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
         <link href="images/gv32x32.ico" rel="shortcut icon" />
-
     </head>
+    
     <body>
         <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
@@ -15,7 +15,10 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
-        
+        if (isset($_SESSION['payment']) != "") 
+        {
+            header("Location: index.php");
+        }
         //For tfa 
         require_once 'loader.php';
         Loader::register('lib','RobThree\\Auth');
@@ -108,7 +111,7 @@
                 $showinfo = mysqli_fetch_assoc($result);
                 $result2 = mysqli_query($MySQLiconn, "SELECT * FROM `movie` WHERE movie_id ='" . $showinfo['movie_id'] . "'");
                 $movie = mysqli_fetch_assoc($result2);
-            
+                $_SESSION['payment'] = "PAID";
                 //For Ticket collection
                 $mail = new PHPMailer;
                 $mail->isSMTP();                                      // Set mailer to use SMTP
@@ -137,8 +140,5 @@
                     echo 'Mailer Error: ' . $mail->ErrorInfo;
                 }
         ?>
-        
-        
-        
     </body>
 </html>

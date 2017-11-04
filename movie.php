@@ -1,6 +1,5 @@
-<html lang="en">
+<html>
     <head>
-        <meta charset="UTF-8">
         <title>Golden Village</title>
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
@@ -12,7 +11,8 @@
             }
         </script>
     </head>
-    <body>
+    <body onLoad="backButtonOverride()">
+
         <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/scripts.js"></script>
@@ -167,6 +167,6 @@
                     </div>
                 </div>
             </div>
-<?php include "footer.inc"; ?>
+    <?php include "footer.inc"; ?>
     </body>
 </html>

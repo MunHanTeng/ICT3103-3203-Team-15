@@ -9,9 +9,10 @@ padding: 0;
 html {
 height: 100%;
 /*Image only BG fallback*/
-background: url('http://thecodeplayer.com/uploads/media/gs.png');
+/* background: url('http://thecodeplayer.com/uploads/media/gs.png'); */
 /*background = gradient + image pattern combo*/
-background: linear-gradient(rgba(196, 102, 0, 0.2), rgba(155, 89, 182, 0.2)),  url('http://thecodeplayer.com/uploads/media/gs.png');
+/* background: linear-gradient(rgba(196, 102, 0, 0.2), rgba(155, 89, 182, 0.2)),  url('http://thecodeplayer.com/uploads/media/gs.png'); */
+background-color: #000;
 }
 body {
 font-family: montserrat, arial, verdana;
@@ -90,7 +91,7 @@ list-style-type: none;
 color: white;
 text-transform: uppercase;
 font-size: 20px;
-width: 50%;
+width: 33%;
 float: left;
 position: relative;
 }

@@ -3,6 +3,8 @@
 <head>
     <title>Golden Village</title>
     <link href="css/ticketcollection.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
 </head>
     <?php
         require_once 'loader.php';
@@ -10,9 +12,9 @@
         use \RobThree\Auth\TwoFactorAuth;
         $tfa = new TwoFactorAuth('ICT3203');
         include_once 'dbconnect.php';
-        session_start();
+        include 'header.inc';
     ?>
-
+<body>
     <?php
         $result = ($tfa->verifyCode($_SESSION['QRCODE'], $_POST['otpcode']) === true ? 'OK' : 'Wrong OTP');
         $qrValue = mysqli_real_escape_string($MySQLiconn, $_SESSION['QRCODE']);
@@ -76,6 +78,6 @@
         echo '<center><h1 style="color:yellow;">Wrong OTP</h1></center>';
     }
     
-?>           
+?>     
 </body>
 </html>

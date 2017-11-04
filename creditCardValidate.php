@@ -124,23 +124,28 @@ if (isset($_POST['submit'])) {
                 mysqli_query($MySQLiconn, $sql_querybooking);
 
                 // QR CODE
-                $randmd = md5(uniqid(rand(), true));
-                $fixedvalue = 123456;
-                $qrcode = (string) ($randmd . $_SESSION['user'] . $_SESSION['show_id']);                //qrcode making unencrypted
+                //$randmd = md5(uniqid(rand(), true));
+                //$fixedvalue = 123456;
+                //$qrcode = (string) ($randmd . $_SESSION['user'] . $_SESSION['show_id']);                //qrcode making unencrypted
                 //$hashedfile = hash("sha256", $qrcode);
                 //$secret = $tfa->createSecret($qrcode);
                 //$base32 = new Base2n(5, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', FALSE, TRUE, TRUE);
                 //$hashedfile = $base32->encode($qrcode);
                 //$hashedfile = base_convert($qrcode, 32, 2);
                 //$hashedfile2 = base_convert($hashedfile, 64, 32);
-                $base32 = new Base2n(5, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', FALSE, TRUE, TRUE);
-                $secret = $base32->encode($qrcode);
-                $code = $tfa->getCode($secret);
+                //$base32 = new Base2n(5, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', FALSE, TRUE, TRUE);
+                //$secret = $base32->encode($qrcode);
+                //$code = $tfa->getCode($secret);
                 //echo $code;
             ?>
             
             <?php
-                $fileurl = 'http://localhost:8086/1004ProjectFinal/checkQRCode.php?qrCode=' . $secret . '';
+                $userid = $_SESSION['user'];
+                $res = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE user_id='$userid'");
+                $row = mysqli_fetch_array($res);
+                $_SESSION['QRCODE'] = $row['qrValue'];
+                $secret = $_SESSION['QRCODE'];
+                //$fileurl = 'http://localhost:8086/1004ProjectFinal/checkQRCode.php?qrCode=' . $secret . '';
                 $sql_qradd = $MySQLiconn->query("UPDATE ticketcollection SET qrValue='$secret' WHERE collection_id='$id'");
                 $collectid = mysqli_query($MySQLiconn, "SELECT collection_id FROM ticketcollection WHERE user_id ='". $userid. "'" );
                 //echo $showtheid; //the problem is here
@@ -189,7 +194,6 @@ if (isset($_POST['submit'])) {
                     echo '<script language="javascript">';
                     echo 'alert("Success! We will be sending an email to you shortly");';
                     echo 'window.location.href = "Success.php";';
-                    $_SESSION['QRCODE'] = $secret;
                     echo '</script>';
                     $_SESSION['message2'] = 'Success! We will be sending an email to you shortly!';
                 } 

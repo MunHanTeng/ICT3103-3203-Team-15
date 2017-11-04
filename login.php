@@ -42,7 +42,15 @@ if (isset($_POST["submit"])) {
         else {
             $res = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE user_email='$username' and user_role='User'");
             $row = mysqli_fetch_array($res);
-            if ((password_verify($upass, $row['password']))) {
+            if ($row['status'] == 'Not Validated')
+            {
+                echo "<script>";
+                echo "alert('This account has not yet validatd');";
+                echo 'window.location = "index.php";';
+                echo '</script>';
+            }
+            else if ((password_verify($upass, $row['password']))) 
+            {
                 $_SESSION['user'] = $row['user_id'];
                 $_SESSION['name'] = $row['username'];
                 $_SESSION['email'] = $row['user_email'];
@@ -50,7 +58,7 @@ if (isset($_POST["submit"])) {
                 $res = mysqli_query($MySQLiconn, "DELETE FROM failed_logins WHERE User='$username'");
                 echo "<script>";
                 echo "alert('Login successful');";
-                echo 'window.location = "index.php";';
+                echo 'window.location = "validateOTP.php";';
                 echo '</script>';
             } else {
                 //If login not successful, create new row in fail logins

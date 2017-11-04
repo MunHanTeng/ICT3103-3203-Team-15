@@ -75,7 +75,7 @@ if(session_status() == PHP_SESSION_NONE) {
                                     <input type="password" class="form-control" name="pwd" placeholder="Password" required>
                                 </div>
                                 <button name="submit" type="submit" class="btn btn-primary">Sign In</button>
-                                <p><a href="register.php">Register</a></p>    
+                                <p><a href="registerUser.php">Register</a></p>    
                             </form>
                             
                         </div>
