@@ -149,7 +149,7 @@
         
             <!-- fieldsets Page 1 -->
             <fieldset>
-                <h1 style="color: red;">PLEASE ENSURE THAT YOU HAVE GOOGLE AUTHENTICATOR AND QR CODE READER APP INSTALL</h1>
+                <h2 style="color: red;">PLEASE ENSURE THAT YOU HAVE GOOGLE AUTHENTICATOR APP INSTALL</h2>
 
                 <h2 class="fs-title">Register user</h2>
                 <h3 class="fs-subtitle">This is the first step</h3>
