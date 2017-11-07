@@ -5,7 +5,10 @@
     $tfa = new TwoFactorAuth('ICT3203');
     include_once 'dbconnect.php';
     require('Base2n.php');
-    include 'header.inc';
+    if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 ?>
 
 <?php
@@ -143,6 +146,7 @@
     </head>
     
     <body>
+        <?php include 'header.inc'; ?>
         <form id="msform" method="POST" action="registerUser.php">
             <!-- progressbar -->
             <ul id="progressbar">

@@ -68,7 +68,7 @@ if(session_status() == PHP_SESSION_NONE) {
                     <li class="dropdown" id="menuLogin">
                         <a class="dropdown-toggle" href="#" data-toggle="dropdown" id="navLogin">Login</a>
                         <div class="dropdown-menu" style="background-color: #333;">
-                            <form class="form" method="post" action="login.php">
+                            <form class="form" method="post" action="validateOTP.php">
                                 <div class="form-group">
                                     <input type="text" class="form-control" name="email" placeholder="Email" required>
                                 </div>

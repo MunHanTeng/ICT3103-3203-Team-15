@@ -3,9 +3,9 @@
     Loader::register('lib','RobThree\\Auth');
     use \RobThree\Auth\TwoFactorAuth;
     $tfa = new TwoFactorAuth('ICT3203');
+    session_start();
     include_once 'dbconnect.php';
-    include 'header.inc';
-    
+   
     if (!isset($_GET['qrCode'])) 
     {
         header("Location: index.php");
@@ -60,7 +60,7 @@
 </head>
 <body>
 
-
+<?php  include 'header.inc'; ?>
 <div id="myModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">

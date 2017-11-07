@@ -4,7 +4,7 @@
     use \RobThree\Auth\TwoFactorAuth;
     $tfa = new TwoFactorAuth('ICT3203');
     include_once 'dbconnect.php';
-    include 'header.inc';
+   
     //echo $_SESSION['dummy_id'];
         
 ?>
@@ -20,7 +20,7 @@
     </head>
     
     <body>
-    
+    <?php  include 'header.inc'; ?>
         <form id="msform" method="POST" action="processUserAcc.php">
         <!-- progressbar -->
         <ul id="progressbar">

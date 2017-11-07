@@ -58,9 +58,7 @@ if (isset($_POST["submit"])) {
                 $res = mysqli_query($MySQLiconn, "DELETE FROM failed_logins WHERE User='$username'");
                 
                 echo "<script type='text/javascript'>";
-                echo "alert('Login successful');";
                 echo 'window.location = "validateOTP.php";';
-                $_SESSION["SUCESS"] = "YES";
                 echo '</script>';
             } else {
                 //If login not successful, create new row in fail logins
