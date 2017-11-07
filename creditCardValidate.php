@@ -1,17 +1,8 @@
 <?php
 
-//For qr code
 include "qrcodelib/qrlib.php";
 
-//for otp
-require_once 'loader.php';
-Loader::register('lib','RobThree\\Auth');
-use \RobThree\Auth\TwoFactorAuth;
-$tfa = new TwoFactorAuth('ICT3203');
 
-require('Base2n.php');
-
-//For credit card modification
 require('mod10.php');
 
 function validate($CCN, $CCED, $CVV2) {
@@ -77,9 +68,7 @@ if (isset($_POST['submit'])) {
         $okay = FALSE;
         header("Location: Payment2.php");
     }
-    ?>
 
-    <?php
     if ($okay) {
         if (validate($_POST['CreditCardNo'], $_POST['CreditCardExpiry'], $_POST['CVV2'])) {
             $dic = array('A' => 0, 'B' => 1, 'C' => 2, 'D' => 3, 'E' => 4);
@@ -124,34 +113,17 @@ if (isset($_POST['submit'])) {
                 mysqli_query($MySQLiconn, $sql_querybooking);
 
                 // QR CODE
-                //$randmd = md5(uniqid(rand(), true));
-                //$fixedvalue = 123456;
-                //$qrcode = (string) ($randmd . $_SESSION['user'] . $_SESSION['show_id']);                //qrcode making unencrypted
-                //$hashedfile = hash("sha256", $qrcode);
-                //$secret = $tfa->createSecret($qrcode);
-                //$base32 = new Base2n(5, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', FALSE, TRUE, TRUE);
-                //$hashedfile = $base32->encode($qrcode);
-                //$hashedfile = base_convert($qrcode, 32, 2);
-                //$hashedfile2 = base_convert($hashedfile, 64, 32);
-                //$base32 = new Base2n(5, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', FALSE, TRUE, TRUE);
-                //$secret = $base32->encode($qrcode);
-                //$code = $tfa->getCode($secret);
-                //echo $code;
-            ?>
-            
-            <?php
-                $userid = $_SESSION['user'];
-                $res = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE user_id='$userid'");
-                $row = mysqli_fetch_array($res);
-                $_SESSION['QRCODE'] = $row['qrValue'];
-                $secret = $_SESSION['QRCODE'];
-                //$fileurl = 'http://localhost:8086/1004ProjectFinal/checkQRCode.php?qrCode=' . $secret . '';
-                $sql_qradd = $MySQLiconn->query("UPDATE ticketcollection SET qrValue='$secret' WHERE collection_id='$id'");
-                $collectid = mysqli_query($MySQLiconn, "SELECT collection_id FROM ticketcollection WHERE user_id ='". $userid. "'" );
-                //echo $showtheid; //the problem is here
-                 
-                //$sql_qradd = $MySQLiconn->query("UPDATE ticketcollection SET qrValue='$secret' WHERE collection_id=22");
-                //$sql_qradd = $MySQLiconn->query("INSERT INTO ticketcollection(qrValue) VALUES ('$secret') WHERE (collection_id='".$collectid. "'");
+                $randmd = md5(uniqid(rand(), true));
+                $fixedvalue = 123456;
+                $qrcode = (string) ($fixedvalue . $randmd . $_SESSION['user'] . $_SESSION['show_id'] . $_SESSION['name']);                //qrcode making unencrypted
+                $hashedfile = hash("sha256", $qrcode);
+                $fileurl = '128.199.217.166/checkQRCode.php?qrCode=' . $hashedfile . '';
+                $sql_qradd = $MySQLiconn->query("UPDATE ticketcollection SET qrValue='$hashedfile' WHERE collection_id='$id'");
+                /* $collectid = mysqli_query($MySQLiconn, "SELECT collection_id FROM ticketcollection WHERE user_id ='". $userid. "'" );
+                  echo $showtheid; //the problem is here
+                 */
+                //$sql_qradd = $MySQLiconn->query("UPDATE ticketcollection SET qrValue='$hashedfile' WHERE collection_id=22");
+                //$sql_qradd = $MySQLiconn->query("INSERT INTO ticketcollection(qrValue) VALUES ('$hashedfile') WHERE (collection_id='".$collectid. "'");
                 mysqli_query($MySQLiconn, $sql_qradd);
             }
             
@@ -162,10 +134,9 @@ if (isset($_POST['submit'])) {
                 $showinfo = mysqli_fetch_assoc($result);
                 $result2 = mysqli_query($MySQLiconn, "SELECT * FROM `movie` WHERE movie_id ='" . $showinfo['movie_id'] . "'");
                 $movie = mysqli_fetch_assoc($result2);
-                               
+               
                 require 'email/PHPMailerAutoload.php';
 
-                //For Confirm booking
                 $mail = new PHPMailer;
                 $mail->isSMTP();                                      // Set mailer to use SMTP
                 $mail->Host = 'smtp.gmail.com';                       // Specify main and backup SMTP servers
@@ -177,7 +148,7 @@ if (isset($_POST['submit'])) {
 
                 $mail->setFrom('from@example.com', 'Golden Village');
                 $mail->addAddress('' . $_SESSION['email'] . '');      // Add a recipient
-                $mail->AddEmbeddedImage($tfa->getQRCodeImageAsDataUri('Movie Account Authentication', 'DIVSTQOR2RJEHR35IO33SI4MUW5TPGA2'), "my-attach", "rocks.png");
+
                 $mail->isHTML(true);                                  // Set email format to HTML
 
                 $mail->Subject = '' . $movie['movie_name'] . ' seats successfully booked!';
@@ -186,7 +157,9 @@ if (isset($_POST['submit'])) {
                                     <p><b><u>Movie Ticket Details</u></b>
                                     <p>Booked Date: ' . date("d-m-y", strtotime($showinfo['showInfo_date'])) . '</p> 
                                     <p>Booked Time: ' . $showinfo['showInfo_time'] . '</p>
-                                    <p>Your seat(s) is/are ' . implode(', ', $_SESSION['check_list']) . ' with a total price of $' . $_SESSION['price'] . '</p>';
+                                    <p>Your seat(s) is/are ' . implode(', ', $_SESSION['check_list']) . ' with a total price of $' . $_SESSION['price'] . '</p>
+                                    <p>Your QR:
+                                    <p><img src= https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' . $fileurl . '></p>';
                 if (!$mail->send()) {
                     echo 'Movie tickets details could not be sent.';
                     echo 'Mailer Error: ' . $mail->ErrorInfo;
@@ -196,7 +169,7 @@ if (isset($_POST['submit'])) {
                     echo 'window.location.href = "Success.php";';
                     echo '</script>';
                     $_SESSION['message2'] = 'Success! We will be sending an email to you shortly!';
-                } 
+                }
             }
             //header("Location: Success.php");
         } else {
@@ -205,7 +178,7 @@ if (isset($_POST['submit'])) {
             echo 'window.location.href = "Payment2.php";';
             echo '</script>';
             echo $_SESSION['message1'];
-            //header("Location: Payment2.php");
+            //header("Location: Payment2.php");  
         }
     }
 }

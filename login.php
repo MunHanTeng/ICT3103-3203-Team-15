@@ -52,13 +52,15 @@ if (isset($_POST["submit"])) {
             else if ((password_verify($upass, $row['password']))) 
             {
                 $_SESSION['user'] = $row['user_id'];
-                $_SESSION['name'] = $row['username'];
-                $_SESSION['email'] = $row['user_email'];
+//                $_SESSION['name'] = $row['username'];
+//                $_SESSION['email'] = $row['user_email'];
                 //If login successful, delete from fail logins
                 $res = mysqli_query($MySQLiconn, "DELETE FROM failed_logins WHERE User='$username'");
-                echo "<script>";
+                
+                echo "<script type='text/javascript'>";
                 echo "alert('Login successful');";
                 echo 'window.location = "validateOTP.php";';
+                $_SESSION["SUCESS"] = "YES";
                 echo '</script>';
             } else {
                 //If login not successful, create new row in fail logins

@@ -5,6 +5,7 @@
     $tfa = new TwoFactorAuth('ICT3203');
     include_once 'dbconnect.php';
     include 'header.inc';
+    //echo $_SESSION['dummy_id'];
         
 ?>
 
@@ -33,14 +34,17 @@
             <h2 class="fs-title">Scan the QR Code</h2>
             <h3 class="fs-subtitle">This is the first step</h3>
             <?php
-                echo 'Please scan the following QR code and click next<br><img src="' . $tfa->getQRCodeImageAsDataUri('Movie Account Authentication', $_SESSION['QRCODE']) . '"><br>';
+            $id = $_SESSION['dummy_id'];
+            $user_result = mysqli_query($MySQLiconn, "SELECT dummy_otpSecret FROM dummy_table WHERE dummy_id='$id'");
+            $userResult = mysqli_fetch_assoc($user_result); 
+                echo 'Please scan the following QR code and click next<br><img src="' . $tfa->getQRCodeImageAsDataUri('Movie Account Authentication', $userResult['dummy_otpSecret']) . '"><br>';
             ?>
             <input type="button" name="next" class="next action-button" value="Next" />
         </fieldset>
        
         <!-- fieldsets Page 2 -->
         <fieldset>
-            <h2 class="fs-title">Enter OTP</h2>
+            <h2 class="fs-title">Scan QR Code</h2>
             <h3 class="fs-subtitle">This is the second step</h3>
             <br>Please enter the OTP Code generated from your Google Authenticator and submit to verify
             <br /><br />

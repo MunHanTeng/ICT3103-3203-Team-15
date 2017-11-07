@@ -7,6 +7,7 @@ if(session_status() == PHP_SESSION_NONE) {
 }
 ?>
 
+
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -66,7 +67,7 @@ if(session_status() == PHP_SESSION_NONE) {
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown" id="menuLogin">
                         <a class="dropdown-toggle" href="#" data-toggle="dropdown" id="navLogin">Login</a>
-                        <div class="dropdown-menu" >
+                        <div class="dropdown-menu" style="background-color: #333;">
                             <form class="form" method="post" action="login.php">
                                 <div class="form-group">
                                     <input type="text" class="form-control" name="email" placeholder="Email" required>
@@ -77,7 +78,6 @@ if(session_status() == PHP_SESSION_NONE) {
                                 <button name="submit" type="submit" class="btn btn-primary">Sign In</button>
                                 <p><a href="registerUser.php">Register</a></p>    
                             </form>
-                            
                         </div>
                     </li>
                 </ul>

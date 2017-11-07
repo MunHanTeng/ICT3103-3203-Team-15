@@ -108,10 +108,10 @@
             $base32 = new Base2n(5, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', FALSE, TRUE, TRUE);
             $secret = $base32->encode($qrcode);
             $code = $tfa->getCode($secret);
-            $_SESSION['QRCODE'] = $secret;
-            if (mysqli_query($MySQLiconn, "INSERT INTO user_list(username,user_email,password,user_role,phone,user_nric, status, qrValue) VALUES('$uname','$email','$upass','User', '$uphone','$unric', 'Not Validated', '$secret')")) 
+            if (mysqli_query($MySQLiconn, "INSERT INTO dummy_table(dummy_username,dummy_email,dummy_pass,dummy_user_role,dummy_phone,dummy_NRIC, dummy_status, dummy_otpSecret) VALUES('$uname','$email','$upass','User', '$uphone','$unric', 'Not Validated', '$secret')")) 
             {
-            
+                 $id = mysqli_insert_id($MySQLiconn);
+                 $_SESSION['dummy_id'] = $id;
                 ?>
                 <script>
                     alert('Successfully registered!');
@@ -136,6 +136,10 @@
         <title>Golden Village</title>
         <link href="css/ticketcollection.css" rel="stylesheet">
         <link href="css/bootstrap.min.css" rel="stylesheet">
+
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/scripts.js"></script>
     </head>
     
     <body>

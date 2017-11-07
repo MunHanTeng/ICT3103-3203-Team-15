@@ -75,7 +75,7 @@
                 }
                 echo '<div class="col-md-4 col-sm-4">';
                 echo '<div class="item">';
-                echo '<a href="movie.php?q=' . $row['movie_id'] . '"><img class="smallposter" src="data:image/jpeg;base64,' . base64_encode($row['movie_poster']) . '"></a>';
+                echo '<a href="javascript:redirectMoviePage('. $row['movie_id'] .')"><img class="smallposter" src="data:image/jpeg;base64,' . base64_encode($row['movie_poster']) . '"></a>';
                 echo '<p>' . $row["movie_name"] . '</p>';
                 echo '<p class="Rating">' . $row["movie_type"] . '</p>';
                 echo '<p>' . $row["movie_runningTime"] . '</p>';

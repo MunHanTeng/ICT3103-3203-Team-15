@@ -128,3 +128,8 @@ content: none;
 background: #27AE60;
 color: white;
 }
+
+.form {
+    padding:10px 20px 0px;
+    width:300px;
+}

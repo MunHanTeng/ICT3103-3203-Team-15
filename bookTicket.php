@@ -15,7 +15,7 @@
 
         <?php
         include 'header.inc';
-        if (!isset($_SESSION['user'])) {
+        if (!isset($_SESSION['name'])) {
             echo '<script language="javascript">';
             echo 'alert("Please Login in order to be able to buy ticket sucessfully"); location.href="index.php"';
             echo '</script>';

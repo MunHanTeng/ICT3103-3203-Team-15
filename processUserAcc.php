@@ -18,33 +18,36 @@
     ?>
 
     <?php
-        $result = ($tfa->verifyCode($_SESSION['QRCODE'], $_POST['otpcode']) === true ? 'OK' : 'Wrong OTP');
-        $qrValue = mysqli_real_escape_string($MySQLiconn, $_SESSION['QRCODE']);
-        $res = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE qrValue='$qrValue'");
+            $id = $_SESSION['dummy_id'];
+            $user_result = mysqli_query($MySQLiconn, "SELECT * FROM dummy_table WHERE dummy_id='$id'");
+            $userResult = mysqli_fetch_assoc($user_result); 
+            
+            $uname = $userResult['dummy_username'];
+            $uemail = $userResult['dummy_email'];
+            $upass = $userResult['dummy_pass'];
+            $urole = $userResult['dummy_user_role'];
+            $uphone = $userResult['dummy_phone'];
+            $unric = $userResult['dummy_NRIC'];
+            $usecretKey = $userResult['dummy_otpSecret'];
+        
+            $result = ($tfa->verifyCode($usecretKey, $_POST['otpcode']) === true ? 'OK' : 'Wrong OTP');
+            //echo $qrValue;
+            //$res = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE otpSecretKey='$qrValue'");
 
-        // alert for testing purpose, real operation should be storing the secret into the database together with user account from session.
-        //$userid = $_SESSION['user'];
-        $OTPCode = $tfa->getCode($_SESSION['QRCODE']);
-        if ($result == 'OK')
-        {
-            $res2 = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE qrValue='$qrValue' and status = 'Validated'");
-            if (mysqli_num_rows($res2) == 1) 
+            // alert for testing purpose, real operation should be storing the secret into the database together with user account from session.
+            //$userid = $_SESSION['user'];
+            $OTPCode = $tfa->getCode($usecretKey);
+            if ($result == 'OK')
             {
-                echo '<center><img src="images/unsucess.png" align="middle" alt="unSucess Image" style="margin-top: 10%; width: 10%; height: 10%;"></center>';
-                echo '<center><h1 style="color:yellow;">This QR Code have already been used before</h1></center>';
-            }
-            else 
-            {
+                $sql_adduser = $MySQLiconn->query("INSERT INTO user_list( username, user_email, password, user_role, phone, user_nric, status, otpSecretKey) VALUES ('$uname','$uemail','$upass','$urole', '$uphone', '$unric', 'Validated', '$usecretKey')");
+                mysqli_query($MySQLiconn, $sql_adduser);
+            
                 echo '<center><img src="images/successbutton.png" align="middle" alt="Sucess Image" style="margin-top: 10%; width: 10%; height: 10%;"></center>';
-                //Save to otp table
-                $res = mysqli_query($MySQLiconn, "UPDATE user_list SET status='Validated' WHERE qrValue='$qrValue'");
-                $row = mysqli_affected_rows($MySQLiconn);
-                if ($row == 1) 
-                {
-                    echo '<center><h1 style="color:yellow;">User Account Validated Successfully</h1></center>';
-                }
+                echo '<center><h1 style="color:yellow;">User Account Validated Successfully</h1></center>';
+                        
+                $sql_deletedummy = $MySQLiconn->query("delete from dummy_table where dummy_id = '$id'");
+                mysqli_query($MySQLiconn, $sql_deletedummy);
             }
-        }
         else 
         {
             echo '<center><img src="images/unsucess.png" align="middle" alt="Sucess Image" style="margin-top: 10%; width: 10%; height: 10%;"></center>';

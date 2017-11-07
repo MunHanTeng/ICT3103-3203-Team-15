@@ -1,71 +1,96 @@
 <?php
-session_start();
-include_once 'dbconnect.php';
-?>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Golden Village</title>
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <link href="css/style.css" rel="stylesheet">
-        <link href="images/gv32x32.ico" rel="shortcut icon" />
+    require_once 'loader.php';
+    Loader::register('lib','RobThree\\Auth');
+    use \RobThree\Auth\TwoFactorAuth;
+    $tfa = new TwoFactorAuth('ICT3203');
+    include_once 'dbconnect.php';
+    include 'header.inc';
+    
+    if (!isset($_GET['qrCode'])) 
+    {
+        header("Location: index.php");
+    }
 
-    </head>
-    <body>
-        <?php
-        include 'header.inc';
-        ?>
-
-
-        <?php
-        if (!isset($_GET['qrCode'])) {
-            header("Location: index.php");
-        }
-
+    
+    if(isset($_POST['submit']))
+    {
         $qrValue = mysqli_real_escape_string($MySQLiconn, $_GET['qrCode']);
-
         $res = mysqli_query($MySQLiconn, "SELECT * FROM ticketcollection WHERE qrValue='$qrValue'");
-        if (mysqli_num_rows($res) == 1) {
-            $res = mysqli_query($MySQLiconn, "UPDATE ticketcollection SET ticket_collected=1 WHERE qrValue='$qrValue'");
-            $row = mysqli_affected_rows($MySQLiconn);
-            if ($row == 1) {
-                ?>
+        if (mysqli_num_rows($res) == 1) 
+        {
+           $user_result = mysqli_query($MySQLiconn, "SELECT * FROM ticketcollection AS TC INNER JOIN user_list AS UL ON TC.user_id = UL.user_id WHERE TC.qrValue = '$qrValue' ");
+           $userResult = mysqli_fetch_assoc($user_result); 
+        }
+        
+        //Check OTP Code
+         $result = ($tfa->verifyCode($userResult['otpSecretKey'], $_POST['otpcode']) === true ? 'OK' : 'Wrong OTP');
+        // alert for testing purpose, real operation should be storing the secret into the database together with user account from session.
+        if ($result == 'OK')
+        {
+            $_SESSION['OTPSecret'] = $qrValue;
+        }
+        else 
+        {
+            $_SESSION['OTPSecret'] = '';
+        }
+        
+        echo "<script>";
+        echo 'window.location = "OTPPage.php";';
+        echo '</script>';
+        
+        //echo $userResult['otpSecretKey'];
+                        
+    }
+    
+    
+?>
+<!doctype html>
+<html>
+<head>
+    <title>Validate OTP</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("#myModal").modal('show');
+        });
+    </script>
+</head>
+<body>
 
-            <center><h1 style="color:yellow;">Tickets redeemed successfully</h1></center>
-            <h3><u> Ticket Collection Details </u></h3>
-            <div class="container-fluid" style="background-color:#303030 ; padding-bottom: 10px">
-                <div class="row">
-                    <?php
-                    $user_result = mysqli_query($MySQLiconn, "SELECT * FROM ticketcollection AS TC INNER JOIN user_list AS UL ON TC.user_id = UL.user_id WHERE TC.qrValue = '$qrValue' ");
-                    $userResult = mysqli_fetch_assoc($user_result);
 
-                    $ticket_result = mysqli_query($MySQLiconn, "SELECT * FROM booking AS B INNER JOIN showinfo AS SI ON B.showInfo_id = SI.showInfo_id INNER JOIN movie AS M ON B.movie_id = M.movie_id WHERE collection_id = " . $userResult['collection_id'] . "");
-                    // $ticketResult = mysqli_fetch_assoc($ticket_result);
-                    $seat = array();
-                    while ($row = mysqli_fetch_array($ticket_result)) {
-                        $seat[] = $row['seat_no'];
-                        $movie = $row['movie_name'];
-                        $date = $row['showInfo_date'];
-                        $time = $row['showInfo_time'];
-                    }
-                    echo '<p><h4>Movie: ' . $movie . '</h4></p>';
-                    echo '<p><h4>Booked Date: ' . $date . '</h4></p>';
-                    echo '<p><h4>Booked Time: ' . $time . '</h4></p>';
-                    echo '<p><h4>Booked Seat(s): ' . implode(',', $seat) . '</h4></p>';
-                } else {
-                    ?>
-                    <center><h1 style="color:yellow;">Error redeeming ticket</h1></center>
-
-                    <?php
-                }
-            }
-            ?>
-            <!--//  echo 'QR Code is ' . $qrValue;-->
+<div id="myModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white">&times;</button>
+                <h4 class="modal-title">Enter OTP</h4>
+            </div>
+            <div class="modal-body">
+                <h3>Enter the OTP shown in the Google authenticator</h3>
+                <form action="" method="POST">
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="otpcode"><p>OTP Code:</p></label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="otpcode" name="otpcode">
+                        </div>
+                    </div>
+                    <button type="submit" name="submit" class="btn btn-primary">Submit</button>
+                </form>
+                <br />
+            </div>
         </div>
     </div>
+</div>
 
-
-
-    <?php include 'footer.inc'; ?>
+    
 </body>
 </html>
+
+
+
+
+
+
