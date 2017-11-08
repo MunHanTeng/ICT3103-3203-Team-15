@@ -7,7 +7,8 @@
         <link href="images/gv32x32.ico" rel="shortcut icon" />
         <script type= "text/javascript">
             function redirectMoviePage(movId){
-                document.cookie = "movID =" + movId;
+                var newMovId = movId.replace(/[^a-zA-Z0-9 ]/g, "");
+                document.cookie = "movID =" + newMovId;
                 window.location = "movie.php";
             }
         </script>
