@@ -18,7 +18,7 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
-        $resultCinema = mysqli_query($MySQLiconn, "SELECT * FROM cinema");
+        $resultCinema = mysqli_query($MySQLiconn, "SELECT cinema_id,cinema_name,cinema_address,cinema_image FROM cinema");
         ?>
         <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>

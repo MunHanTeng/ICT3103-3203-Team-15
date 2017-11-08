@@ -19,7 +19,7 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
-        $sqlCinema = "SELECT * FROM cinema WHERE cinema_id = ?";
+        $sqlCinema = "SELECT cinema_id,cinema_name,No_Of_Screen,cinema_address,cinema_mrt,cinema_bus,cinema_googleMap FROM cinema WHERE cinema_id = ?";
         $stmt = $MySQLiconn->prepare($sqlCinema);
         $stmt->bind_param('i', $_COOKIE['cinemaid']);       
         $stmt->execute();

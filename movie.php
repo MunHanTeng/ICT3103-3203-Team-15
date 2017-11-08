@@ -20,7 +20,7 @@
         include 'header.inc';
         include_once 'dbconnect.php';
         $movid = $_POST['moID'];
-        $stmt = $MySQLiconn->prepare("SELECT * FROM movie WHERE movie_id = ?");
+        $stmt = $MySQLiconn->prepare("SELECT movie_name,movie_type,movie_cast,movie_director,movie_genre,movie_release,movie_runningTime,movie_distributor,movie_language,movie_synopsis,movie_TNC,movie_trailerLink,movie_websiteLink,movie_poster,movie_carousel FROM movie WHERE movie_id = ?");
         $stmt->bind_param('s', $movid);
         $stmt->execute();
         $result = $stmt->get_result();
