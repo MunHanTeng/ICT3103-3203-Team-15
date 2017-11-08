@@ -7,8 +7,7 @@
         <link href="images/gv32x32.ico" rel="shortcut icon" />
         <script type= "text/javascript">
             function redirectCinemaPage(cinemaid){
-                document.cookie = "cinemaid =" + cinemaid;
-                window.location = "cinema.php";
+                //$("#myform").submit();
             }
         </script>
     </head>

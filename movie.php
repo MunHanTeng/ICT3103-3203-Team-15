@@ -19,7 +19,8 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
-        $result = mysqli_query($MySQLiconn, "SELECT * FROM movie WHERE movie_id ='" . $_COOKIE['movID'] . "'");
+        $movid =  $_POST['moID'];
+        $result = mysqli_query($MySQLiconn, "SELECT * FROM movie WHERE movie_id ='$movid'");
         $movie = mysqli_fetch_assoc($result);
         ?>
 
@@ -121,7 +122,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <?php
-                            $sql = "SELECT DISTINCT cinema.cinema_id, cinema.cinema_name FROM `cinema` WHERE cinema.cinema_id in (SELECT showinfo.cinema_id FROM showinfo WHERE showinfo.movie_id ='" . $_COOKIE['movID'] . "')";
+                            $sql = "SELECT DISTINCT cinema.cinema_id, cinema.cinema_name FROM `cinema` WHERE cinema.cinema_id in (SELECT showinfo.cinema_id FROM showinfo WHERE showinfo.movie_id ='$movid')";
                             $resultCinema = mysqli_query($MySQLiconn, $sql);
                             
                             while ($row = mysqli_fetch_assoc($resultCinema)) {
@@ -144,12 +145,12 @@
                             echo '<div class="panel-body">';
                             echo '<table class="tickets">';
                             //echo '<tr><td><h4>'.$row['cinema_name'].'</h4></td></tr>';
-                            $sqlDate = "Select DISTINCT showInfo_date from showinfo where movie_id='".$_COOKIE['movID']."' and cinema_id='".$row['cinema_id']."'";
+                            $sqlDate = "Select DISTINCT showInfo_date from showinfo where movie_id='$movid' and cinema_id='".$row['cinema_id']."'";
                             $resultShow = mysqli_query($MySQLiconn, $sqlDate);
                             while ($date = mysqli_fetch_assoc($resultShow)) {
                                 echo '<tr><td>';
                                 echo '<p>'.$date['showInfo_date'].'</p>';
-                                $sqlTime = "Select * from showinfo where movie_id='".$_COOKIE['movID']."' and cinema_id='".$row['cinema_id']."' and showInfo_date='".$date['showInfo_date']."'";
+                                $sqlTime = "Select * from showinfo where movie_id='$movid' and cinema_id='".$row['cinema_id']."' and showInfo_date='".$date['showInfo_date']."'";
                                 $resultTime = mysqli_query($MySQLiconn, $sqlTime);
                                 while ($time = mysqli_fetch_assoc($resultTime)) {
                                     echo '<a href="javascript:redirectPaymentPage('. $time['showInfo_id'] .')" class="btn btn-primary">'.$time['showInfo_time'].'</a>';

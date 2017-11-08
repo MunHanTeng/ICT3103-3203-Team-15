@@ -19,11 +19,9 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
-        $cinemaid = $_COOKIE['cinemaid'];
-        $result = mysqli_query($MySQLiconn, "SELECT * FROM `cinema` WHERE cinema_id ='" .$_COOKIE['cinemaid']. "'");
+        $result = mysqli_query($MySQLiconn, "SELECT * FROM `cinema` WHERE cinema_id ='".$_COOKIE['cinemaid']."'");
         $cinema = mysqli_fetch_assoc($result)
         ?>
-
         <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>
             <li><a href="MainCinema.php" class="activeLink">Cinemas</a> <span class="divider"></span></li>
