@@ -7,8 +7,9 @@
         <link href="images/gv32x32.ico" rel="shortcut icon" />
         <script type= "text/javascript">
             function redirectMoviePage(movId){
-                document.cookie = "movID =" + movId;
-                window.location = "movie.php";
+                var s= document.getElementById('moID');
+                s.value = movId; 
+                $("#myform").submit();
             }
         </script>
     </head>
@@ -22,6 +23,9 @@
         $resultCarousel = mysqli_query($MySQLiconn, "SELECT * FROM `movie` WHERE movie_carousel IS NOT NULL");
         $resultMovie = mysqli_query($MySQLiconn, "select * from movie");
         ?>
+        <form id="myform" action="movie.php" method="POST">
+            <input type="hidden" id="moID" name="moID">
+        </form>
         <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>
             <li class="active">Movies</li>

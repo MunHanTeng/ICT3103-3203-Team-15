@@ -19,11 +19,14 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
-        $cinemaid = $_COOKIE['cinemaid'];
-        $result = mysqli_query($MySQLiconn, "SELECT * FROM `cinema` WHERE cinema_id ='" .$_COOKIE['cinemaid']. "'");
+        $sqlCinema = "SELECT * FROM cinema WHERE cinema_id = ?";
+        $stmt = $MySQLiconn->prepare($sqlCinema);
+        $stmt->bind_param('i', $_COOKIE['cinemaid']);       
+        $stmt->execute();
+        $result= $stmt->get_result();
+        
         $cinema = mysqli_fetch_assoc($result)
         ?>
-
         <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>
             <li><a href="MainCinema.php" class="activeLink">Cinemas</a> <span class="divider"></span></li>
@@ -86,8 +89,11 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <?php
-                            $sql = "SELECT DISTINCT showInfo_date from showinfo where cinema_id = '".$_COOKIE['cinemaid']."'";
-                            $resultDate = mysqli_query($MySQLiconn, $sql);
+                            $sql = "SELECT DISTINCT showInfo_date from showinfo where cinema_id = ?";
+                            $stmt = $MySQLiconn->prepare($sql);
+                            $stmt->bind_param('s', $_COOKIE['cinemaid']);
+                            $stmt->execute();
+                            $resultDate= $stmt->get_result();
                             
                             while ($date = mysqli_fetch_assoc($resultDate)) {
                                 echo '<h4 class="Collapseh4">';
@@ -107,8 +113,11 @@
                             echo '<div id="collapse'.$date['showInfo_date'].'" class="panel-collapse collapse">';
                             echo '<div class="panel-body">';
                             echo '<table class="tickets">';
-                            $sqlMovie = "SELECT DISTINCT movie.movie_id, movie.movie_name, movie.movie_type FROM movie WHERE movie.movie_id in (SELECT showinfo.movie_id FROM showinfo WHERE showinfo.cinema_id ='".$_COOKIE['cinemaid']."' AND showinfo.showInfo_date ='".$date['showInfo_date']."')";
-                            $resultMovie = mysqli_query($MySQLiconn, $sqlMovie);
+                            $sqlMovie = "SELECT DISTINCT movie.movie_id, movie.movie_name, movie.movie_type FROM movie WHERE movie.movie_id in (SELECT showinfo.movie_id FROM showinfo WHERE showinfo.cinema_id =? AND showinfo.showInfo_date =?)";
+                            $stmt = $MySQLiconn->prepare($sqlMovie);
+                            $stmt->bind_param('ss', $_COOKIE['cinemaid'],$date['showInfo_date']);
+                            $stmt->execute();
+                            $resultMovie = $stmt->get_result();
                             while ($Movie = mysqli_fetch_assoc($resultMovie)) {
                                 echo '<tr><td>';
                                 echo '<a href="movie.php?q='.$Movie['movie_id'].'"><h4>'.$Movie['movie_name'].'</h4></a>';

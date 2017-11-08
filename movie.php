@@ -5,7 +5,7 @@
         <link href="css/style.css" rel="stylesheet">
         <link href="images/gv32x32.ico" rel="shortcut icon" />
         <script type= "text/javascript">
-            function redirectPaymentPage(showInfoid){
+            function redirectPaymentPage(showInfoid) {
                 document.cookie = "showinfoID =" + showInfoid;
                 window.location = "bookTicket.php";
             }
@@ -19,7 +19,12 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
-        $result = mysqli_query($MySQLiconn, "SELECT * FROM movie WHERE movie_id ='" . $_COOKIE['movID'] . "'");
+        $movid = $_POST['moID'];
+        $stmt = $MySQLiconn->prepare("SELECT * FROM movie WHERE movie_id = ?");
+        $stmt->bind_param('s', $movid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
         $movie = mysqli_fetch_assoc($result);
         ?>
 
@@ -121,16 +126,17 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <?php
-                            $sql = "SELECT DISTINCT cinema.cinema_id, cinema.cinema_name FROM `cinema` WHERE cinema.cinema_id in (SELECT showinfo.cinema_id FROM showinfo WHERE showinfo.movie_id ='" . $_COOKIE['movID'] . "')";
-                            $resultCinema = mysqli_query($MySQLiconn, $sql);
-                            
+                            $sql = "SELECT DISTINCT cinema.cinema_id, cinema.cinema_name FROM `cinema` WHERE cinema.cinema_id in (SELECT showinfo.cinema_id FROM showinfo WHERE showinfo.movie_id =?)";
+                            $stmt = $MySQLiconn->prepare($sql);
+                            $stmt->bind_param('s', $movid);
+                            $stmt->execute();
+                            $resultCinema = $stmt->get_result();
                             while ($row = mysqli_fetch_assoc($resultCinema)) {
-
                                 echo '<h4 class="Collapseh4">';
-                                echo '<a data-toggle="collapse" data-parent="#accordion" class="activeLink" href="#collapse'.$row['cinema_id'].'" class="">';
-                                    echo'<span class="glyphicon glyphicon-collapse-down"></span>'.$row['cinema_name']; 
+                                echo '<a data-toggle="collapse" data-parent="#accordion" class="activeLink" href="#collapse' . $row['cinema_id'] . '" class="">';
+                                echo'<span class="glyphicon glyphicon-collapse-down"></span>' . $row['cinema_name'];
                                 echo '</a>';
-                            echo'</h4>';
+                                echo'</h4>';
                             }
                             ?>
                         </div>
@@ -138,21 +144,30 @@
                             <div class="panel-body"></div>
                         </div>                        
                         <?php
-                            mysqli_data_seek($resultCinema, 0);
+                        mysqli_data_seek($resultCinema, 0);
                         while ($row = mysqli_fetch_assoc($resultCinema)) {
-                            echo '<div id="collapse'.$row['cinema_id'].'" class="panel-collapse collapse">';
+                            echo '<div id="collapse' . $row['cinema_id'] . '" class="panel-collapse collapse">';
                             echo '<div class="panel-body">';
                             echo '<table class="tickets">';
                             //echo '<tr><td><h4>'.$row['cinema_name'].'</h4></td></tr>';
-                            $sqlDate = "Select DISTINCT showInfo_date from showinfo where movie_id='".$_COOKIE['movID']."' and cinema_id='".$row['cinema_id']."'";
+                            $sqlDate = "Select DISTINCT showInfo_date from showinfo where movie_id=? and cinema_id=?";
                             $resultShow = mysqli_query($MySQLiconn, $sqlDate);
+                            $stmt = $MySQLiconn->prepare($sqlDate);
+                            $stmt->bind_param('ss', $movid, $row['cinema_id']);
+                            $stmt->execute();
+                            $resultShow = $stmt->get_result();
+
                             while ($date = mysqli_fetch_assoc($resultShow)) {
                                 echo '<tr><td>';
-                                echo '<p>'.$date['showInfo_date'].'</p>';
-                                $sqlTime = "Select * from showinfo where movie_id='".$_COOKIE['movID']."' and cinema_id='".$row['cinema_id']."' and showInfo_date='".$date['showInfo_date']."'";
-                                $resultTime = mysqli_query($MySQLiconn, $sqlTime);
+                                echo '<p>' . $date['showInfo_date'] . '</p>';
+                                $sqlTime = "Select * from showinfo where movie_id=? and cinema_id=? and showInfo_date=?";
+                                $stmt = $MySQLiconn->prepare($sqlTime);
+                                $stmt->bind_param('sss', $movid, $row['cinema_id'], $date['showInfo_date']);
+                                $stmt->execute();
+                                $resultTime = $stmt->get_result();
+
                                 while ($time = mysqli_fetch_assoc($resultTime)) {
-                                    echo '<a href="javascript:redirectPaymentPage('. $time['showInfo_id'] .')" class="btn btn-primary">'.$time['showInfo_time'].'</a>';
+                                    echo '<a href="javascript:redirectPaymentPage(' . $time['showInfo_id'] . ')" class="btn btn-primary">' . $time['showInfo_time'] . '</a>';
                                     //echo '<a href="bookTicket.php?q='.$time['showInfo_id'].'" class="btn btn-primary">'.$time['showInfo_time'].'</a>';
                                 }
                                 echo '</td></tr>';
@@ -162,11 +177,10 @@
                             echo '</div>';
                             echo '</div>';
                         }
-
                         ?>
                     </div>
                 </div>
             </div>
-    <?php include "footer.inc"; ?>
+            <?php include "footer.inc"; ?>
     </body>
 </html>
