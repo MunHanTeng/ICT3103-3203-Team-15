@@ -25,9 +25,16 @@
         $sqlCinema = "SELECT cinema_id,cinema_name,No_Of_Screen,cinema_address,cinema_mrt,cinema_bus,cinema_googleMap FROM cinema WHERE cinema_id = ?";
         $stmt = $MySQLiconn->prepare($sqlCinema);
         $stmt->bind_param('i', $_COOKIE['cinemaid']);       
-        $stmt->execute();
-        $result= $stmt->get_result();
-        
+		if (!$stmt->execute())
+        {
+    ?>
+           <script>
+                alert('Error Retrieving Cinema!');
+                window.location.href='errorPage.php'
+            </script>
+    <?php
+        }
+        $result= $stmt->get_result();       
         $cinema = mysqli_fetch_assoc($result)
         ?>
         <form id="myform" action="bookTicket.php" method="POST">
@@ -98,7 +105,15 @@
                             $sql = "SELECT DISTINCT showInfo_date from showinfo where cinema_id = ?";
                             $stmt = $MySQLiconn->prepare($sql);
                             $stmt->bind_param('s', $_COOKIE['cinemaid']);
-                            $stmt->execute();
+							if (!$stmt->execute())
+							{
+						?>
+							   <script>
+									alert('Error Displaying Showtime Information!');
+									window.location.href='errorPage.php'
+								</script>
+						<?php
+							}
                             $resultDate= $stmt->get_result();
                             
                             while ($date = mysqli_fetch_assoc($resultDate)) {
@@ -123,6 +138,15 @@
                             $stmt = $MySQLiconn->prepare($sqlMovie);
                             $stmt->bind_param('ss', $_COOKIE['cinemaid'],$date['showInfo_date']);
                             $stmt->execute();
+							if (!$stmt->execute())
+							{
+						?>
+							   <script>
+									alert('Error Displaying Movie Information!');
+									window.location.href='errorPage.php'
+								</script>
+						<?php
+							}
                             $resultMovie = $stmt->get_result();
                             while ($Movie = mysqli_fetch_assoc($resultMovie)) {
                                 echo '<tr><td>';
