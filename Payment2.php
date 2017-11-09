@@ -32,15 +32,52 @@
         
         ?>
         <?php
-        $result = mysqli_query($MySQLiconn, "SELECT * FROM `showinfo` WHERE showInfo_id ='" . $showInfoID . "'");
-        $showinfo = mysqli_fetch_assoc($result);
+        // RETRIEVE SHOW INFO
+        $showInfoQuery = $MySQLiconn->prepare("SELECT showInfo_date, showInfo_time, cinema_id, movie_id FROM showinfo WHERE showInfo_id = ?");
+        $showInfoQuery->bind_param('i', $showInfoID);
+         if (!$showInfoQuery->execute()) {
+            ?>
+            <script>
+                alert('Error Login!');
+                window.location.href = 'errorPage.php'
+            </script>
+            <?php
+        }
+        $showInfoResult = $showInfoQuery->get_result();
 
-        $result2 = mysqli_query($MySQLiconn, "SELECT * FROM `movie` WHERE movie_id ='" . $showinfo['movie_id'] . "'");
+        $showinfo = mysqli_fetch_assoc($showInfoResult);
+        
+        // RETRIEVE MOVIE 
+        $movieQuery = $MySQLiconn->prepare("SELECT movie_name, movie_poster, movie_websiteLink FROM movie WHERE movie_id = ?");
+        $movieQuery->bind_param('i', $showinfo['movie_id']);
+         if (!$movieQuery->execute()) {
+            ?>
+            <script>
+                alert('Error Login!');
+                window.location.href = 'errorPage.php'
+            </script>
+            <?php
+        }
+        $movieResult = $movieQuery->get_result();
+        
+        $movie = mysqli_fetch_assoc($movieResult);
+
+        // RETRIEVE CINEMA 
+        $cinemaQuery = $MySQLiconn->prepare("SELECT cinema_name FROM cinema WHERE cinema_id = ?");
+        $cinemaQuery->bind_param('i', $showinfo['cinema_id']);
+        if (!$cinemaQuery->execute()) {
+            ?>
+            <script>
+                alert('Error Login!');
+                window.location.href = 'errorPage.php'
+            </script>
+            <?php
+        }
+        $cinemaResult = $cinemaQuery->get_result(); 
+        $cinema = mysqli_fetch_assoc($cinemaResult);
+        
         $_SESSION['movie_id'] = $showinfo['movie_id'];
-        $result3 = mysqli_query($MySQLiconn, "SELECT * FROM `cinema` WHERE cinema_id ='" . $showinfo['cinema_id'] . "'");
-        $movie = mysqli_fetch_assoc($result2);
-        $cinema = mysqli_fetch_assoc($result3);
-
+       
         //$PaymentMode = {"Standard Price - $12.50":12.50, "Visa Checkout- $12.00":12, "DBS/POSB Credit & Debit - $7.50":7.50};
         $PaymentModeValue = array(
             "Standard Price - $12.50" => 12.50,
@@ -92,8 +129,6 @@
                         <p>Email: <span style="font-size:1.5em;color:yellow;"><?php echo $Email ?></span></p>
                     </div>
                 </div>
-
-
 
                 <div class="row"> 
                     <div class="container-fluid" style="background-color:#303030 ;padding-bottom: 10px;text-align: left;">

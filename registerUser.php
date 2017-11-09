@@ -172,7 +172,7 @@
                 $_SESSION['dummy_id'] = $id;
     ?>
                 <script>
-                    alert('Successfully registered!');
+                    alert('You may proceed to second step!');
                     window.location.href='afterRegister.php'
                 </script>
     <?php

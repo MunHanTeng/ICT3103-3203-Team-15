@@ -7,11 +7,8 @@
         <link href="images/gv32x32.ico" rel="shortcut icon" />
         <script type= "text/javascript">
             function redirectPaymentPage(showInfoid){
-                //document.cookie = "showinfoID =" + showInfoid;
-                //window.location = "bookTicket.php";
-                var s= document.getElementById('SIID');
-                s.value = showInfoid; 
-                $("#myform").submit();
+                document.cookie = "showinfoID =" + showInfoid;
+                window.location = "bookTicket.php";
             }
         </script>
     </head>

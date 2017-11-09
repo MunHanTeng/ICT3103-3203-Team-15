@@ -16,8 +16,8 @@ function validate($CCN, $CCED, $CVV2) {
 
     if ($cstatus[0] == "valid") {
         $CARDTYPE = $cstatus[1];
-        $_POST["card_number"] = $cstatus[2];
-        $_POST["card_cvv2"] = $cstatus[3];
+        $_POST["card_number"] = trim($cstatus[2]);
+        $_POST["card_cvv2"] = trim($cstatus[3]);
         return true;
     } else {
         $ErrArr = $cstatus;
@@ -64,13 +64,13 @@ if (isset($_POST['submit'])) {
         header("Location: Payment2.php");
     }
     if (empty($_POST['CreditCardName'])) {
-        $_SESSION['CreditCardName'] = 'Credit Card Name is Empty!';
+        $_SESSION['CCName'] = 'Credit Card Name is Empty!';
         $okay = FALSE;
         header("Location: Payment2.php");
     }
 
     if ($okay) {
-        if (validate($_POST['CreditCardNo'], $_POST['CreditCardExpiry'], $_POST['CVV2'])) {
+        if (validate(trim($_POST['CreditCardNo']), trim($_POST['CreditCardExpiry']), trim($_POST['CVV2']))) {
             $dic = array('A' => 0, 'B' => 1, 'C' => 2, 'D' => 3, 'E' => 4);
             //echo '<br>';
             //echo 'PaymentMode: '. $_SESSION['PaymentMode'];
@@ -80,8 +80,8 @@ if (isset($_POST['submit'])) {
             //echo 'show id: '. $_SESSION['show_id'];
             //echo '<br>';
             $userid = $_SESSION['user'];
-            $CCNum = $_POST['CreditCardNo'];
-            $CCName = $_POST['CreditCardName'];
+            $CCNum = trim($_POST['CreditCardNo']);
+            $CCName = trim($_POST['CreditCardName']);
             $date = $_SESSION['BookTime'];
             $timeType = explode(" ", $date);
             $timeItems = explode(":", $timeType[0]);
@@ -91,9 +91,19 @@ if (isset($_POST['submit'])) {
             $Formaydate = $_SESSION['BookDate'];
 
             // TICKET COLLECT
-            $sql_queryticketCollect = $MySQLiconn->query("INSERT INTO ticketcollection( ticket_collected, booking_time, CreditCardNum, CreditCardName, user_id, booking_date) VALUES (0, '$Formattime', '$CCNum', '$CCName', '$userid', '$Formaydate')");
-            mysqli_query($MySQLiconn, $sql_queryticketCollect);
-            $collectionresult = mysqli_affected_rows($MySQLiconn);
+            $ticketCollectQuery = $MySQLiconn->prepare("INSERT INTO ticketcollection( ticket_collected, booking_time, CreditCardNum, CreditCardName, user_id, booking_date) VALUES (0, ?, ?, ?, ?, ?)");
+            $ticketCollectQuery->bind_param('sssss', $Formattime, $CCNum, $CCName, $userid, $Formaydate);
+            if (!$ticketCollectQuery->execute()) {
+                ?>
+                <script>
+                    alert('Error Login!');
+                    window.location.href = 'errorPage.php'
+                </script>
+                <?php
+
+            }
+
+//            $collectionresult = mysqli_affected_rows($MySQLiconn);
             $id = mysqli_insert_id($MySQLiconn);
             foreach ($_SESSION['check_list'] as $seat) {
                 //echo '<br>';
@@ -108,9 +118,18 @@ if (isset($_POST['submit'])) {
                 $showInfoID = $_SESSION['show_id'];
                 $movieID = $_SESSION['movie_id'];
 
-                // BOOKING
-                $sql_querybooking = $MySQLiconn->query("INSERT INTO booking( showInfo_id, seat_no, showInfo_row, showInfo_column, movie_id, collection_id) VALUES ('$showInfoID','$seat','$row','$col', '$movieID', '$id')");
-                mysqli_query($MySQLiconn, $sql_querybooking);
+                // BOOKING                
+                $bookingQuery = $MySQLiconn->prepare("INSERT INTO booking( showInfo_id, seat_no, showInfo_row, showInfo_column, movie_id, collection_id) VALUES (?, ?, ?, ?, ?, ?)");
+                $bookingQuery->bind_param('ssssss', $showInfoID, $seat, $row, $col, $movieID, $id);
+                if (!$bookingQuery->execute()) {
+                    ?>
+                    <script>
+                        alert('Error Login!');
+                        window.location.href = 'errorPage.php'
+                    </script>
+                    <?php
+
+                }
 
                 // QR CODE
                 $randmd = md5(uniqid(rand(), true));
@@ -118,23 +137,54 @@ if (isset($_POST['submit'])) {
                 $qrcode = (string) ($fixedvalue . $randmd . $_SESSION['user'] . $_SESSION['show_id'] . $_SESSION['name']);                //qrcode making unencrypted
                 $hashedfile = hash("sha256", $qrcode);
                 $fileurl = '128.199.217.166/checkQRCode.php?qrCode=' . $hashedfile . '';
-                $sql_qradd = $MySQLiconn->query("UPDATE ticketcollection SET qrValue='$hashedfile' WHERE collection_id='$id'");
-                /* $collectid = mysqli_query($MySQLiconn, "SELECT collection_id FROM ticketcollection WHERE user_id ='". $userid. "'" );
-                  echo $showtheid; //the problem is here
-                 */
-                //$sql_qradd = $MySQLiconn->query("UPDATE ticketcollection SET qrValue='$hashedfile' WHERE collection_id=22");
-                //$sql_qradd = $MySQLiconn->query("INSERT INTO ticketcollection(qrValue) VALUES ('$hashedfile') WHERE (collection_id='".$collectid. "'");
-                mysqli_query($MySQLiconn, $sql_qradd);
+
+                $QRQuery = $MySQLiconn->prepare("UPDATE ticketcollection SET qrValue=? WHERE collection_id=?");
+                $QRQuery->bind_param('si', $hashedfile, $id);
+                if (!$QRQuery->execute()) {
+                    ?>
+                    <script>
+                        alert('Error Login!');
+                        window.location.href = 'errorPage.php'
+                    </script>
+                    <?php
+
+                }
             }
-            
+
             // EMAIL
-            if ($sql_querybooking && $sql_queryticketCollect) {
+            if ($ticketCollectQuery->affected_rows > 0 && $bookingQuery->affected_rows > 0 && $QRQuery->affected_rows > 0) {
                 $id = mysqli_insert_id($MySQLiconn);
-                $result = mysqli_query($MySQLiconn, "SELECT * FROM `showinfo` WHERE showInfo_id ='" . $_SESSION['show_id'] . "'");
-                $showinfo = mysqli_fetch_assoc($result);
-                $result2 = mysqli_query($MySQLiconn, "SELECT * FROM `movie` WHERE movie_id ='" . $showinfo['movie_id'] . "'");
-                $movie = mysqli_fetch_assoc($result2);
-               
+
+                // RETRIEVE SHOW INFO
+                $showInfoQuery = $MySQLiconn->prepare("SELECT showInfo_date, showInfo_time, movie_id FROM showinfo WHERE showInfo_id = ?");
+                $showInfoQuery->bind_param('i', $_SESSION['show_id']);
+                if (!$showInfoQuery->execute()) {
+                    ?>
+                    <script>
+                        alert('Error Login!');
+                        window.location.href = 'errorPage.php'
+                    </script>
+                    <?php
+
+                }
+                $showInfoResult = $showInfoQuery->get_result();
+                $showinfo = mysqli_fetch_assoc($showInfoResult);
+
+                // RETRIEVE MOVIE 
+                $movieQuery = $MySQLiconn->prepare("SELECT movie_name FROM movie WHERE movie_id = ?");
+                $movieQuery->bind_param('i', $showinfo['movie_id']);
+                if (!$movieQuery->execute()) {
+                    ?>
+                    <script>
+                        alert('Error Login!');
+                        window.location.href = 'errorPage.php'
+                    </script>
+                    <?php
+
+                }
+                $movieResult = $movieQuery->get_result();
+                $movie = mysqli_fetch_assoc($movieResult);
+
                 require 'email/PHPMailerAutoload.php';
 
                 $mail = new PHPMailer;

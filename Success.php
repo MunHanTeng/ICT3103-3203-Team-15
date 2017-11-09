@@ -33,13 +33,64 @@
           $Email = $_SESSION['email'];  
         ?>
          <?php
-            $result = mysqli_query($MySQLiconn, "SELECT * FROM `showinfo` WHERE showInfo_id ='" . $showInfoID . "'");
-            $showinfo = mysqli_fetch_assoc($result);
+            //$result = mysqli_query($MySQLiconn, "SELECT * FROM `showinfo` WHERE showInfo_id ='" . $showInfoID . "'");
+            //$showinfo = mysqli_fetch_assoc($result);
 
-            $result2 = mysqli_query($MySQLiconn, "SELECT * FROM `movie` WHERE movie_id ='" . $showinfo['movie_id'] . "'");
-            $result3 = mysqli_query($MySQLiconn, "SELECT * FROM `cinema` WHERE cinema_id ='" . $showinfo['cinema_id'] . "'");
+            //First Prepared Statement
+            $stmt = $MySQLiconn->prepare("SELECT movie_id, cinema_id, showInfo_date, showInfo_time FROM showinfo WHERE showInfo_id = ?");
+            $stmt->bind_param('s', $showInfoID);
+		if (!$stmt->execute())
+		{
+	?>
+		   <script>
+                        alert('Error Displaying Sucess Information!');
+                        window.location.href='errorPage.php'
+                    </script>
+	<?php
+		}
+            $result = $stmt->get_result();
+            $showinfo = mysqli_fetch_assoc($result);
+            
+            $stmt->free_result();
+            $stmt->close();
+         
+            //Second Prepared Statement
+            $stmt2 = $MySQLiconn->prepare("SELECT movie_poster, movie_websiteLink, movie_name FROM movie WHERE movie_id = ?");
+            $stmt2->bind_param('s', $showinfo['movie_id']);
+		if (!$stmt2->execute())
+		{
+	?>
+		   <script>
+                        alert('Error Displaying Sucess Information!');
+                        window.location.href='errorPage.php'
+                    </script>
+	<?php
+		}
+            $result2 = $stmt2->get_result();
             $movie = mysqli_fetch_assoc($result2);
+
+            
+            //Third Parameter
+            $stmt3 = $MySQLiconn->prepare("SELECT cinema_name FROM cinema WHERE cinema_id = ?");
+            $stmt3->bind_param('s', $showinfo['cinema_id']);
+		if (!$stmt3->execute())
+		{
+	?>
+		   <script>
+                        alert('Error Displaying Sucess Information!');
+                        window.location.href='errorPage.php'
+                    </script>
+	<?php
+		}
+            $result3 = $stmt3->get_result();
             $cinema = mysqli_fetch_assoc($result3);
+         
+            
+            
+            //$result2 = mysqli_query($MySQLiconn, "SELECT * FROM `movie` WHERE movie_id ='" . $showinfo['movie_id'] . "'");
+            //$result3 = mysqli_query($MySQLiconn, "SELECT * FROM `cinema` WHERE cinema_id ='" . $showinfo['cinema_id'] . "'");
+            //$movie = mysqli_fetch_assoc($result2);
+            //$cinema = mysqli_fetch_assoc($result3);
             
             //$PaymentMode = {"Standard Price - $12.50":12.50, "Visa Checkout- $12.00":12, "DBS/POSB Credit & Debit - $7.50":7.50};
             $PaymentModeValue = array(

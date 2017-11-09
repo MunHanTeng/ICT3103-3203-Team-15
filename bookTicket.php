@@ -4,8 +4,8 @@
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
         <link href="images/gv32x32.ico" rel="shortcut icon" />
-         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
     </head>
     <body onLoad="backButtonOverrideBody()">
         <script src="js/jquery.min.js"></script>
@@ -24,7 +24,14 @@
         // RETRIEVE SHOW INFO
         $showInfoQuery = $MySQLiconn->prepare("SELECT showInfo_date, showInfo_time, movie_id FROM showinfo WHERE showInfo_id = ?");
         $showInfoQuery->bind_param('i', $_COOKIE['showinfoID']);
-        $showInfoQuery->execute();
+        if (!$showInfoQuery->execute()) {
+            ?>
+            <script>
+    alert('Error Login!');
+    window.location.href = 'errorPage.php'
+            </script>
+            <?php
+        }
         $showInfoResult = $showInfoQuery->get_result();
 
         $showinfo = mysqli_fetch_assoc($showInfoResult);
@@ -32,16 +39,34 @@
         // RETRIEVE MOVIE 
         $movieQuery = $MySQLiconn->prepare("SELECT movie_name, movie_poster, movie_websiteLink FROM movie WHERE movie_id = ?");
         $movieQuery->bind_param('i', $showinfo['movie_id']);
-        $movieQuery->execute();
+        if (!$movieQuery->execute()) {
+            ?>
+            <script>
+                alert('Error Login!');
+                window.location.href = 'errorPage.php'
+            </script>
+            <?php
+        }
         $movieResult = $movieQuery->get_result();
 
         $movie = mysqli_fetch_assoc($movieResult);
         ?>
         <script>
-        window.onload = function () {
-            document.getElementById("StartBooking").style.display = 'none';
-            document.getElementById("SeatSelection").style.display = 'none';
-        }
+            window.onload = function () {
+                document.getElementById("StartBooking").style.display = 'none';
+                document.getElementById("SeatSelection").style.display = 'none';
+                
+                function disableBack() {
+                        window.history.forward()
+                    }
+
+                    window.onload = disableBack();
+                    window.onpageshow = function (evt) {
+                        if (evt.persisted)
+                            disableBack()
+                    }
+                
+            }
         </script>
         <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>
@@ -138,7 +163,14 @@
                                 $q = 1;
                                 $bookQuery = $MySQLiconn->prepare("SELECT seat_no FROM booking WHERE showInfo_id = ?");
                                 $bookQuery->bind_param('i', $_COOKIE['showinfoID']);
-                                $bookQuery->execute();
+                                if (!$bookQuery->execute()) {
+                                    ?>
+                                    <script>
+                                        alert('Error Login!');
+                                        window.location.href = 'errorPage.php'
+                                    </script>
+                                    <?php
+                                }
                                 $bookResult = $bookQuery->get_result();
 
                                 $bookedseats = array();
@@ -215,13 +247,7 @@
                     </div>
                 </div> 
             </div>
-<script>
-    $(document).ready(function() {
-        function disableBack() { window.history.forward() }
-
-        window.onload = disableBack();
-        window.onpageshow = function(evt) { if (evt.persisted) disableBack() }
-    });
-</script>
+            <script>
+            </script>
     </body>
 </html>

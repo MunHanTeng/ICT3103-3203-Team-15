@@ -7,10 +7,8 @@
         <link href="images/gv32x32.ico" rel="shortcut icon" />
         <script type= "text/javascript">
             function redirectCinemaPage(cinemaid){
-                //$("#myform").submit();
-                var s= document.getElementById('CID');
-                s.value = cinemaid; 
-                $("#myform").submit();
+                document.cookie = "cinemaid =" + cinemaid;
+                window.location = "cinema.php";
             }
         </script>
     </head>

@@ -31,11 +31,34 @@ if (isset($_POST["submit"])) {
         $upass = mysqli_real_escape_string($MySQLiconn, $_POST['pwd']);
 
         //Delete rows older than 5 minutes
-        $res = mysqli_query($MySQLiconn, "DELETE FROM failed_logins WHERE User='$username' and Timestamp<= (now() - interval 15 minute)");
+//        $res = mysqli_query($MySQLiconn, "DELETE FROM failed_logins WHERE User='$username' and Timestamp<= (now() - interval 15 minute)");
 
+        $stmtDelete = $MySQLiconn->prepare("DELETE FROM failed_logins WHERE User = ? and Timestamp <= (now() - interval 15 minute)");
+        $stmtDelete->bind_param('i', $username);
+        if (!$stmtDelete->execute()) {
+            ?>
+            <script>
+                alert('Error Login!');
+                window.location.href = 'errorPage.php'
+            </script>
+            <?php
+        }
         //Check row count of failed login, if >5, notify user login attempts too many
-        $res = mysqli_query($MySQLiconn, "SELECT COUNT(User) as userFails FROM failed_logins WHERE User='$username'");
-        $row = mysqli_fetch_array($res);
+        $stmtCount = $MySQLiconn->prepare("SELECT COUNT(User) as userFails FROM failed_logins WHERE User = ?");
+        $stmtCount->bind_param('s', $username);
+        if (!$stmtCount->execute()) {
+            ?>
+            <script>
+                alert('Error Login!');
+                window.location.href = 'errorPage.php'
+            </script>
+            <?php
+        }
+        $result = $stmtCount->get_result();
+        $row = mysqli_fetch_assoc($result);
+
+//       res = mysqli_query($MySQLiconn, "SELECT COUNT(User) as userFails FROM failed_logins WHERE User='$username'");
+//       $row = mysqli_fetch_array($res);
         $userFails = $row['userFails'];
         if ($userFails >= 5) {
             echo "<script>";
@@ -45,8 +68,23 @@ if (isset($_POST["submit"])) {
         }
         //$data['userFails']
         else {
-            $res = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE user_email='$username' and user_role='User'");
-            $row = mysqli_fetch_array($res);
+            //$res = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE user_email='$username' and user_role='User'");
+            //$row = mysqli_fetch_array($res);
+            $accType = 'User';
+
+            $resSelect = $MySQLiconn->prepare("SELECT status, password, user_id FROM user_list WHERE user_email = ? and user_role = ?");
+            $resSelect->bind_param('ss', $username, $accType);
+            if (!$resSelect->execute()) {
+                ?>
+                <script>
+                    alert('Error Login!');
+                    window.location.href = 'errorPage.php'
+                </script>
+                <?php
+            }
+            $result = $resSelect->get_result();
+            $row = mysqli_fetch_assoc($result);
+
             if ($row['status'] == 'Not Validated') {
                 echo "<script>";
                 echo "alert('This account has not yet validatd');";
@@ -55,17 +93,57 @@ if (isset($_POST["submit"])) {
             } else if ((password_verify($upass, $row['password']))) {
                 $_SESSION['user'] = $row['user_id'];
                 //If login successful, delete from fail logins
-                $res = mysqli_query($MySQLiconn, "DELETE FROM failed_logins WHERE User='$username'");
+//                $res = mysqli_query($MySQLiconn, "DELETE FROM failed_logins WHERE User='$username'");
+
+                $stmtDeleteFL = $MySQLiconn->prepare("DELETE FROM failed_logins WHERE User = ?");
+                $stmtDeleteFL->bind_param('i', $username);
+                if (!$stmtDeleteFL->execute()) {
+                    ?>
+                    <script>
+                        alert('Error Login!');
+                        window.location.href = 'errorPage.php'
+                    </script>
+                    <?php
+                }
 
                 echo "<script type='text/javascript'>";
                 echo 'window.location = "validateOTP.php";';
                 echo '</script>';
             } else {
                 //If login not successful, create new row in fail logins
-                $existsQuery = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE user_email='$username'");
-                if (mysqli_num_rows($existsQuery) > 0) {
+//                $existsQuery = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE user_email='$username'");
+                $resExists = $MySQLiconn->prepare("SELECT user_id FROM user_list WHERE user_email = ?");
+                $resExists->bind_param('s', $username);
+                if (!$resExists->execute()) {
+                    ?>
+                    <script>
+                        alert('Error Login!');
+                        window.location.href = 'errorPage.php'
+                    </script>
+                    <?php
+                }
+                $resExists->store_result();
+
+
+                if ($resExists->num_rows > 0) {
                     $remainingTry = 5 - ($userFails + 1);
-                    $res = mysqli_query($MySQLiconn, "INSERT INTO failed_logins(User,Timestamp) VALUES('$username',now())");
+
+                    //For Insert
+                    $stmt3 = $MySQLiconn->prepare("INSERT INTO failed_logins(User,Timestamp) VALUES(?, now())");
+                    $stmt3->bind_param('ssssssss', $username);
+
+                    if (!$stmt3->execute()) {
+                        ?>
+                        <script>
+                            alert('Error Login!');
+                            window.location.href = 'errorPage.php'
+                        </script>
+                        <?php
+                    }
+
+                    $id = $stmt3->insert_id;
+
+//                    $res = mysqli_query($MySQLiconn, "INSERT INTO failed_logins(User,Timestamp) VALUES('$username',now())");
                     echo "<script>";
                     echo "alert('Incorrect Username or Password, $remainingTry attempts left');";
                     echo 'window.location = "index.php";';
@@ -84,17 +162,30 @@ if (isset($_POST["submit"])) {
 // OTP
 if (isset($_POST['validate'])) {
     $userid = $_SESSION['user'];
-    $res = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE user_id='$userid'");
-    $row = mysqli_fetch_array($res);
-    $result = ($tfa->verifyCode($row['otpSecretKey'], $_POST['otpcode']) === true ? 'OK' : 'Wrong OTP');
+
+    $userQuery = $MySQLiconn->prepare("SELECT username, user_email, otpSecretKey FROM user_list WHERE user_id=?");
+    $userQuery->bind_param('i', $userid);
+    if (!$userQuery->execute()) {
+        ?>
+        <script>
+            alert('Error Login!');
+            window.location.href = 'errorPage.php'
+        </script>
+        <?php
+    }
+
+    $userResult = $userQuery->get_result();
+//    $res = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE user_id='$userid'");
+    $userRow = mysqli_fetch_array($userResult);
+    $otpResult = ($tfa->verifyCode($userRow['otpSecretKey'], $_POST['otpcode']) === true ? 'OK' : 'Wrong OTP');
     // alert for testing purpose, real operation should be storing the secret into the database together with user account from session.
-    if ($result == 'OK') {
+    if ($otpResult == 'OK') {
         echo '<script language="javascript">';
         echo 'alert("Login successfully");';
         echo 'window.location.href = "index.php";';
         echo '</script>';
-        $_SESSION['name'] = $row['username'];
-        $_SESSION['email'] = $row['user_email'];
+        $_SESSION['name'] = $userRow['username'];
+        $_SESSION['email'] = $userRow['user_email'];
     } else {
         echo '<script language="javascript">';
         echo 'alert("OTP is incorrect please try again");';
@@ -114,9 +205,9 @@ if (isset($_POST['validate'])) {
 
     </head>
     <body>
-<?php
-include 'header.inc';
-?>
+        <?php
+        include 'header.inc';
+        ?>
 
 
         <div id="myModal" class="modal fade">
@@ -146,8 +237,8 @@ include 'header.inc';
 
     </body>
     <script type="text/javascript">
-        $(document).ready(function () {
-            $("#myModal").modal('show');
-        });
+            $(document).ready(function () {
+                $("#myModal").modal('show');
+            });
     </script>
 </html>

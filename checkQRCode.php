@@ -15,11 +15,42 @@
     if(isset($_POST['submit']))
     {
         $qrValue = mysqli_real_escape_string($MySQLiconn, $_GET['qrCode']);
-        $res = mysqli_query($MySQLiconn, "SELECT * FROM ticketcollection WHERE qrValue='$qrValue'");
-        if (mysqli_num_rows($res) == 1) 
+        //$res = mysqli_query($MySQLiconn, "SELECT * FROM ticketcollection WHERE qrValue='$qrValue'");
+        
+        //Count num of column where qrvalue = to db qr
+            $stmt = $MySQLiconn->prepare("SELECT booking_time FROM ticketcollection WHERE qrValue = ?");
+            $stmt->bind_param('s', $qrValue);
+		if (!$stmt->execute())
+		{
+	?>
+		   <script>
+                        alert('Error Displaying Sucess Information!');
+                        window.location.href='errorPage.php'
+                    </script>
+	<?php
+		}
+            $stmt->store_result();
+
+        
+        if ($stmt->num_rows == 1) 
         {
-           $user_result = mysqli_query($MySQLiconn, "SELECT * FROM ticketcollection AS TC INNER JOIN user_list AS UL ON TC.user_id = UL.user_id WHERE TC.qrValue = '$qrValue' ");
-           $userResult = mysqli_fetch_assoc($user_result); 
+           //GET OTP Secret
+            $stmt2 = $MySQLiconn->prepare("SELECT otpSecretKey FROM ticketcollection AS TC INNER JOIN user_list AS UL ON TC.user_id = UL.user_id WHERE TC.qrValue = ?");
+            $stmt2->bind_param('s', $qrValue);
+		if (!$stmt2->execute())
+		{
+	?>
+		   <script>
+                        alert('Error Displaying Sucess Information!');
+                        window.location.href='errorPage.php'
+                    </script>
+	<?php
+		}
+            $result2 = $stmt2->get_result();
+            $userResult = mysqli_fetch_assoc($result2);
+            
+           //$user_result = mysqli_query($MySQLiconn, "SELECT * FROM ticketcollection AS TC INNER JOIN user_list AS UL ON TC.user_id = UL.user_id WHERE TC.qrValue = '$qrValue' ");
+           //$userResult = mysqli_fetch_assoc($user_result); 
         }
         
         //Check OTP Code

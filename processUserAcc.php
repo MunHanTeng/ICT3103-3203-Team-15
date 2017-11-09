@@ -96,6 +96,17 @@
                     </script>
     <?php
                     }
+                    else 
+                    {
+                        ?>
+                    
+                    <script>
+                    alert('Sucessfully registered!');
+                    //window.location.href='errorPage.php'
+                </script>
+                    
+                    <?php
+                    }
                 
                 
                 //$sql_deletedummy = $MySQLiconn->query("delete from dummy_table where dummy_id = '$id'");

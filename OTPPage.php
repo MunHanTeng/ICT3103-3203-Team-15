@@ -21,12 +21,46 @@ $tfa = new TwoFactorAuth('ICT3203');
         if ($_SESSION['OTPSecret'] != '') {
             
             $qrValue = $_SESSION['OTPSecret'];
-            $res1 = mysqli_query($MySQLiconn, "SELECT * FROM ticketcollection WHERE qrValue='$qrValue' AND ticket_collected = 0");
             
-            if (mysqli_num_rows($res1) == 1) {
-                $res = mysqli_query($MySQLiconn, "UPDATE ticketcollection SET ticket_collected=1, time_collected = now() WHERE qrValue='$qrValue'");
-                $row = mysqli_affected_rows($MySQLiconn);
-                if ($row == 1) {
+            //Count num of column where qrvalue = to db qr and no collection
+            $stmt5 = $MySQLiconn->prepare("SELECT booking_time FROM ticketcollection WHERE qrValue = ? AND ticket_collected = 0");
+            $stmt5->bind_param('s', $qrValue);
+		if (!$stmt5->execute())
+		{
+	?>
+		   <script>
+                        alert('Error Displaying Sucess Information!');
+                        window.location.href='errorPage.php'
+                    </script>
+	<?php
+		}
+                
+                else 
+                {
+                    $stmt5->store_result();
+                }
+            
+            
+            //$res1 = mysqli_query($MySQLiconn, "SELECT * FROM ticketcollection WHERE qrValue='$qrValue' AND ticket_collected = 0");
+            
+            if ($stmt5->num_rows == 1) {
+                
+                //Update
+                $stmt2 = $MySQLiconn->prepare("UPDATE ticketcollection SET ticket_collected=1, time_collected = now() WHERE qrValue = ? ");
+                $stmt2->bind_param('s',$qrValue);
+                if (!$stmt2->execute())
+		{
+	?>
+		   <script>
+                        alert('Error Displaying Sucess Information!');
+                        //window.location.href='errorPage.php'
+                    </script>
+	<?php
+		}
+                
+                //$res = mysqli_query($MySQLiconn, "UPDATE ticketcollection SET ticket_collected=1, time_collected = now() WHERE qrValue='$qrValue'");
+                //$row = mysqli_affected_rows($MySQLiconn);
+                if ($stmt2->execute() && $stmt5->affected_rows == 1) {
                     echo '<center><img src="images/successbutton.png" align="middle" alt="Sucess Image" style="margin-top: 10%; width: 10%; height: 10%;"></center>';
                     echo '<center><h1 style="color:yellow;">Tickets redeemed successfully</h1></center>';
                     echo '<center><h3 style="color: white"><u> Ticket Collection Details </u></h3></center>';
@@ -36,13 +70,46 @@ $tfa = new TwoFactorAuth('ICT3203');
                     ?>
 
                     <?php
-                    $user_result = mysqli_query($MySQLiconn, "SELECT * FROM ticketcollection AS TC INNER JOIN user_list AS UL ON TC.user_id = UL.user_id WHERE TC.qrValue = '$qrValue' ");
-                    $userResult = mysqli_fetch_assoc($user_result);
+                    //Select from titcketCollection 
+                    $stmt3 = $MySQLiconn->prepare("SELECT collection_id, user_email, username FROM ticketcollection AS TC INNER JOIN user_list AS UL ON TC.user_id = UL.user_id WHERE TC.qrValue =  ?");
+                    $stmt3->bind_param('s', $qrValue);
+                    if (!$stmt3->execute())
+                    {
+                    ?>
+                        <script>
+                            alert('Error Displaying Sucess Information!');
+                            window.location.href='errorPage.php'
+                        </script>
+                    <?php
+                    }
+                    $result3 = $stmt3->get_result();
+                    $userResult = mysqli_fetch_assoc($result3);
+                    
+                    //$user_result = mysqli_query($MySQLiconn, "SELECT collection_id FROM ticketcollection AS TC INNER JOIN user_list AS UL ON TC.user_id = UL.user_id WHERE TC.qrValue = '$qrValue' ");
+                    //$userResult = mysqli_fetch_assoc($user_result);
 
-                    $ticket_result = mysqli_query($MySQLiconn, "SELECT * FROM booking AS B INNER JOIN showinfo AS SI ON B.showInfo_id = SI.showInfo_id INNER JOIN movie AS M ON B.movie_id = M.movie_id WHERE collection_id = " . $userResult['collection_id'] . "");
+                    //Select from booking 
+                    $stmt4 = $MySQLiconn->prepare("SELECT * FROM booking AS B INNER JOIN showinfo AS SI ON B.showInfo_id = SI.showInfo_id INNER JOIN movie AS M ON B.movie_id = M.movie_id WHERE collection_id = ?");
+                    $stmt4->bind_param('s', $userResult['collection_id']);
+                    if (!$stmt4->execute())
+                    {
+                    ?>
+                        <script>
+                            alert('Error Displaying Sucess Information!');
+                            window.location.href='errorPage.php'
+                        </script>
+                    <?php
+                    }
+                    else 
+                    {
+                        $result4 = $stmt4->get_result();
+                    }
+                    
+                    
+                    //$ticket_result = mysqli_query($MySQLiconn, "SELECT * FROM booking AS B INNER JOIN showinfo AS SI ON B.showInfo_id = SI.showInfo_id INNER JOIN movie AS M ON B.movie_id = M.movie_id WHERE collection_id = " . $userResult['collection_id'] . "");
                     // $ticketResult = mysqli_fetch_assoc($ticket_result);
                     $seat = array();
-                    while ($row = mysqli_fetch_array($ticket_result)) {
+                    while ($row = mysqli_fetch_assoc($result4)) {
                         $seat[] = $row['seat_no'];
                         $movie = $row['movie_name'];
                         $date = $row['showInfo_date'];
