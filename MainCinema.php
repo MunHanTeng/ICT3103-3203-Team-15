@@ -8,10 +8,16 @@
         <script type= "text/javascript">
             function redirectCinemaPage(cinemaid){
                 //$("#myform").submit();
+                var s= document.getElementById('CID');
+                s.value = cinemaid; 
+                $("#myform").submit();
             }
         </script>
     </head>
     <body>
+        <form id="myform" action="cinema.php" method="POST">
+            <input type="hidden" id="CID" name="CID">
+        </form>
         <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/scripts.js"></script>

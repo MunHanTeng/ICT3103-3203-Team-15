@@ -5,13 +5,11 @@
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
         <link href="images/gv32x32.ico" rel="shortcut icon" />
-
     </head>
     <body>
         <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/scripts.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <?php
         include 'header.inc';
         include_once 'dbconnect.php';

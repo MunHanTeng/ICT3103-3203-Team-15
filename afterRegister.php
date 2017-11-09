@@ -16,7 +16,9 @@
         <title>Golden Village</title>
         <link href="css/ticketcollection.css" rel="stylesheet">
         <link href="css/bootstrap.min.css" rel="stylesheet">
-
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/scripts.js"></script>
     </head>
     
     <body>
@@ -35,10 +37,30 @@
             <h3 class="fs-subtitle">This is the first step</h3>
             <?php
             $id = $_SESSION['dummy_id'];
-            $user_result = mysqli_query($MySQLiconn, "SELECT dummy_otpSecret FROM dummy_table WHERE dummy_id='$id'");
-            $userResult = mysqli_fetch_assoc($user_result); 
+            $stmt = $MySQLiconn->prepare("SELECT dummy_otpSecret FROM dummy_table WHERE dummy_id = ?");
+            $stmt->bind_param('s', $id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $userResult = mysqli_fetch_assoc($result);
+            
+            if ($stmt->execute())
+            {
+                $id = $stmt->insert_id;
+                //$user_result = mysqli_query($MySQLiconn, "SELECT dummy_otpSecret FROM dummy_table WHERE dummy_id='$id'");
+                //$userResult = mysqli_fetch_assoc($user_result); 
                 echo 'Please scan the following QR code and click next<br><img src="' . $tfa->getQRCodeImageAsDataUri('Movie Account Authentication', $userResult['dummy_otpSecret']) . '"><br>';
+            }
+            else 
+            {
             ?>
+                <script>
+                    alert('Error');
+                    window.location.href='errorPage.php'
+                </script>
+            <?php 
+            }
+            ?>
+                
             <input type="button" name="next" class="next action-button" value="Next" />
         </fieldset>
        

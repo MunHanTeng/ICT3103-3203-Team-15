@@ -86,14 +86,62 @@
             $okay = False;
         }
     
+        //Check Duplicate EMAIL
         $email = mysqli_real_escape_string($MySQLiconn, $_POST['email']);
-        $result = mysqli_query($MySQLiconn, "SELECT COUNT(*) As RegisteredEmail FROM user_list where user_email='".$email."'");
-        $row = mysqli_fetch_array($result);
-        if ($row['RegisteredEmail' != 0])
+        //$result = mysqli_query($MySQLiconn, "SELECT COUNT(user_email) As RegisteredEmail FROM user_list where user_email='".$email."'");
+        $stmtCount = $MySQLiconn->prepare("SELECT COUNT(user_email) As RegisteredEmail FROM user_list where user_email = ?");
+        $stmtCount->bind_param('s', $email);
+        if (!$stmtCount->execute())
+        {
+    ?>
+           <script>
+                alert('Error Login!');
+                window.location.href='errorPage.php'
+            </script>
+    <?php
+        }
+        $result = $stmtCount->get_result();
+        $row = mysqli_fetch_assoc($result);
+
+        
+        //$row = mysqli_fetch_array($result);
+        if ($row['RegisteredEmail'] != 0)
         {
             $emailErr = "Email Already Registered";
             $okay = False;
         }
+        
+        $stmtCount->free_result();
+        $stmtCount->close();
+        
+        
+        //Check Duplicate NRIC
+        $nric = mysqli_real_escape_string($MySQLiconn, $_POST['nric']);
+        //$result = mysqli_query($MySQLiconn, "SELECT COUNT(user_email) As RegisteredEmail FROM user_list where user_email='".$email."'");
+        $stmtCount = $MySQLiconn->prepare("SELECT COUNT(user_nric) As RegisteredNRIC FROM user_list where user_nric = ?");
+        $stmtCount->bind_param('s', $nric);
+        if (!$stmtCount->execute())
+        {
+    ?>
+           <script>
+                alert('Error Login!');
+                window.location.href='errorPage.php'
+            </script>
+    <?php
+        }
+        $result = $stmtCount->get_result();
+        $row = mysqli_fetch_assoc($result);
+        
+        //$row = mysqli_fetch_array($result);
+        if ($row['RegisteredNRIC'] != 0)
+        {
+            $NRIC = "NRIC Already Registered";
+            $okay = False;
+        }
+        
+        $stmtCount->free_result();
+        $stmtCount->close();
+        
     
         //if (mysqli_query("SELECT COUNT(* "))
         if ($okay) 
@@ -102,6 +150,8 @@
             $uphone = mysqli_real_escape_string($MySQLiconn, $_POST['phone']); 
             $unric = mysqli_real_escape_string($MySQLiconn, $_POST['nric']);
             $upass = password_hash($_POST['pwd'], PASSWORD_DEFAULT);
+            $accType = 'User';
+            $validatedNot = 'Not Validated';
             //$hash = md5(rand(0,1000));
         
             //QR Code
@@ -111,18 +161,35 @@
             $base32 = new Base2n(5, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', FALSE, TRUE, TRUE);
             $secret = $base32->encode($qrcode);
             $code = $tfa->getCode($secret);
-            if (mysqli_query($MySQLiconn, "INSERT INTO dummy_table(dummy_username,dummy_email,dummy_pass,dummy_user_role,dummy_phone,dummy_NRIC, dummy_status, dummy_otpSecret) VALUES('$uname','$email','$upass','User', '$uphone','$unric', 'Not Validated', '$secret')")) 
+            
+            //Prepared Statement For Register Insert to dummy
+            $stmt = $MySQLiconn->prepare("INSERT INTO dummy_table(dummy_username, dummy_email, dummy_pass, dummy_user_role, dummy_phone, dummy_NRIC, dummy_status, dummy_otpSecret) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param('ssssssss', $uname, $email, $upass, $accType, $uphone, $unric, $validatedNot, $secret);
+
+            if ($stmt->execute())
             {
-                 $id = mysqli_insert_id($MySQLiconn);
-                 $_SESSION['dummy_id'] = $id;
-                ?>
+                $id = $stmt->insert_id;
+                $_SESSION['dummy_id'] = $id;
+    ?>
                 <script>
                     alert('Successfully registered!');
                     window.location.href='afterRegister.php'
                 </script>
-                
-                <?php
+    <?php
             }
+            else 
+            {
+    ?>
+                <script>
+                    alert('Error registered!');
+                    window.location.href='errorPage.php'
+                </script>
+    <?php 
+            }
+    ?>
+
+    <?php
+    
         } 
         else 
         {
@@ -131,7 +198,10 @@
             <?php
         }
     }
-?>
+    
+    ?>
+            
+            <!-- if (mysqli_query($MySQLiconn, "INSERT INTO dummy_table(dummy_username,dummy_email,dummy_pass,dummy_user_role,dummy_phone,dummy_NRIC, dummy_status, dummy_otpSecret) VALUES('$uname','$email','$upass','User', '$uphone','$unric', 'Not Validated', '$secret')")) -->
 
 <!doctype html>
 <html>
@@ -165,7 +235,7 @@
                 <label class="control-label col-md-3" for="firstname"><p>Username:</p></label>
                     <div class="col-md-9">
                         <input type="text" class="form-control" name ="name" >
-                        <span class="text-danger"><?php echo $nameErr; ?></span>
+                        <span style="float: left;" class="text-danger"><?php echo $nameErr; ?></span>
                     </div>
                 </div>
             
@@ -173,7 +243,7 @@
                     <label class="control-label col-md-3" for="email" name="email"><p>Email:</p></label>
                     <div class="col-md-9">
                         <input type="text" class="form-control" name="email" required>
-                        <span class="text-danger"><?php echo $emailErr; ?></span>
+                        <span style="float: left;" class="text-danger"><?php echo $emailErr; ?></span>
                     </div>
                 </div>
             
@@ -181,7 +251,7 @@
                     <label class="control-label col-md-3" for="pwd" name="pwd"><p>Password:</p></label>
                     <div class="col-md-9">          
                         <input type="password" class="form-control" name="pwd" required>
-                        <span class="text-danger"><?php echo $passwordErr; ?></span>
+                        <span style="float: left;" class="text-danger"><?php echo $passwordErr; ?></span>
                     </div>
                 </div>
                         
@@ -189,7 +259,7 @@
                     <label class="control-label col-md-3" for="pwd"><p>Password Confirm:</p></label>
                     <div class="col-md-9">          
                         <input type="password" class="form-control" name="confirmpwd">
-                        <span class="text-danger"><?php echo $confirmPwdErr; ?></span>
+                        <span style="float: left;" class="text-danger"><?php echo $confirmPwdErr; ?></span>
                     </div>
                 </div>
             
@@ -197,7 +267,7 @@
                     <label class="control-label col-md-3" for="phone"><p>Phone Number:</p></label>
                     <div class="col-md-9">          
                         <input type="number" class="form-control" name="phone" maxlength="8">
-                        <span class="text-danger"><?php echo $phoneNoErr; ?></span>
+                        <span style="float: left;" class="text-danger"><?php echo $phoneNoErr; ?></span>
                     </div>
                 </div>
             
@@ -205,7 +275,7 @@
                     <label class="control-label col-md-3" for="nric"><p>NRIC :</p></label>
                     <div class="col-md-9">          
                         <input type="text" class="form-control" name="nric" maxlength="9">
-                        <span class="text-danger"><?php echo $NRIC; ?></span>
+                        <span style="float: left;" class="text-danger"><?php echo $NRIC; ?></span>
                     </div>
                 </div>
                 

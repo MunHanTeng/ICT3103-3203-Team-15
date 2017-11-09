@@ -9,25 +9,43 @@
                 document.cookie = "showinfoID =" + showInfoid;
                 window.location = "bookTicket.php";
             }
+            function backButtonOverride()
+            {
+                // Work around a Safari bug
+                // that sometimes produces a blank page
+                setTimeout("backButtonOverrideBody()", 1);
+            }
+
+            function backButtonOverrideBody()
+            {
+                // Works if we backed up to get here
+                try {
+                    history.forward();
+                } catch (e) 
+                {
+                // OK to ignore
+                }
+                setTimeout("backButtonOverrideBody()", 500);
+            }
         </script>
     </head>
     <body onLoad="backButtonOverride()">
-
         <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/scripts.js"></script>
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
-        $movid = $_POST['moID'];
+        $movid = $_COOKIE['movieID'];
         $stmt = $MySQLiconn->prepare("SELECT movie_name,movie_type,movie_cast,movie_director,movie_genre,movie_release,movie_runningTime,movie_distributor,movie_language,movie_synopsis,movie_TNC,movie_trailerLink,movie_websiteLink,movie_poster,movie_carousel FROM movie WHERE movie_id = ?");
         $stmt->bind_param('s', $movid);
         $stmt->execute();
         $result = $stmt->get_result();
-
         $movie = mysqli_fetch_assoc($result);
         ?>
-
+        <form id="myform" action="bookTicket.php" method="POST">
+            <input type="hidden" id="SIID" name="SIID">
+        </form>
         <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>
             <li><a href="MainMovie.php" class="activeLink">Movies</a> <span class="divider"></span></li>
@@ -160,7 +178,8 @@
                             while ($date = mysqli_fetch_assoc($resultShow)) {
                                 echo '<tr><td>';
                                 echo '<p>' . $date['showInfo_date'] . '</p>';
-                                $sqlTime = "Select * from showinfo where movie_id=? and cinema_id=? and showInfo_date=?";
+                                
+                                $sqlTime = "Select showInfo_id, showInfo_time from showinfo where movie_id=? and cinema_id=? and showInfo_date=?";
                                 $stmt = $MySQLiconn->prepare($sqlTime);
                                 $stmt->bind_param('sss', $movid, $row['cinema_id'], $date['showInfo_date']);
                                 $stmt->execute();

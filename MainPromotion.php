@@ -14,7 +14,7 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
-        $resultPromotion = mysqli_query($MySQLiconn, "SELECT * FROM promotion");
+        $resultPromotion = mysqli_query($MySQLiconn, "SELECT promotionInfo_title, promotionInfo_image, promotionInfo_description  FROM promotion");
         ?>
         <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>
@@ -43,7 +43,7 @@
                                 echo '<!-- Modal content-->';
                                     echo '<div class="modal-content">';
                                         echo '<div class="modal-header">';
-                                        echo '<button type="button" class="close" data-dismiss="modal">&times;</button><!-- Makes the X -->';
+                                        echo '<button style="color: white" type="button" class="close" data-dismiss="modal">&times;</button><!-- Makes the X -->';
                                         echo '<h4 class="modal-title">'.$row['promotionInfo_title'].'</h4>';
                                     echo '</div>'; //modal-header
                                     echo '<div class="modal-body">';

@@ -18,9 +18,36 @@
     ?>
 
     <?php
-            $id = $_SESSION['dummy_id'];
-            $user_result = mysqli_query($MySQLiconn, "SELECT * FROM dummy_table WHERE dummy_id='$id'");
-            $userResult = mysqli_fetch_assoc($user_result); 
+            //For Retriving value
+            $idDummy = $_SESSION['dummy_id'];
+            $stmt = $MySQLiconn->prepare("SELECT dummy_username, dummy_email, dummy_pass, dummy_user_role, dummy_phone, dummy_NRIC, dummy_status, dummy_otpSecret FROM dummy_table WHERE dummy_id = ?");
+            $stmt->bind_param('s', $idDummy);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $userResult = mysqli_fetch_assoc($result);
+
+            if (!$stmt->execute())
+            {
+     ?>
+
+                <script>
+                    alert('Error');
+                    //window.location.href='errorPage.php'
+                </script>
+    <?php
+            }
+            
+            $stmt->free_result();
+            $stmt->close();
+            
+            
+            
+            //$stmt3 = $MySQLiconn->prepare("INSERT INTO user_list(username, user_email, password, user_role, phone, user_nric, status, otpSecretKey) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            //$stmt3->bind_param('dddddddd', $uname, $uemail, $upass, $urole, $uphone, $unric, $validNot, $usecretKey);
+
+            
+            //$user_result = mysqli_query($MySQLiconn, "SELECT * FROM dummy_table WHERE dummy_id='$id'");
+            //$userResult = mysqli_fetch_assoc($user_result); 
             
             $uname = $userResult['dummy_username'];
             $uemail = $userResult['dummy_email'];
@@ -29,24 +56,69 @@
             $uphone = $userResult['dummy_phone'];
             $unric = $userResult['dummy_NRIC'];
             $usecretKey = $userResult['dummy_otpSecret'];
+            $validNot = 'Validate';
         
             $result = ($tfa->verifyCode($usecretKey, $_POST['otpcode']) === true ? 'OK' : 'Wrong OTP');
             //echo $qrValue;
             //$res = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE otpSecretKey='$qrValue'");
 
+            //Prepared Statement For Register Insert to user table
+                
             // alert for testing purpose, real operation should be storing the secret into the database together with user account from session.
             //$userid = $_SESSION['user'];
             $OTPCode = $tfa->getCode($usecretKey);
             if ($result == 'OK')
             {
-                $sql_adduser = $MySQLiconn->query("INSERT INTO user_list( username, user_email, password, user_role, phone, user_nric, status, otpSecretKey) VALUES ('$uname','$uemail','$upass','$urole', '$uphone', '$unric', 'Validated', '$usecretKey')");
-                mysqli_query($MySQLiconn, $sql_adduser);
+                
             
-                echo '<center><img src="images/successbutton.png" align="middle" alt="Sucess Image" style="margin-top: 10%; width: 10%; height: 10%;"></center>';
-                echo '<center><h1 style="color:yellow;">User Account Validated Successfully</h1></center>';
-                        
-                $sql_deletedummy = $MySQLiconn->query("delete from dummy_table where dummy_id = '$id'");
-                mysqli_query($MySQLiconn, $sql_deletedummy);
+                //For Insert
+                $stmt3 = $MySQLiconn->prepare("INSERT INTO user_list(username, user_email, password, user_role, phone, user_nric, status, otpSecretKey) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt3->bind_param('ssssssss', $uname, $uemail, $upass, $urole, $uphone, $unric, $validNot, $usecretKey);
+                
+                if ($stmt3->execute())
+                {
+                    $id = $stmt3->insert_id;
+                
+                    //Delete Table
+                    echo '<center><img src="images/successbutton.png" align="middle" alt="Sucess Image" style="margin-top: 10%; width: 10%; height: 10%;"></center>';
+                    echo '<center><h1 style="color:yellow;">User Account Validated Successfully</h1></center>';
+                    
+                    $stmt2 = $MySQLiconn->prepare("delete from dummy_table WHERE dummy_id = ?");
+                    $stmt2->bind_param('s', $idDummy);
+                    $stmt2->execute();
+                
+                    if (!$stmt2->execute())
+                    {
+    ?>
+                    <script>
+                        alert('Error');
+                        window.location.href='errorPage.php'
+                    </script>
+    <?php
+                    }
+                
+                
+                //$sql_deletedummy = $MySQLiconn->query("delete from dummy_table where dummy_id = '$id'");
+                //mysqli_query($MySQLiconn, $sql_deletedummy);
+            }
+            else 
+            {
+                echo $stmt3->error;
+            ?>
+                <script>
+                    alert('Error registered!');
+                    //window.location.href='errorPage.php'
+                </script>
+    <?php 
+            }
+    ?>
+                
+                <?php
+                
+                //$sql_adduser = $MySQLiconn->query("INSERT INTO user_list( username, user_email, password, user_role, phone, user_nric, status, otpSecretKey) VALUES ('$uname','$uemail','$upass','$urole', '$uphone', '$unric', 'Validated', '$usecretKey')");
+                //mysqli_query($MySQLiconn, $sql_adduser);
+            
+
             }
         else 
         {

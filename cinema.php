@@ -7,8 +7,11 @@
         <link href="images/gv32x32.ico" rel="shortcut icon" />
         <script type= "text/javascript">
             function redirectPaymentPage(showInfoid){
-                document.cookie = "showinfoID =" + showInfoid;
-                window.location = "bookTicket.php";
+                //document.cookie = "showinfoID =" + showInfoid;
+                //window.location = "bookTicket.php";
+                var s= document.getElementById('SIID');
+                s.value = showInfoid; 
+                $("#myform").submit();
             }
         </script>
     </head>
@@ -27,6 +30,9 @@
         
         $cinema = mysqli_fetch_assoc($result)
         ?>
+        <form id="myform" action="bookTicket.php" method="POST">
+            <input type="hidden" id="SIID" name="SIID">
+        </form>
         <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>
             <li><a href="MainCinema.php" class="activeLink">Cinemas</a> <span class="divider"></span></li>
@@ -122,7 +128,7 @@
                                 echo '<tr><td>';
                                 echo '<a href="movie.php?q='.$Movie['movie_id'].'"><h4>'.$Movie['movie_name'].'</h4></a>';
                                 echo '<p class="Rating">'.$Movie['movie_type'].'</p>';
-                                $sqlTime = "Select * from showinfo where cinema_id='".$_COOKIE['cinemaid']."' and movie_id='".$Movie['movie_id']."' and showInfo_date='".$date['showInfo_date']."'";
+                                $sqlTime = "Select showInfo_id, showInfo_time from showinfo where cinema_id='".$_COOKIE['cinemaid']."' and movie_id='".$Movie['movie_id']."' and showInfo_date='".$date['showInfo_date']."'";
                                 $resultTime = mysqli_query($MySQLiconn, $sqlTime);
                                 while ($time = mysqli_fetch_assoc($resultTime)) {
                                     echo '<a href="javascript:redirectPaymentPage('. $time['showInfo_id'] .')" class="btn btn-primary">'.$time['showInfo_time'].'</a>';
