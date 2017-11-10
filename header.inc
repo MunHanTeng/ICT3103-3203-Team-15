@@ -70,10 +70,10 @@ if(session_status() == PHP_SESSION_NONE) {
                         <div class="dropdown-menu" style="background-color: #333;">
                             <form class="form" method="post" action="validateOTP.php">
                                 <div class="form-group">
-                                    <input type="text" class="form-control" name="email" placeholder="Email" required>
+                                    <input type="text" class="form-control" name="email" autocomplete="off" placeholder="Email" required>
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" class="form-control" name="pwd" placeholder="Password" required>
+                                    <input type="password" class="form-control" autocomplete="off" name="pwd" placeholder="Password" required>
                                 </div>
                                 <button name="submit" type="submit" class="btn btn-primary">Sign In</button>
                                 <p><a href="registerUser.php">Register</a></p>    

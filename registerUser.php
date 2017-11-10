@@ -234,7 +234,7 @@
                 <div class="form-group">
                 <label class="control-label col-md-3" for="firstname"><p>Username:</p></label>
                     <div class="col-md-9">
-                        <input type="text" class="form-control" name ="name" >
+                        <input type="text" class="form-control" name ="name" autocomplete="off" required>
                         <span style="float: left;" class="text-danger"><?php echo $nameErr; ?></span>
                     </div>
                 </div>
@@ -242,7 +242,7 @@
                 <div class="form-group">
                     <label class="control-label col-md-3" for="email" name="email"><p>Email:</p></label>
                     <div class="col-md-9">
-                        <input type="text" class="form-control" name="email" required>
+                        <input type="text" class="form-control" name="email" autocomplete="off" required>
                         <span style="float: left;" class="text-danger"><?php echo $emailErr; ?></span>
                     </div>
                 </div>
@@ -250,7 +250,7 @@
                 <div class="form-group">
                     <label class="control-label col-md-3" for="pwd" name="pwd"><p>Password:</p></label>
                     <div class="col-md-9">          
-                        <input type="password" class="form-control" name="pwd" required>
+                        <input type="password" class="form-control" name="pwd" autocomplete="off" required>
                         <span style="float: left;" class="text-danger"><?php echo $passwordErr; ?></span>
                     </div>
                 </div>
@@ -258,7 +258,7 @@
                 <div class="form-group">
                     <label class="control-label col-md-3" for="pwd"><p>Password Confirm:</p></label>
                     <div class="col-md-9">          
-                        <input type="password" class="form-control" name="confirmpwd">
+                        <input type="password" class="form-control" autocomplete="off" name="confirmpwd" required>
                         <span style="float: left;" class="text-danger"><?php echo $confirmPwdErr; ?></span>
                     </div>
                 </div>
@@ -266,7 +266,7 @@
                 <div class="form-group">
                     <label class="control-label col-md-3" for="phone"><p>Phone Number:</p></label>
                     <div class="col-md-9">          
-                        <input type="number" class="form-control" name="phone" maxlength="8">
+                        <input type="number" class="form-control" autocomplete="off" name="phone" maxlength="8" required>
                         <span style="float: left;" class="text-danger"><?php echo $phoneNoErr; ?></span>
                     </div>
                 </div>
@@ -274,7 +274,7 @@
                 <div class="form-group">
                     <label class="control-label col-md-3" for="nric"><p>NRIC :</p></label>
                     <div class="col-md-9">          
-                        <input type="text" class="form-control" name="nric" maxlength="9">
+                        <input type="text" class="form-control" autocomplete="off" name="nric" maxlength="9" required>
                         <span style="float: left;" class="text-danger"><?php echo $NRIC; ?></span>
                     </div>
                 </div>
