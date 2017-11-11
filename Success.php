@@ -101,7 +101,11 @@
 
 	unset($_SESSION['PaymentMode']);
 	unset($_SESSION['check_list']);
-	unset($_SESSION['show_id']);  
+	unset($_SESSION['show_id']); 
+	unset($_SESSION['CCN']); 
+	unset($_SESSION['CCE']); 
+	unset($_SESSION['CVV2']);
+	unset($_SESSION['CCName']);  
         ?>
          <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>
