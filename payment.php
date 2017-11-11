@@ -19,9 +19,12 @@
 
         $PaymentMode = $_SESSION['PaymentMode'];
         //$_SESSION['PaymentMode']=$PaymentMode;
-
+       
         $showInfoID = $_SESSION['show_id'];
         ?>
+        <script>
+               alert(<?php echo $PaymentMode; ?>);
+            </script>
         <?php
         // RETRIEVE SHOW INFO
         $showInfoQuery = $MySQLiconn->prepare("SELECT showInfo_date, showInfo_time, cinema_id, movie_id FROM showinfo WHERE showInfo_id = ?");
@@ -29,8 +32,8 @@
         if (!$showInfoQuery->execute()) {
             ?>
             <script>
-                alert('Error Login!');
-                window.location.href = 'errorPage.php'
+                alert('Error Displaying Payment Form!');
+                window.location.href = 'errorPage.php';
             </script>
             <?php
         }
@@ -44,8 +47,8 @@
         if (!$movieQuery->execute()) {
             ?>
             <script>
-                alert('Error Login!');
-                window.location.href = 'errorPage.php'
+                alert('Error Displaying Payment Form!');
+                window.location.href = 'errorPage.php';
             </script>
             <?php
         }
@@ -59,8 +62,8 @@
         if (!$cinemaQuery->execute()) {
             ?>
             <script>
-                alert('Error Login!');
-                window.location.href = 'errorPage.php'
+              alert('Error Displaying Payment Form!');
+                window.location.href = 'errorPage.php';
             </script>
             <?php
         }
@@ -115,11 +118,20 @@
                         }
                     }
                 </script>
+                
                 <div class="row">  
                     <?php
-                    $TotAmnt = $PaymentModeValue[$PaymentMode] * count($check_list);
-                    echo '<p style="text-align:left;" >Total Amount: &nbsp<span style="font-size:1.5em;color:yellow;">S$' . $TotAmnt . '</span></p>';
-                    ?>
+                    if ($PaymentMode % 12 == 0 || $PaymentMode % 12.50 == 0 || $PaymentMode % 7.50 == 0){
+                        $TotAmnt = $PaymentMode * count($check_list);
+                        echo '<p style="text-align:left;" >Total Amount: &nbsp<span style="font-size:1.5em;color:yellow;">S$' . $TotAmnt . '</span></p>';
+                    }
+                    else{
+                         echo "<script>
+                               alert('An error has occurred. Please try again!');
+                               window.location.href = 'MainMovie.php';
+                            </script>";
+                    }
+                        ?>
                 </div>
                 <?php
                 if (!isset($_SESSION['user'])) {

@@ -53,7 +53,7 @@ $tfa = new TwoFactorAuth('ICT3203');
 	?>
 		   <script>
                         alert('Error Displaying Sucess Information!');
-                        //window.location.href='errorPage.php'
+                        window.location.href='errorPage.php';
                     </script>
 	<?php
 		}
@@ -78,7 +78,7 @@ $tfa = new TwoFactorAuth('ICT3203');
                     ?>
                         <script>
                             alert('Error Displaying Sucess Information!');
-                            window.location.href='errorPage.php'
+                            window.location.href='errorPage.php';
                         </script>
                     <?php
                     }
@@ -96,7 +96,7 @@ $tfa = new TwoFactorAuth('ICT3203');
                     ?>
                         <script>
                             alert('Error Displaying Sucess Information!');
-                            window.location.href='errorPage.php'
+                            window.location.href='errorPage.php';
                         </script>
                     <?php
                     }
@@ -159,10 +159,17 @@ $tfa = new TwoFactorAuth('ICT3203');
             } else {
                 echo '<center><img src="images/unsucess.png" align="middle" alt="Sucess Image" style="margin-top: 10%; width: 10%; height: 10%;"></center>';
                 echo '<center><h1 style="color:yellow;">Ticket has already been collected</h1></center>';
+                echo '<script>
+                window.setTimeout(function(){ history.go(-1);}, 20);
+
+            </script>';
             }
         } else {
             echo '<center><img src="images/unsucess.png" align="middle" alt="Sucess Image" style="margin-top: 10%; width: 10%; height: 10%;"></center>';
             echo '<center><h1 style="color:yellow;">Wrong OTP</h1></center>';
+            echo '<script>
+                window.setTimeout(function(){ history.go(-1);}, 20);
+            </script>';
         }
         ?>     
     </body>

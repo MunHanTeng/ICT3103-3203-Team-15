@@ -96,8 +96,8 @@ if (isset($_POST['submit'])) {
             if (!$ticketCollectQuery->execute()) {
                 ?>
                 <script>
-                    alert('Error Login!');
-                    window.location.href = 'errorPage.php'
+                   alert('Error Displaying Payment Summary!');
+                    window.location.href = 'errorPage.php';
                 </script>
                 <?php
 
@@ -124,8 +124,8 @@ if (isset($_POST['submit'])) {
                 if (!$bookingQuery->execute()) {
                     ?>
                     <script>
-                        alert('Error Login!');
-                        window.location.href = 'errorPage.php'
+                       alert('Error Displaying Payment Summary!');
+                        window.location.href = 'errorPage.php';
                     </script>
                     <?php
 
@@ -143,8 +143,8 @@ if (isset($_POST['submit'])) {
                 if (!$QRQuery->execute()) {
                     ?>
                     <script>
-                        alert('Error Login!');
-                        window.location.href = 'errorPage.php'
+                      alert('Error Displaying Payment Summary!');
+                        window.location.href = 'errorPage.php';
                     </script>
                     <?php
 
@@ -161,7 +161,7 @@ if (isset($_POST['submit'])) {
                 if (!$showInfoQuery->execute()) {
                     ?>
                     <script>
-                        alert('Error Login!');
+                       alert('Error Displaying Payment Summary!');
                         window.location.href = 'errorPage.php'
                     </script>
                     <?php
@@ -176,8 +176,8 @@ if (isset($_POST['submit'])) {
                 if (!$movieQuery->execute()) {
                     ?>
                     <script>
-                        alert('Error Login!');
-                        window.location.href = 'errorPage.php'
+                       alert('Error Displaying Payment Summary!');
+                        window.location.href = 'errorPage.php';
                     </script>
                     <?php
 

@@ -27,8 +27,8 @@
         if (!$showInfoQuery->execute()) {
             ?>
             <script>
-    alert('Error Login!');
-    window.location.href = 'errorPage.php'
+    alert('Error Displaying Ticket Information!');
+    window.location.href = 'errorPage.php';
             </script>
             <?php
         }
@@ -42,8 +42,8 @@
         if (!$movieQuery->execute()) {
             ?>
             <script>
-                alert('Error Login!');
-                window.location.href = 'errorPage.php'
+                alert('Error Displaying Ticket Information!');
+                window.location.href = 'errorPage.php';
             </script>
             <?php
         }
@@ -126,7 +126,7 @@
             </script>
             <script>
                 function TicketType() {
-                    var PaymentMode = {"Standard Price - $12.50": 12.50, "Visa Checkout- $12.00": 12, "DBS/POSB Credit & Debit - $7.50": 7.50};
+                    var PaymentMode = {"Standard Price - $12.50": 12.50, "Visa Checkout - $12.00": 12, "DBS/POSB Credit & Debit - $7.50": 7.50};
 
 
                     var x = document.getElementById("BuyTicket").value;
@@ -166,8 +166,8 @@
                                 if (!$bookQuery->execute()) {
                                     ?>
                                     <script>
-                                        alert('Error Login!');
-                                        window.location.href = 'errorPage.php'
+                                     alert('Error Displaying Ticket Information!');
+                                        window.location.href = 'errorPage.php';
                                     </script>
                                     <?php
                                 }
@@ -215,9 +215,9 @@
                             <Label style="color:white;">Select Ticket Price: </Label>
 
                             <select name="BuyTicket" id="BuyTicket" onchange="TicketType()" class="form-control">
-                                <option value="">Please Select your Payment Mode</option>
+                                <option value="" selected disabled hidden>Please Select your Payment Mode</option>
                                 <option value="Standard Price - $12.50">Standard Price - $12.50</option>
-                                <option value="Visa Checkout- $12.00">Visa Checkout- $12.00</option>
+                                <option value="Visa Checkout - $12.00">Visa Checkout- $12.00</option>
                                 <option value="DBS/POSB Credit & Debit - $7.50">DBS/POSB Credit & Debit - $7.50</option>
                             </select>
 
