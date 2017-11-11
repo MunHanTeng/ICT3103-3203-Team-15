@@ -105,7 +105,8 @@
 	unset($_SESSION['CCN']); 
 	unset($_SESSION['CCE']); 
 	unset($_SESSION['CVV2']);
-	unset($_SESSION['CCName']);  
+	unset($_SESSION['CCName']); 	
+	unset($_SESSION['payment']); 
         ?>
          <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>
