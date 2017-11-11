@@ -128,8 +128,16 @@
             </div>
             <div class="row">  
                 <?php
-                $TotAmnt = $PaymentModeValue[$PaymentMode]*count($check_list);
-                 echo '<p style="text-align:left;" >Total Amount: &nbsp<span style="font-size:1.5em;color:yellow;">S$'.$TotAmnt.'</span></p>';
+		if ($PaymentMode % 12 == 0 || $PaymentMode % 12.50 == 0 || $PaymentMode % 7.50 == 0){
+                    $TotAmnt = $PaymentMode*count($check_list);
+                    echo '<p style="text-align:left;" >Total Amount: &nbsp<span style="font-size:1.5em;color:yellow;">S$'.$TotAmnt.'</span></p>';
+ 		}
+                else{
+                    echo "<script>
+                          alert('An error has occurred. Please try again!');
+                          window.location.href = 'MainMovie.php';
+                         </script>";
+                }
                 ?>
             </div>
             <div class="row"> 
