@@ -136,7 +136,7 @@ if (isset($_POST['submit'])) {
                 $fixedvalue = 123456;
                 $qrcode = (string) ($fixedvalue . $randmd . $_SESSION['user'] . $_SESSION['show_id'] . $_SESSION['name']);                //qrcode making unencrypted
                 $hashedfile = hash("sha256", $qrcode);
-                $fileurl = '128.199.217.166/checkQRCode.php?qrCode=' . $hashedfile . '';
+                $fileurl = 'https://128.199.217.166/checkQRCode.php?qrCode=' . $hashedfile . '';
 
                 $QRQuery = $MySQLiconn->prepare("UPDATE ticketcollection SET qrValue=? WHERE collection_id=?");
                 $QRQuery->bind_param('si', $hashedfile, $id);

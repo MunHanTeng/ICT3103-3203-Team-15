@@ -97,7 +97,11 @@
                     "Standard Price - $12.50" => 12.50,
                     "Visa Checkout- $12.00" => 12,
                     "DBS/POSB Credit & Debit - $7.50" => 7.50
-                );       
+                );     
+
+	unset($_SESSION['PaymentMode']);
+	unset($_SESSION['check_list']);
+	unset($_SESSION['show_id']);  
         ?>
          <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>
