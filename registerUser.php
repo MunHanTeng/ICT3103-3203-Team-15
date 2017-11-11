@@ -159,8 +159,9 @@
             $fixedvalue = 123456;
             $qrcode = (string) ($randmd . $unric . $uname. $_POST["email"]);
             $base32 = new Base2n(5, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', FALSE, TRUE, TRUE);
-            $secret = $base32->encode($qrcode);
+            $secret = $tfa->createSecret(160);
             $code = $tfa->getCode($secret);
+
             
             //Prepared Statement For Register Insert to dummy
             $stmt = $MySQLiconn->prepare("INSERT INTO dummy_table(dummy_username, dummy_email, dummy_pass, dummy_user_role, dummy_phone, dummy_NRIC, dummy_status, dummy_otpSecret) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");

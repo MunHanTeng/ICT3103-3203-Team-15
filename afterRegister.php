@@ -42,13 +42,14 @@
             $stmt->execute();
             $result = $stmt->get_result();
             $userResult = mysqli_fetch_assoc($result);
+
             
             if ($stmt->execute())
             {
                 $id = $stmt->insert_id;
                 //$user_result = mysqli_query($MySQLiconn, "SELECT dummy_otpSecret FROM dummy_table WHERE dummy_id='$id'");
-                //$userResult = mysqli_fetch_assoc($user_result); 
-                echo 'Please scan the following QR code and click next<br><img src="' . $tfa->getQRCodeImageAsDataUri('Movie Account Authentication', $userResult['dummy_otpSecret']) . '"><br>';
+                //$userResult = mysqli_fetch_assoc($user_result);
+                echo 'Please scan the following QR code and click next<br><img src="https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' . $tfa->getQRText('Movie%20Account%20Authentication', $userResult['dummy_otpSecret']) . '"><br>';
             }
             else 
             {

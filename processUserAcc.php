@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<>
 <head>
     <title>Golden Village</title>
     <link href="css/ticketcollection.css" rel="stylesheet">
@@ -55,10 +55,10 @@
             $urole = $userResult['dummy_user_role'];
             $uphone = $userResult['dummy_phone'];
             $unric = $userResult['dummy_NRIC'];
-            $usecretKey = $userResult['dummy_otpSecret'];
+            $secret = $userResult['dummy_otpSecret'];
             $validNot = 'Validate';
-        
-            $result = ($tfa->verifyCode($usecretKey, $_POST['otpcode']) === true ? 'OK' : 'Wrong OTP');
+
+            $result = ($tfa->verifyCode($secret, $_POST['otpcode']) === true ? 'OK' : 'Wrong OTP');
             //echo $qrValue;
             //$res = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE otpSecretKey='$qrValue'");
 
@@ -66,14 +66,13 @@
                 
             // alert for testing purpose, real operation should be storing the secret into the database together with user account from session.
             //$userid = $_SESSION['user'];
-            $OTPCode = $tfa->getCode($usecretKey);
             if ($result == 'OK')
             {
                 
             
                 //For Insert
                 $stmt3 = $MySQLiconn->prepare("INSERT INTO user_list(username, user_email, password, user_role, phone, user_nric, status, otpSecretKey) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt3->bind_param('ssssssss', $uname, $uemail, $upass, $urole, $uphone, $unric, $validNot, $usecretKey);
+                $stmt3->bind_param('ssssssss', $uname, $uemail, $upass, $urole, $uphone, $unric, $validNot, $secret);
                 
                 if ($stmt3->execute())
                 {
@@ -102,7 +101,8 @@
                     
                     <script>
                     alert('Sucessfully registered!');
-                    //window.location.href='errorPage.php'
+                    window.setTimeout(function(){window.location.href='index.php';}, 5);
+
                 </script>
                     
                     <?php
@@ -135,6 +135,13 @@
         {
             echo '<center><img src="images/unsucess.png" align="middle" alt="Sucess Image" style="margin-top: 10%; width: 10%; height: 10%;"></center>';
             echo '<center><h1 style="color:yellow;">Wrong OTP</h1></center>';
+            sleep(3);
+            ?>
+            <script>
+                window.setTimeout(function(){window.location.href='afterRegister.php';}, 5);
+
+            </script>
+        <?php
         }
     
     ?>           

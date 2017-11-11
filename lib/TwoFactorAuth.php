@@ -169,10 +169,10 @@ class TwoFactorAuth
     {
         return 'otpauth://totp/' . rawurlencode($label)
             . '?secret=' . rawurlencode($secret)
-            . '&issuer=' . rawurlencode($this->issuer)
-            . '&period=' . intval($this->period)
-            . '&algorithm=' . rawurlencode(strtoupper($this->algorithm))
-            . '&digits=' . intval($this->digits);
+            . '%26issuer=' . rawurlencode($this->issuer)
+            . '%26period=' . intval($this->period)
+            . '%26algorithm=' . rawurlencode(strtoupper($this->algorithm))
+            . '%26digits=' . intval($this->digits);
     }
 
     private function base32Decode($value)
