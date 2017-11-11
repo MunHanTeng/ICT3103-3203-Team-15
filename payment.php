@@ -22,9 +22,7 @@
        
         $showInfoID = $_SESSION['show_id'];
         ?>
-        <script>
-               alert(<?php echo $PaymentMode; ?>);
-            </script>
+        
         <?php
         // RETRIEVE SHOW INFO
         $showInfoQuery = $MySQLiconn->prepare("SELECT showInfo_date, showInfo_time, cinema_id, movie_id FROM showinfo WHERE showInfo_id = ?");
