@@ -12,19 +12,27 @@
 ?>
 
 <?php
+    
+    function trim_input($data) {
+      $data = trim($data);
+      $data = stripslashes($data);
+      $data = htmlspecialchars($data);
+      return $data;
+    }
+    
     $nameErr = $emailErr = $passwordErr = $confirmPwdErr = $phoneNoErr = $NRIC = "";
     $regularExpNRIC = "/^[STFG]\d{7}[A-Z]$/";
     if (isset($_POST['submit'])) 
     {
         $okay = True;
-        if (empty($_POST["name"])) 
+        if (empty(trim_input($_POST["name"]))) 
         {
             $nameErr = "Name is required";
             $okay = False;
         }
-        $email = $_POST["email"];
+        $email = trim_input($_POST["email"]);
     
-        if (empty($_POST["email"])) 
+        if (empty(trim_input($_POST["email"]))) 
         {
             $emailErr = "Email is required";
             $okay = False;
@@ -36,59 +44,58 @@
             $okay = False;
         }
         
-        if (empty($_POST["pwd"])) 
+        if (empty(trim_input($_POST["pwd"]))) 
         {
             $passwordErr = "Password is required";
             $okay = False;
         }
         
-        else if (strlen($_POST["pwd"]) < 8) 
+        else if (strlen(trim_input($_POST["pwd"])) < 8) 
         {
             $passwordErr = "Password must be longer than 8 characters";
             $okay = False;
         }
     
-        if (empty($_POST["confirmpwd"])) 
+        if (empty(trim_input($_POST["confirmpwd"]))) 
         {
             $confirmPwdErr = "Confirm Password is required";
             $okay = False;
         }
-        else if ($_POST["confirmpwd"] != $_POST["pwd"]) 
+        else if (trim_input($_POST["confirmpwd"]) != trim_input($_POST["pwd"])) 
         {
             $confirmPwdErr = "Passwords must match";
             $okay = False;
         }
-        if (empty($_POST["phone"])) 
+        if (empty(trim_input($_POST["phone"]))) 
         {
             $phoneNoErr = "Phone is required";
             $okay = False;
         }
-        else if (!is_numeric($_POST["phone"])) 
+        else if (!is_numeric(trim_input($_POST["phone"]))) 
         {
             $phoneNoErr = "Only numbers are allowed";
             $okay = False;
         } 
-        else if (strlen($_POST["phone"]) != 8) 
+        else if (strlen(trim_input($_POST["phone"])) != 8) 
         {
             $phoneNoErr = "The number need to be 8 digits";
             $okay = False;
         }
         
-        if (empty($_POST["nric"])) 
+        if (empty(trim_input($_POST["nric"]))) 
         {
             $NRIC = "NRIC is required";
             $okay = False;
         }
     
-        if (!preg_match($regularExpNRIC, $_POST["nric"]))
+        if (!preg_match($regularExpNRIC, trim_input($_POST["nric"])))
         {
             $NRIC = "NRIC format incorrect";
             $okay = False;
         }
     
         //Check Duplicate EMAIL
-        $email = mysqli_real_escape_string($MySQLiconn, $_POST['email']);
-        //$result = mysqli_query($MySQLiconn, "SELECT COUNT(user_email) As RegisteredEmail FROM user_list where user_email='".$email."'");
+        $email = mysqli_real_escape_string($MySQLiconn, trim_input($_POST['email']));
         $stmtCount = $MySQLiconn->prepare("SELECT COUNT(user_email) As RegisteredEmail FROM user_list where user_email = ?");
         $stmtCount->bind_param('s', $email);
         if (!$stmtCount->execute())
@@ -103,8 +110,6 @@
         $result = $stmtCount->get_result();
         $row = mysqli_fetch_assoc($result);
 
-        
-        //$row = mysqli_fetch_array($result);
         if ($row['RegisteredEmail'] != 0)
         {
             $emailErr = "Email Already Registered";
@@ -116,8 +121,7 @@
         
         
         //Check Duplicate NRIC
-        $nric = mysqli_real_escape_string($MySQLiconn, $_POST['nric']);
-        //$result = mysqli_query($MySQLiconn, "SELECT COUNT(user_email) As RegisteredEmail FROM user_list where user_email='".$email."'");
+        $nric = mysqli_real_escape_string($MySQLiconn, trim_input($_POST['nric']));    
         $stmtCount = $MySQLiconn->prepare("SELECT COUNT(user_nric) As RegisteredNRIC FROM user_list where user_nric = ?");
         $stmtCount->bind_param('s', $nric);
         if (!$stmtCount->execute())
@@ -132,7 +136,6 @@
         $result = $stmtCount->get_result();
         $row = mysqli_fetch_assoc($result);
         
-        //$row = mysqli_fetch_array($result);
         if ($row['RegisteredNRIC'] != 0)
         {
             $NRIC = "NRIC Already Registered";
@@ -142,27 +145,23 @@
         $stmtCount->free_result();
         $stmtCount->close();
         
-    
-        //if (mysqli_query("SELECT COUNT(* "))
         if ($okay) 
         {
-            $uname = mysqli_real_escape_string($MySQLiconn, $_POST['name']); 
-            $uphone = mysqli_real_escape_string($MySQLiconn, $_POST['phone']); 
-            $unric = mysqli_real_escape_string($MySQLiconn, $_POST['nric']);
-            $upass = password_hash($_POST['pwd'], PASSWORD_DEFAULT);
+            $uname = mysqli_real_escape_string($MySQLiconn, trim_input($_POST['name'])); 
+            $uphone = mysqli_real_escape_string($MySQLiconn, trim_input($_POST['phone'])); 
+            $unric = mysqli_real_escape_string($MySQLiconn, trim_input($_POST['nric']));
+            $upass = password_hash(trim_input($_POST['pwd']), PASSWORD_DEFAULT);
             $accType = 'User';
             $validatedNot = 'Not Validated';
-            //$hash = md5(rand(0,1000));
         
             //QR Code
             $randmd = md5(uniqid(rand(), true));
             $fixedvalue = 123456;
-            $qrcode = (string) ($randmd . $unric . $uname. $_POST["email"]);
+            $qrcode = (string) ($randmd . $unric . $uname. trim_input($_POST["email"]));
             $base32 = new Base2n(5, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', FALSE, TRUE, TRUE);
             $secret = $tfa->createSecret(160);
             $code = $tfa->getCode($secret);
-
-            
+  
             //Prepared Statement For Register Insert to dummy
             $stmt = $MySQLiconn->prepare("INSERT INTO dummy_table(dummy_username, dummy_email, dummy_pass, dummy_user_role, dummy_phone, dummy_NRIC, dummy_status, dummy_otpSecret) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->bind_param('ssssssss', $uname, $email, $upass, $accType, $uphone, $unric, $validatedNot, $secret);
@@ -201,13 +200,11 @@
     }
     
     ?>
-            
-            <!-- if (mysqli_query($MySQLiconn, "INSERT INTO dummy_table(dummy_username,dummy_email,dummy_pass,dummy_user_role,dummy_phone,dummy_NRIC, dummy_status, dummy_otpSecret) VALUES('$uname','$email','$upass','User', '$uphone','$unric', 'Not Validated', '$secret')")) -->
-
+      
 <!doctype html>
 <html>
     <head>
-        <title>Golden Village</title>
+       <title>Golden Village</title>
         <link href="css/ticketcollection.css" rel="stylesheet">
         <link href="css/bootstrap.min.css" rel="stylesheet">
 
@@ -295,105 +292,5 @@
     <!-- jQuery easing plugin --> 
     <script src="js/jquery.easing.min.js" type="text/javascript"></script> 
    
-    <script>
-        $(function() 
-        {
-            //jQuery time
-            var current_fs, next_fs, previous_fs; //fieldsets
-            var left, opacity, scale; //fieldset properties which we will animate
-            var animating; //flag to prevent quick multi-click glitches
-
-            $(".next").click(function()
-            {
-                if(animating) return false;
-                animating = true;
-	
-                current_fs = $(this).parent();
-                next_fs = $(this).parent().next();
-	
-                //activate next step on progressbar using the index of next_fs
-                $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-	
-                //show the next fieldset
-                next_fs.show(); 
-                //hide the current fieldset with style
-                current_fs.animate({opacity: 0}, 
-                {
-                    step: function(now, mx) 
-                    {
-			//as the opacity of current_fs reduces to 0 - stored in "now"
-			//1. scale current_fs down to 80%
-			scale = 1 - (1 - now) * 0.2;
-			//2. bring next_fs from the right(50%)
-			left = (now * 50)+"%";
-			//3. increase opacity of next_fs to 1 as it moves in
-			opacity = 1 - now;
-			current_fs.css({'transform': 'scale('+scale+')'});
-			next_fs.css({'left': left, 'opacity': opacity});
-                    }, 
-                    duration: 800, 
-                    complete: function()
-                    {
-			current_fs.hide();
-			animating = false;
-                    }, 
-                    //this comes from the custom easing plugin
-                    easing: 'easeInOutBack'
-                });
-            });
-
-            $(".previous").click(function()
-            {
-                if(animating) return false;
-                animating = true;
-	
-                current_fs = $(this).parent();
-                previous_fs = $(this).parent().prev();
-	
-                //de-activate current step on progressbar
-                $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
-	
-                //show the previous fieldset
-                previous_fs.show(); 
-                //hide the current fieldset with style
-                current_fs.animate({opacity: 0}, 
-                {
-                    step: function(now, mx) 
-                    {
-			//as the opacity of current_fs reduces to 0 - stored in "now"
-			//1. scale previous_fs from 80% to 100%
-			scale = 0.8 + (1 - now) * 0.2;
-			//2. take current_fs to the right(50%) - from 0%
-			left = ((1-now) * 50)+"%";
-			//3. increase opacity of previous_fs to 1 as it moves in
-			opacity = 1 - now;
-			current_fs.css({'left': left});
-			previous_fs.css({'transform': 'scale('+scale+')', 'opacity': opacity});
-                    }, 
-                    duration: 800, 
-                    complete: function()
-                    {
-			current_fs.hide();
-			animating = false;
-                    }, 
-                    //this comes from the custom easing plugin
-                    easing: 'easeInOutBack'
-                });
-            });
-        });
-    </script>
-    <script type="text/javascript">
-
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-36251023-1']);
-        _gaq.push(['_setDomainName', 'jqueryscript.net']);
-        _gaq.push(['_trackPageview']);
-
-        (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();
-
-    </script>
+    <script src="js/otpScript.js" type="text/javascript"></script> 
 </html>

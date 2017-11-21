@@ -5,12 +5,7 @@
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
         <link href="images/gv32x32.ico" rel="shortcut icon" />
-        <script type= "text/javascript">
-            function redirectMoviePage(movId){
-                document.cookie = "movieID =" + movId;
-                window.location = "movie.php";
-            }
-        </script>
+        <script src="js/override.js" type="text/javascript"></script> 
     </head>
     <body>
         <script src="js/jquery.min.js"></script>
@@ -19,12 +14,9 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
-        //$resultCarousel = mysqli_query($MySQLiconn, "SELECT * FROM `movie` WHERE movie_carousel IS NOT NULL");
+
         $resultMovie = mysqli_query($MySQLiconn, "select movie_id, movie_poster, movie_name, movie_type, movie_runningTime  from movie");
         ?>
-        <!-- <form id="myform" action="movie.php" method="POST">
-            <input type="hidden" id="moID" name="moID">
-        </form> -->
         <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>
             <li class="active">Movies</li>
@@ -41,11 +33,11 @@
                 }
                 echo '<div class="col-md-4 col-sm-4">';
                 echo '<div class="item">';
-                echo '<a href="javascript:redirectMoviePage('. $row['movie_id'] .')"><img class="smallposter" src="data:image/jpeg;base64,' . base64_encode($row['movie_poster']) . '"></a>';
+                echo '<a href="javascript:redirectMoviePage(' . $row['movie_id'] . ')"><img class="smallposter" src="data:image/jpeg;base64,' . base64_encode($row['movie_poster']) . '"></a>';
                 echo '<p>' . $row["movie_name"] . '</p>';
                 echo '<p class="Rating">' . $row["movie_type"] . '</p>';
                 echo '<p>' . $row["movie_runningTime"] . '</p>';
-                echo '<a class="btn btn-primary" href="javascript:redirectMoviePage('. $row['movie_id'] .')">Buy Tickets</a>';
+                echo '<a class="btn btn-primary" href="javascript:redirectMoviePage(' . $row['movie_id'] . ')">Buy Tickets</a>';
                 echo '</div></div>';
                 if ($position == 2) {
                     echo '</div>';

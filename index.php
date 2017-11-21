@@ -5,12 +5,7 @@
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
         <link href="images/gv32x32.ico" rel="shortcut icon" />
-        <script type= "text/javascript">
-            function redirectMoviePage(movId){
-                document.cookie = "movieID =" + movId;
-                window.location = "movie.php";
-            }
-        </script>
+        <script src="js/override.js" type="text/javascript"></script> 
 
     </head>
     <body>

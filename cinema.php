@@ -5,12 +5,7 @@
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
         <link href="images/gv32x32.ico" rel="shortcut icon" />
-        <script type= "text/javascript">
-            function redirectPaymentPage(showInfoid){
-                document.cookie = "showinfoID =" + showInfoid;
-                window.location = "bookTicket.php";
-            }
-        </script>
+        <script src="js/override.js" type="text/javascript"></script> 
     </head>
     <body>
         <script src="js/jquery.min.js"></script>
@@ -65,7 +60,6 @@
                     </div>
                     <div class="col-xs-9">
                         <p><?php echo $cinema['cinema_address'];?></p>
-                        <!--https://support.google.com/maps/answer/3544418?hl=en Make sure you set the embed code to small-->
                         <?php echo $cinema['cinema_googleMap'];?>
                     </div>
                 </div>

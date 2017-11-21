@@ -11,6 +11,7 @@
         <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/scripts.js"></script>
+        <script src="js/bookTicket.js" type="text/javascript"></script> 
 
         <?php
         include 'header.inc';
@@ -27,8 +28,8 @@
         if (!$showInfoQuery->execute()) {
             ?>
             <script>
-    alert('Error Displaying Ticket Information!');
-    window.location.href = 'errorPage.php';
+                alert('Error Displaying Ticket Information!');
+                window.location.href = 'errorPage.php';
             </script>
             <?php
         }
@@ -51,23 +52,6 @@
 
         $movie = mysqli_fetch_assoc($movieResult);
         ?>
-        <script>
-            window.onload = function () {
-                document.getElementById("StartBooking").style.display = 'none';
-                document.getElementById("SeatSelection").style.display = 'none';
-                
-                function disableBack() {
-                        window.history.forward()
-                    }
-
-                    window.onload = disableBack();
-                    window.onpageshow = function (evt) {
-                        if (evt.persisted)
-                            disableBack()
-                    }
-                
-            }
-        </script>
         <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>
             <li><a href="MainMovie.php" class="activeLink">Movies</a> <span class="divider"></span></li>
@@ -88,69 +72,11 @@
                         $day = date('l', $timestamp);
                         echo "<center><h5>You have selected movie : </h5><h4>" . $movie['movie_name'] . "</h4>";
                         echo "<h5> on </h5><h4>" . $day . "  " . $showinfo['showInfo_date'] . "  " . $showinfo['showInfo_time'] . "</h4></center>";
-
-                        //echo "<hr>";
                         ?>
                         <hr>
                     </div>
                 </div>
             </div>
-            <script>
-                function updateAmount(list) {
-                    var count;
-                    var countValue;
-                    if (list.checked)
-                    {
-                        countValue = document.getElementById("demo").innerHTML;
-                        if (countValue === '')
-                        {
-                            count = 0;
-                        }
-                        else
-                        {
-                            count = document.getElementById("demo").innerHTML;
-                        }
-                        count++
-                        count = document.getElementById("demo").innerHTML = count;
-                    }
-                    else {
-                        count = document.getElementById("demo").innerHTML;
-
-                        count--
-                        document.getElementById("demo").innerHTML = count;
-                    }
-                    if (count != 0) {
-                        document.getElementById("SeatSelection").style.display = 'block';
-                    }
-                }
-            </script>
-            <script>
-                function TicketType() {
-                    var PaymentMode = {"Standard Price - $12.50": 12.50, "Visa Checkout - $12.00": 12, "DBS/POSB Credit & Debit - $7.50": 7.50};
-
-
-                    var x = document.getElementById("BuyTicket").value;
-                    var count = document.getElementById("demo").innerHTML.valueOf();
-                    var TicketPrice = PaymentMode[x] * count;
-                    //alert("Total Price: " + TicketPrice);
-                    document.getElementById("TicketType").innerHTML = x;
-                    document.getElementById("TicketType").innerHTML.style = 'color:White';
-
-                    document.getElementById("TicketPrice").innerHTML = "$" + PaymentMode[x];
-                    document.getElementById("TicketPrice").innerHTML.style = 'White';
-
-                    document.getElementById("Qty").innerHTML = count;
-                    document.getElementById("Qty").innerHTML.style = 'White';
-
-                    document.getElementById("TotalAmount").innerHTML = "$" + TicketPrice;
-                    document.getElementById("TotalAmount").innerHTML.style = 'White';
-
-                    if (x != "" && count != 0) {
-                        document.getElementById("StartBooking").style.display = 'block';
-
-                    }
-                }
-            </script>
             <div class="row">
                 <div class="col-md-8 text-center">
                     <div class="container-fluid" style="width:475px;height:235px">
@@ -166,7 +92,7 @@
                                 if (!$bookQuery->execute()) {
                                     ?>
                                     <script>
-                                     alert('Error Displaying Ticket Information!');
+                                        alert('Error Displaying Ticket Information!');
                                         window.location.href = 'errorPage.php';
                                     </script>
                                     <?php
@@ -177,12 +103,9 @@
                                 if (count($bookResult) > 0) {
 
                                     while ($seatNo = mysqli_fetch_assoc($bookResult)) {
-                                        //echo $seatNo['seat_no'];
-                                        //echo '<br>';
                                         array_push($bookedseats, $seatNo['seat_no']);
                                     }
                                 }
-
 
                                 echo '<center><h5>screen</h5></center>';
                                 $checked = 0;
@@ -201,7 +124,6 @@
                                     }
                                     echo '<br>';
                                 }
-                                //echo 'You have selected '. $var.' number of buttons!';
                                 ?>
                             </div>
                     </div>
@@ -247,7 +169,5 @@
                     </div>
                 </div> 
             </div>
-            <script>
-            </script>
     </body>
 </html>

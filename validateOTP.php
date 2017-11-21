@@ -13,26 +13,31 @@ $tfa = new TwoFactorAuth('ICT3203');
 // Declare some variable for error message
 $emailErr = null;
 $passwordErr = null;
-//echo '<script type="text/javascript">alert ("' . $_POST['fname'] . '")</script>';
+
+
+function trim_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
+
 //Check if submit button is being pressed a not
 if (isset($_POST["submit"])) {
     $okay = True;
-    if (empty($_POST["email"])) {
+    if (empty(trim_input($_POST["email"]))) {
         $emailErr = "Email is required";
         $okay = False;
     }
-    if (empty($_POST["pwd"])) {
+    if (empty(trim_input($_POST["pwd"]))) {
         $passwordErr = "Password is required";
         $okay = False;
     }
     if ($okay) {
-        //echo '<script type="text/javascript">alert("hello!");</script>';
-        $username = mysqli_real_escape_string($MySQLiconn, $_POST['email']);
-        $upass = mysqli_real_escape_string($MySQLiconn, $_POST['pwd']);
+        $username = mysqli_real_escape_string($MySQLiconn, trim_input($_POST['email']));
+        $upass = mysqli_real_escape_string($MySQLiconn, trim_input($_POST['pwd']));
 
         //Delete rows older than 5 minutes
-//        $res = mysqli_query($MySQLiconn, "DELETE FROM failed_logins WHERE User='$username' and Timestamp<= (now() - interval 15 minute)");
-
         $stmtDelete = $MySQLiconn->prepare("DELETE FROM failed_logins WHERE User = ? and Timestamp <= (now() - interval 15 minute)");
         $stmtDelete->bind_param('i', $username);
         if (!$stmtDelete->execute()) {
@@ -57,8 +62,6 @@ if (isset($_POST["submit"])) {
         $result = $stmtCount->get_result();
         $row = mysqli_fetch_assoc($result);
 
-//       res = mysqli_query($MySQLiconn, "SELECT COUNT(User) as userFails FROM failed_logins WHERE User='$username'");
-//       $row = mysqli_fetch_array($res);
         $userFails = $row['userFails'];
         if ($userFails >= 5) {
             echo "<script>";
@@ -66,10 +69,7 @@ if (isset($_POST["submit"])) {
             echo 'window.location = "index.php";';
             echo '</script>';
         }
-        //$data['userFails']
         else {
-            //$res = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE user_email='$username' and user_role='User'");
-            //$row = mysqli_fetch_array($res);
             $accType = 'User';
 
             $resSelect = $MySQLiconn->prepare("SELECT status, password, user_id FROM user_list WHERE user_email = ? and user_role = ?");
@@ -93,7 +93,6 @@ if (isset($_POST["submit"])) {
             } else if ((password_verify($upass, $row['password']))) {
                 $_SESSION['user'] = $row['user_id'];
                 //If login successful, delete from fail logins
-//                $res = mysqli_query($MySQLiconn, "DELETE FROM failed_logins WHERE User='$username'");
 
                 $stmtDeleteFL = $MySQLiconn->prepare("DELETE FROM failed_logins WHERE User = ?");
                 $stmtDeleteFL->bind_param('i', $username);
@@ -111,7 +110,6 @@ if (isset($_POST["submit"])) {
                 echo '</script>';
             } else {
                 //If login not successful, create new row in fail logins
-//                $existsQuery = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE user_email='$username'");
                 $resExists = $MySQLiconn->prepare("SELECT user_id FROM user_list WHERE user_email = ?");
                 $resExists->bind_param('s', $username);
                 if (!$resExists->execute()) {
@@ -130,7 +128,7 @@ if (isset($_POST["submit"])) {
 
                     //For Insert
                     $stmt3 = $MySQLiconn->prepare("INSERT INTO failed_logins(User,Timestamp) VALUES(?, now())");
-                    $stmt3->bind_param('ssssssss', $username);
+                    $stmt3->bind_param('s', $username);
 
                     if (!$stmt3->execute()) {
                         ?>
@@ -143,7 +141,6 @@ if (isset($_POST["submit"])) {
 
                     $id = $stmt3->insert_id;
 
-//                    $res = mysqli_query($MySQLiconn, "INSERT INTO failed_logins(User,Timestamp) VALUES('$username',now())");
                     echo "<script>";
                     echo "alert('Incorrect Username or Password, $remainingTry attempts left');";
                     echo 'window.location = "index.php";';
@@ -175,9 +172,8 @@ if (isset($_POST['validate'])) {
     }
 
     $userResult = $userQuery->get_result();
-//    $res = mysqli_query($MySQLiconn, "SELECT * FROM user_list WHERE user_id='$userid'");
     $userRow = mysqli_fetch_array($userResult);
-    $otpResult = ($tfa->verifyCode($userRow['otpSecretKey'], $_POST['otpcode']) === true ? 'OK' : 'Wrong OTP');
+    $otpResult = ($tfa->verifyCode($userRow['otpSecretKey'], trim_input($_POST['otpcode'])) === true ? 'OK' : 'Wrong OTP');
     // alert for testing purpose, real operation should be storing the secret into the database together with user account from session.
     if ($otpResult == 'OK') {
         echo '<script language="javascript">';
@@ -209,7 +205,6 @@ if (isset($_POST['validate'])) {
         include 'header.inc';
         ?>
 
-
         <div id="myModal" class="modal fade">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -236,9 +231,5 @@ if (isset($_POST['validate'])) {
 
 
     </body>
-    <script type="text/javascript">
-            $(document).ready(function () {
-                $("#myModal").modal('show');
-            });
-    </script>
+    <script src="js/validateOTPModal.js" type="text/javascript"></script> 
 </html>

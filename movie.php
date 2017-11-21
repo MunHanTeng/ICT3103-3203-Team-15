@@ -4,30 +4,7 @@
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
         <link href="images/gv32x32.ico" rel="shortcut icon" />
-        <script type= "text/javascript">
-            function redirectPaymentPage(showInfoid) {
-                document.cookie = "showinfoID =" + showInfoid;
-                window.location = "bookTicket.php";
-            }
-            function backButtonOverride()
-            {
-                // Work around a Safari bug
-                // that sometimes produces a blank page
-                setTimeout("backButtonOverrideBody()", 1);
-            }
-
-            function backButtonOverrideBody()
-            {
-                // Works if we backed up to get here
-                try {
-                    history.forward();
-                } catch (e) 
-                {
-                // OK to ignore
-                }
-                setTimeout("backButtonOverrideBody()", 500);
-            }
-        </script>
+        <script src="js/override.js" type="text/javascript"></script> 
     </head>
     <body onLoad="backButtonOverride()">
         <script src="js/jquery.min.js"></script>
@@ -220,7 +197,7 @@
 
                                 while ($time = mysqli_fetch_assoc($resultTime)) {
                                     echo '<a href="javascript:redirectPaymentPage(' . $time['showInfo_id'] . ')" class="btn btn-primary">' . $time['showInfo_time'] . '</a>';
-                                    //echo '<a href="bookTicket.php?q='.$time['showInfo_id'].'" class="btn btn-primary">'.$time['showInfo_time'].'</a>';
+                                   
                                 }
                                 echo '</td></tr>';
                             }

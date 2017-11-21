@@ -5,12 +5,8 @@
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
         <link href="images/gv32x32.ico" rel="shortcut icon" />
-        <script type= "text/javascript">
-            function redirectCinemaPage(cinemaid){
-                document.cookie = "cinemaid =" + cinemaid;
-                window.location = "cinema.php";
-            }
-        </script>
+
+        <script src="js/override.js" type="text/javascript"></script> 
     </head>
     <body>
         <form id="myform" action="cinema.php" method="POST">
@@ -74,46 +70,46 @@
             <h4>To view cinema information and showtimes, please click on the cinema below.</h4>
 
 
-                <?php
-                $position = 0;
-                while ($row = mysqli_fetch_assoc($resultCinema)) {
+            <?php
+            $position = 0;
+            while ($row = mysqli_fetch_assoc($resultCinema)) {
 
-                    if ($position == 0) {
-                        echo '<div class="row row-eq-height">';
+                if ($position == 0) {
+                    echo '<div class="row row-eq-height">';
+                }
+                echo '<div class="col-md-4 col-sm-4">';
+                echo '<div class="mainCinemaBG"><h4>' . $row['cinema_name'] . '</h4></div>';
+                echo '<div class="item">';
+                echo '<a href="javascript:redirectCinemaPage(' . $row['cinema_id'] . ')"><img class="cinema-poster" src="data:image/jpeg;base64,' . base64_encode($row['cinema_image']) . '"></a>';
+
+                $address = explode(",", $row['cinema_address']);
+                echo '<br><br><p>';
+                for ($i = 0; $i < count($address); $i++) {
+                    if ($i != 0) {
+                        echo '<br>';
                     }
-                    echo '<div class="col-md-4 col-sm-4">';
-                    echo '<div class="mainCinemaBG"><h4>'.$row['cinema_name'].'</h4></div>';
-                    echo '<div class="item">';
-                    echo '<a href="javascript:redirectCinemaPage('. $row['cinema_id'] .')"><img class="cinema-poster" src="data:image/jpeg;base64,' . base64_encode($row['cinema_image']) . '"></a>';
-                    //echo '<a href="cinema.php?q=' . $row['cinema_id'] . '"><img class="cinema-poster" src="data:image/jpeg;base64,' . base64_encode($row['cinema_image']) . '"></a>';
-                    $address = explode(",", $row['cinema_address']);
-                    echo '<br><br><p>';
-                    for ($i = 0; $i < count($address); $i++) {
-                        if ($i != 0) {
-                            echo '<br>';
-                        }
-                        echo $address[$i];
-                    }
-                    if (count($address) < 4) {
-                        for($i = -1; $i < (4 - count($address)); $i++) {
-                            echo '<br>';
-                        }
-                    }
-                    echo '</p>';
-                    echo '<a href="javascript:redirectCinemaPage('. $row['cinema_id'] .')" class="btn btn-primary">Buy Tickets</a>';
-                    //echo '<a class="btn btn-primary" href="cinema.php?q=' . $row['cinema_id'] . '">Buy Tickets</a>';
-                    echo '</div></div>';
-                    if ($position == 2) {
-                        echo '</div>';
-                        $position = 0;
-                    } else {
-                        $position++;
+                    echo $address[$i];
+                }
+                if (count($address) < 4) {
+                    for ($i = -1; $i < (4 - count($address)); $i++) {
+                        echo '<br>';
                     }
                 }
-                if ($position != 2) {
+                echo '</p>';
+                echo '<a href="javascript:redirectCinemaPage(' . $row['cinema_id'] . ')" class="btn btn-primary">Buy Tickets</a>';
+
+                echo '</div></div>';
+                if ($position == 2) {
                     echo '</div>';
+                    $position = 0;
+                } else {
+                    $position++;
                 }
-                ?>
+            }
+            if ($position != 2) {
+                echo '</div>';
+            }
+            ?>
 
         </div>
         <?php include 'footer.inc'; ?>

@@ -11,11 +11,16 @@
         header("Location: index.php");
     }
 
-    
+    function trim_input($data) {
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        return $data;
+    }
+
     if(isset($_POST['submit']))
     {
-        $qrValue = mysqli_real_escape_string($MySQLiconn, $_GET['qrCode']);
-        //$res = mysqli_query($MySQLiconn, "SELECT * FROM ticketcollection WHERE qrValue='$qrValue'");
+        $qrValue = mysqli_real_escape_string($MySQLiconn, trim_input($_GET['qrCode']));
         
         //Count num of column where qrvalue = to db qr
             $stmt = $MySQLiconn->prepare("SELECT booking_time FROM ticketcollection WHERE qrValue = ?");
@@ -48,13 +53,10 @@
 		}
             $result2 = $stmt2->get_result();
             $userResult = mysqli_fetch_assoc($result2);
-            
-           //$user_result = mysqli_query($MySQLiconn, "SELECT * FROM ticketcollection AS TC INNER JOIN user_list AS UL ON TC.user_id = UL.user_id WHERE TC.qrValue = '$qrValue' ");
-           //$userResult = mysqli_fetch_assoc($user_result); 
         }
         
         //Check OTP Code
-         $result = ($tfa->verifyCode($userResult['otpSecretKey'], $_POST['otpcode']) === true ? 'OK' : 'Wrong OTP');
+         $result = ($tfa->verifyCode($userResult['otpSecretKey'], trim_input($_POST['otpcode'])) === true ? 'OK' : 'Wrong OTP');
         // alert for testing purpose, real operation should be storing the secret into the database together with user account from session.
         if ($result == 'OK')
         {
@@ -68,12 +70,8 @@
         echo "<script>";
         echo 'window.location = "OTPPage.php";';
         echo '</script>';
-        
-        //echo $userResult['otpSecretKey'];
                         
-    }
-    
-    
+    }    
 ?>
 <!doctype html>
 <html>
@@ -83,11 +81,7 @@
     <link href="css/style.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function(){
-            $("#myModal").modal('show');
-        });
-    </script>
+    <script src="js/validateOTPModal.js" type="text/javascript"></script> 
 </head>
 <body>
 

@@ -4,20 +4,25 @@
         <title>Golden Village</title>
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
-        <link href="images/gv32x32.ico" rel="shortcut icon" />
+<link href="images/gv32x32.ico" rel="shortcut icon" />
     </head>
     
     <body>
-        <script src="js/jquery.min.js"></script>
+       <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/scripts.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
         if (isset($_SESSION['payment']) != "") 
         {
             header("Location: index.php");
+        }
+        if (!isset($_SESSION['name'])) {
+            echo '<script language="javascript">';
+            echo 'alert("Please Login in order to be able to buy ticket sucessfully"); location.href="index.php"';
+            echo '</script>';
         }
         //For tfa 
         require_once 'loader.php';
@@ -33,9 +38,6 @@
           $Email = $_SESSION['email'];  
         ?>
          <?php
-            //$result = mysqli_query($MySQLiconn, "SELECT * FROM `showinfo` WHERE showInfo_id ='" . $showInfoID . "'");
-            //$showinfo = mysqli_fetch_assoc($result);
-
             //First Prepared Statement
             $stmt = $MySQLiconn->prepare("SELECT movie_id, cinema_id, showInfo_date, showInfo_time FROM showinfo WHERE showInfo_id = ?");
             $stmt->bind_param('s', $showInfoID);
@@ -84,15 +86,7 @@
 		}
             $result3 = $stmt3->get_result();
             $cinema = mysqli_fetch_assoc($result3);
-         
-            
-            
-            //$result2 = mysqli_query($MySQLiconn, "SELECT * FROM `movie` WHERE movie_id ='" . $showinfo['movie_id'] . "'");
-            //$result3 = mysqli_query($MySQLiconn, "SELECT * FROM `cinema` WHERE cinema_id ='" . $showinfo['cinema_id'] . "'");
-            //$movie = mysqli_fetch_assoc($result2);
-            //$cinema = mysqli_fetch_assoc($result3);
-            
-            //$PaymentMode = {"Standard Price - $12.50":12.50, "Visa Checkout- $12.00":12, "DBS/POSB Credit & Debit - $7.50":7.50};
+           
             $PaymentModeValue = array(
                     "Standard Price - $12.50" => 12.50,
                     "Visa Checkout- $12.00" => 12,

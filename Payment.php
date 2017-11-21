@@ -5,51 +5,36 @@
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
         <link href="images/gv32x32.ico" rel="shortcut icon" />
-        
-        <script>
-            function backButtonOverride()
-            {
-                // Work around a Safari bug
-                // that sometimes produces a blank page
-                setTimeout("backButtonOverrideBody()", 1);
-            }
+        <script src="js/override.js" type="text/javascript"></script> 
 
-            function backButtonOverrideBody()
-            {
-                // Works if we backed up to get here
-                try {
-                    history.forward();
-                } catch (e) {
-                // OK to ignore
-                }
-                // Every quarter-second, try again. The only
-                // guaranteed method for Opera, Firefox,
-                // and Safari, which don't always call
-                // onLoad but *do* resume any timers when
-                // returning to a page
-                setTimeout("backButtonOverrideBody()", 500);
-            }
-        </script>
-        
     </head>
     <body onLoad="backButtonOverride()">
         <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/scripts.js"></script>
-        
+        <script src="js/paymentValidate.js" type="text/javascript"></script> 
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
-        //if(isset($_POST['submit'])){
-        $check_list = $_SESSION['check_list'];
-        // $_SESSION['check_list']=$check_list;
 
+        if (!isset($_SESSION['name'])) {
+            echo '<script language="javascript">';
+            echo 'alert("Please Login in order to be able to buy ticket sucessfully"); location.href="index.php"';
+            echo '</script>';
+        }
+
+        $check_list = $_SESSION['check_list'];
         $PaymentMode = $_SESSION['PaymentMode'];
-        //$_SESSION['PaymentMode']=$PaymentMode;
-       
         $showInfoID = $_SESSION['show_id'];
+
+        function trim_input($data) {
+            $data = trim($data);
+            $data = stripslashes($data);
+            $data = htmlspecialchars($data);
+            return $data;
+        }
         ?>
-        
+
         <?php
         // RETRIEVE SHOW INFO
         $showInfoQuery = $MySQLiconn->prepare("SELECT showInfo_date, showInfo_time, cinema_id, movie_id FROM showinfo WHERE showInfo_id = ?");
@@ -57,8 +42,8 @@
         if (!$showInfoQuery->execute()) {
             ?>
             <script>
-                alert('Error Displaying Payment Form!');
-                window.location.href = 'errorPage.php';
+            alert('Error Displaying Payment Form!');
+            window.location.href = 'errorPage.php';
             </script>
             <?php
         }
@@ -87,7 +72,7 @@
         if (!$cinemaQuery->execute()) {
             ?>
             <script>
-              alert('Error Displaying Payment Form!');
+                alert('Error Displaying Payment Form!');
                 window.location.href = 'errorPage.php';
             </script>
             <?php
@@ -127,36 +112,24 @@
                         echo '<p>Date:<span style="font-size:1em;color:yellow;">' . $day . ',' . $showinfo['showInfo_date'] . '</span>&nbsp&nbsp&nbsp&nbsp&nbsp';
                         echo 'Time:<span style="font-size:1em;color:yellow;">' . $showinfo['showInfo_time'] . '</span>&nbsp&nbsp&nbsp&nbsp&nbsp';
                         echo 'Cinema:<span style="font-size:1em;color:yellow;">' . $cinema['cinema_name'] . '</span></p>';
-                        echo '<p>Seats Selected:<span style="font-size:1em;color:yellow;">' . implode(', ', $check_list) . '</span></p>';
+                        echo '<p>Seats Selected:<span style="font-size:1em;color:yellow;">' . trim_input(implode(', ', $check_list)) . '</span></p>';
                         ?>
                     </div> 
                 </div>
-                <script>
-                    function validate() {
-                        var isValid = true;
-                        var form1 = document.getElementById('STARTLOGIN');
-                        document.getElementById('STARTLOGIN').style.display = 'none';
-
-                        if (isValid) {
-                            document.getElementById('form1').style.display = 'block';
-                            return false;
-                        }
-                    }
-                </script>
                 
+
                 <div class="row">  
                     <?php
-                    if ($PaymentMode % 12 == 0 || $PaymentMode % 12.50 == 0 || $PaymentMode % 7.50 == 0){
+                    if ($PaymentMode % 12 == 0 || $PaymentMode % 12.50 == 0 || $PaymentMode % 7.50 == 0) {
                         $TotAmnt = $PaymentMode * count($check_list);
                         echo '<p style="text-align:left;" >Total Amount: &nbsp<span style="font-size:1.5em;color:yellow;">S$' . $TotAmnt . '</span></p>';
-                    }
-                    else{
-                         echo "<script>
+                    } else {
+                        echo "<script>
                                alert('An error has occurred. Please try again!');
                                window.location.href = 'MainMovie.php';
                             </script>";
                     }
-                        ?>
+                    ?>
                 </div>
                 <?php
                 if (!isset($_SESSION['user'])) {
@@ -177,10 +150,5 @@
             </div>
         </div> 
 
-<?php
-// }
-?>
-        <?php
-        ?> 
     </body>
 </html>

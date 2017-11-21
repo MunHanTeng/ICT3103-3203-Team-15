@@ -1,16 +1,16 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Golden Village</title>
+       <title>Golden Village</title>
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
-        <link href="images/gv32x32.ico" rel="shortcut icon" />
+<link href="images/gv32x32.ico" rel="shortcut icon" />
 
     </head>
     <body>
         <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
-        <script src="js/scripts.js"></script>
+<script src="js/scripts.js"></script>
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';

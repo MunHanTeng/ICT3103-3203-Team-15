@@ -5,6 +5,13 @@ include "qrcodelib/qrlib.php";
 
 require('mod10.php');
 
+function trim_input($data) {
+  $data = trim($data);
+  $data = stripslashes($data);
+  $data = htmlspecialchars($data);
+  return $data;
+}
+
 function validate($CCN, $CCED, $CVV2) {
     $CARDTYPE = $ErrArr = NULL;
     $expm = substr($CCED, 0, 2);
@@ -12,12 +19,11 @@ function validate($CCN, $CCED, $CVV2) {
     $cc = new CCVal($CCN, $expm, $expy, $CVV2);
 
     $cstatus = $cc->IsValid();
-    //echo $expy;
 
     if ($cstatus[0] == "valid") {
         $CARDTYPE = $cstatus[1];
-        $_POST["card_number"] = trim($cstatus[2]);
-        $_POST["card_cvv2"] = trim($cstatus[3]);
+        $_POST["card_number"] = trim_input($cstatus[2]);
+        $_POST["card_cvv2"] = trim_input($cstatus[3]);
         return true;
     } else {
         $ErrArr = $cstatus;
@@ -28,60 +34,53 @@ function validate($CCN, $CCED, $CVV2) {
 
 include_once 'dbconnect.php';
 session_start();
-//echo $_POST['CreditCardNo'];
 if (isset($_POST['submit'])) {
 
     $okay = TRUE;
-    if (empty($_POST['CreditCardNo'])) {
+    if (empty(trim_input($_POST['CreditCardNo']))) {
         $_SESSION['CCN'] = 'Credit Card No is Empty!';
         $okay = FALSE;
         header("Location: Payment2.php");
-    } elseif (!is_numeric($_POST['CreditCardNo'])) {
+    } elseif (!is_numeric(trim_input($_POST['CreditCardNo']))) {
         $_SESSION['CCN'] = 'Credit Card No must be numeric!';
         $okay = FALSE;
         header("Location: Payment2.php");
-    } elseif (strlen($_POST['CreditCardNo']) != 16) {
+    } elseif (strlen(trim_input($_POST['CreditCardNo'])) != 16) {
         $_SESSION['CCN'] = 'Credit Card No must be 16 digit!';
         $okay = FALSE;
         header("Location: Payment2.php");
     }
-    if (empty($_POST['CreditCardExpiry'])) {
+    if (empty(trim_input($_POST['CreditCardExpiry']))) {
         $_SESSION['CCE'] = 'Credit Card Expiry date is Empty!';
         $okay = FALSE;
         header("Location: Payment2.php");
     }
-    if (empty($_POST['CVV2'])) {
+    if (empty(trim_input($_POST['CVV2']))) {
         $_SESSION['CVV2'] = 'CVV2 is Empty!';
         $okay = FALSE;
         header("Location: Payment2.php");
-    } elseif (!is_numeric($_POST['CVV2'])) {
+    } elseif (!is_numeric(trim_input($_POST['CVV2']))) {
         $_SESSION['CVV2'] = 'CVV2/CVC2 number must be numeric!';
         $okay = FALSE;
         header("Location: Payment2.php");
-    } elseif (strlen($_POST['CVV2']) != 3) {
+    } elseif (strlen(trim_input($_POST['CVV2'])) != 3) {
         $_SESSION['CVV2'] = 'CVV2/CVC2 must be 3 digit!';
         $okay = FALSE;
         header("Location: Payment2.php");
     }
-    if (empty($_POST['CreditCardName'])) {
+    if (empty(trim_input($_POST['CreditCardName']))) {
         $_SESSION['CCName'] = 'Credit Card Name is Empty!';
         $okay = FALSE;
         header("Location: Payment2.php");
     }
 
     if ($okay) {
-        if (validate(trim($_POST['CreditCardNo']), trim($_POST['CreditCardExpiry']), trim($_POST['CVV2']))) {
+        if (validate(trim_input($_POST['CreditCardNo']), trim_input($_POST['CreditCardExpiry']), trim_input($_POST['CVV2']))) {
             $dic = array('A' => 0, 'B' => 1, 'C' => 2, 'D' => 3, 'E' => 4);
-            //echo '<br>';
-            //echo 'PaymentMode: '. $_SESSION['PaymentMode'];
-            //echo '<br>';
-            //echo 'Seats selected: '.implode(', ', $_SESSION['check_list']);
-            //echo '<br>';
-            //echo 'show id: '. $_SESSION['show_id'];
-            //echo '<br>';
+
             $userid = $_SESSION['user'];
-            $CCNum = trim($_POST['CreditCardNo']);
-            $CCName = trim($_POST['CreditCardName']);
+            $CCNum = trim_input($_POST['CreditCardNo']);
+            $CCName = trim_input($_POST['CreditCardName']);
             $date = $_SESSION['BookTime'];
             $timeType = explode(" ", $date);
             $timeItems = explode(":", $timeType[0]);
@@ -103,18 +102,10 @@ if (isset($_POST['submit'])) {
 
             }
 
-//            $collectionresult = mysqli_affected_rows($MySQLiconn);
             $id = mysqli_insert_id($MySQLiconn);
             foreach ($_SESSION['check_list'] as $seat) {
-                //echo '<br>';
                 $row = $dic[$seat[0]];
-                //echo 'Row: '. $dic[$seat[0]];
-                //echo '<br>';
-                //echo 'col: '. $seat[1];
                 $col = $seat[1];
-                //echo '<br>';
-                //echo 'seat: '. $seat;
-                //echo '<br>';
                 $showInfoID = $_SESSION['show_id'];
                 $movieID = $_SESSION['movie_id'];
 
@@ -221,14 +212,12 @@ if (isset($_POST['submit'])) {
                     $_SESSION['message2'] = 'Success! We will be sending an email to you shortly!';
                 }
             }
-            //header("Location: Success.php");
         } else {
             echo '<script language="javascript">';
             echo 'alert("Please ensure that all details are correct");';
             echo 'window.location.href = "Payment2.php";';
             echo '</script>';
             echo $_SESSION['message1'];
-            //header("Location: Payment2.php");  
         }
     }
 }

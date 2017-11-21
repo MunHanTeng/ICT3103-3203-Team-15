@@ -10,7 +10,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>Golden Village</title>
+       <title>Golden Village</title>
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
     </head>
@@ -28,6 +28,6 @@
         </form>
     </body>
 
-    <!-- jQuery --> 
+     <!-- jQuery --> 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 </html>
