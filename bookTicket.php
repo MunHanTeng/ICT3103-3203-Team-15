@@ -15,11 +15,25 @@
 
         <?php
         include 'header.inc';
+        
+        //After 15 Min delete the record
+        $stmtDelete = $MySQLiconn->prepare("DELETE FROM locked_seat WHERE user_id = ? and timestamp <= (now() - interval 15 minute)");
+        $stmtDelete->bind_param('i', $_SESSION['user']);
+        if (!$stmtDelete->execute()) {
+            ?>
+            <script>
+                alert('Error Login!');
+                window.location.href = 'errorPage.php'
+            </script>
+            <?php
+        }
+        
         if (!isset($_SESSION['name'])) {
             echo '<script language="javascript">';
             echo 'alert("Please Login in order to be able to buy ticket sucessfully"); location.href="index.php"';
             echo '</script>';
         }
+        
         include_once 'dbconnect.php';
 
         // RETRIEVE SHOW INFO
