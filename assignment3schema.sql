@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 07, 2017 at 08:06 AM
+-- Generation Time: Nov 21, 2017 at 05:57 PM
 -- Server version: 10.1.19-MariaDB
 -- PHP Version: 7.0.9
 
@@ -41,10 +41,8 @@ CREATE TABLE `booking` (
 --
 
 INSERT INTO `booking` (`booking_id`, `showInfo_id`, `movie_id`, `seat_no`, `showInfo_row`, `showInfo_column`, `collection_id`) VALUES
-(18, 3, 1, 'A2', 0, 2, 7),
-(19, 3, 1, 'A3', 0, 3, 7),
-(20, 5, 1, 'C7', 2, 7, 8),
-(21, 5, 1, 'D7', 3, 7, 8);
+(35, 5, 1, 'B10', 1, 1, 16),
+(36, 5, 1, 'C10', 2, 1, 16);
 
 -- --------------------------------------------------------
 
@@ -92,6 +90,17 @@ CREATE TABLE `dummy_table` (
   `dummy_otpSecret` varchar(1000) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `dummy_table`
+--
+
+INSERT INTO `dummy_table` (`dummy_id`, `dummy_username`, `dummy_email`, `dummy_pass`, `dummy_user_role`, `dummy_phone`, `dummy_NRIC`, `dummy_status`, `dummy_otpSecret`) VALUES
+(5, 'test', 'tengmunhan@gmail.com', '$2y$10$nfyLDEEQOp3QEPR7BYJ1aOGsBrAsz8u/DeUerLjfCOwnePtDwDceC', 'User', 12345678, 'S8787777H', 'Not Validated', 'MYYGKMZVHE4DONJTHAZTCYLBMU3TOOJTGJSGGOBUMM3DQZBVMNSVGOBXHA3TONZXJB2GK43UORSW4Z3NOVXGQYLOIBTW2YLJNQXGG33N'),
+(6, 'test', 'testttt@gmail.com', '$2y$10$4RV3iKToayDxxZy1.AfgEOamqP/3OspG2ydDFGhdmpF/51BX0e69O', 'User', 12345678, 'S9898888B', 'Not Validated', 'GUZTMNBQHFRDEY3GMMZDGY3CHAYTCNTFGY4TAZBTGAZTIZRZGI2FGOJYHE4DQOBYIJ2GK43UORSXG5DUOR2EAZ3NMFUWYLTDN5WQ===='),
+(7, 'test', 'tre@gmail.com', '$2y$10$IGFP4ulZbbCEgBT5RC9u8ebPvnWorsU5BpFv2Kh2dPdlA4EZOsTtm', 'User', 12345678, 'S8888989J', 'Not Validated', 'MY2TSZDEGM2DAZBQGQYTCM3GHE4DAN3CGNRWGNBUG42TMOJZMI4FGOBYHA4DSOBZJJ2GK43UORZGKQDHNVQWS3BOMNXW2==='),
+(8, 'testppp', 'testpp@gmail.com', '$2y$10$fOxsLx95JnrxFu4VTGprreqWz24kOUXT/.PFyiUVEUkU8GPL9ASuu', 'User', 12345678, 'S0999989J', 'Not Validated', 'HA4DKYZZMJTDKZRTHEYDMZTCGRRWKMJUGQZWCMBXMRSDMYLDGJRFGMBZHE4TSOBZJJ2GK43UOBYHA5DFON2HA4CAM5WWC2LMFZRW63I='),
+(10, 'test', 'test7@gmail.com', '$2y$10$cYvMZseEPE7V2xRaNv10ceZRnfM0Pdft0jXT5pguA4MWVePCvxoRu', 'User', 12345678, 'S9999898B', 'Not Validated', 'ONLENLOK7HWL4N24OQX6C6UHKRUK65HU');
+
 -- --------------------------------------------------------
 
 --
@@ -102,6 +111,29 @@ CREATE TABLE `failed_logins` (
   `User` varchar(255) NOT NULL,
   `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `locked_seat`
+--
+
+CREATE TABLE `locked_seat` (
+  `locked_seat_id` int(11) NOT NULL,
+  `movie_name` varchar(100) NOT NULL,
+  `showinfo_id` int(11) NOT NULL,
+  `seat_no` varchar(100) NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `user_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `locked_seat`
+--
+
+INSERT INTO `locked_seat` (`locked_seat_id`, `movie_name`, `showinfo_id`, `seat_no`, `timestamp`, `user_id`) VALUES
+(7, 'Kids Flix: Marvels Guardians Of The Galaxy Vol.2', 5, 'A1', '2017-11-21 16:46:57', 61),
+(8, 'Kids Flix: Marvels Guardians Of The Galaxy Vol.2', 5, 'A2', '2017-11-21 16:46:57', 61);
 
 -- --------------------------------------------------------
 
@@ -246,8 +278,7 @@ CREATE TABLE `ticketcollection` (
 --
 
 INSERT INTO `ticketcollection` (`collection_id`, `booking_time`, `booking_date`, `CreditCardNum`, `CreditCardName`, `user_id`, `qrValue`, `ticket_collected`, `time_collected`) VALUES
-(7, '14:00:00', '2017-09-23', '4242424242424242', 'test', 37, '2c51fb5c5b38083449c35f569e86387d2625f3837bda6f683f5cbbb2c328cbbe', 1, '2017-11-07 14:47:08'),
-(8, '15:00:00', '2017-09-23', '4242424242424242', 'test', 37, '9c495dbd9b41a1e96d0135c0eb86483478acb83d20beb0fbaa2c901c8064de68', 1, '2017-11-07 14:58:52');
+(16, '15:00:00', '2017-09-23', '4242424242424242', 'testYX', 61, '14136983eb65731a6cb2fda2d495af6caa7917403557af5ff7ecc0f678416156', 0, '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -272,7 +303,8 @@ CREATE TABLE `user_list` (
 --
 
 INSERT INTO `user_list` (`user_id`, `username`, `user_email`, `password`, `user_role`, `phone`, `user_nric`, `status`, `otpSecretKey`) VALUES
-(37, 'testpopup', 'tengmunhan@gmail.com', '$2y$10$hXgNKHNxlGJocOkp/Mhcmessx.A3AmzaGJ65KkFMTJiegFQ5xn4Q6', 'User', 12345678, 'S8787777H', 'Validated', 'G43WGOJWGY3DQYJXGZTGGNDCMIYWGOLGGBSTIMLFGM3DIYRRMM3VGOBXHA3TONZXJB2GK43UOBXXA5LQORSW4Z3NOVXGQYLOIBTW2YLJNQXGG33N');
+(57, 'tengmu', 'tengmunhan@gmail.com', '$2y$10$IKXM2/hIKadEsGKy5yfMK.03C39Eeo/CmcsBaeGirOkPTawnSwfWa', 'User', 12345678, 'S9898999H', 'Validate', 'USGYMAX7JWWCG2TS3742RJ5HQBFLP7TI'),
+(61, 'evilMunHan!', 'tengmunhan_32@hotmail.com', '$2y$10$RmKWb0LeNtnsa1mi.M6P..IVPT8q0vcqDKsr9VMaS160vcNeunN0q', 'User', 12345678, 'S9898888J', 'Validate', 'KTCAEQ3NH244SWYFV46Q6ZOSWWQZ6KF2');
 
 --
 -- Indexes for dumped tables
@@ -298,6 +330,12 @@ ALTER TABLE `cinema`
 --
 ALTER TABLE `dummy_table`
   ADD PRIMARY KEY (`dummy_id`);
+
+--
+-- Indexes for table `locked_seat`
+--
+ALTER TABLE `locked_seat`
+  ADD PRIMARY KEY (`locked_seat_id`);
 
 --
 -- Indexes for table `movie`
@@ -349,7 +387,7 @@ ALTER TABLE `user_list`
 -- AUTO_INCREMENT for table `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 --
 -- AUTO_INCREMENT for table `cinema`
 --
@@ -359,7 +397,12 @@ ALTER TABLE `cinema`
 -- AUTO_INCREMENT for table `dummy_table`
 --
 ALTER TABLE `dummy_table`
-  MODIFY `dummy_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `dummy_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+--
+-- AUTO_INCREMENT for table `locked_seat`
+--
+ALTER TABLE `locked_seat`
+  MODIFY `locked_seat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT for table `movie`
 --
@@ -384,12 +427,12 @@ ALTER TABLE `showinfo`
 -- AUTO_INCREMENT for table `ticketcollection`
 --
 ALTER TABLE `ticketcollection`
-  MODIFY `collection_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `collection_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 --
 -- AUTO_INCREMENT for table `user_list`
 --
 ALTER TABLE `user_list`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 --
 -- Constraints for dumped tables
 --
