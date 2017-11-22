@@ -28,11 +28,15 @@
             <?php
         }
         
-        if (!isset($_SESSION['name'])) {
-            echo '<script language="javascript">';
-            echo 'alert("Please Login in order to be able to buy ticket sucessfully"); location.href="index.php"';
-            echo '</script>';
+        if (!isset($_SESSION['name'])) 
+        {
+            $_SESSION['name'] = "BookingAnonymus";
+            header( "Location:index.php" );
+            exit;
         }
+        else 
+        {
+        
         
         include_once 'dbconnect.php';
 
@@ -65,6 +69,7 @@
         $movieResult = $movieQuery->get_result();
 
         $movie = mysqli_fetch_assoc($movieResult);
+        }
         ?>
         <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>

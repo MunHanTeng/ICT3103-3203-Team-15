@@ -1,4 +1,4 @@
-<html lang="en">
+ <html lang="en">
     <head>
         <meta charset="UTF-8">
         <title>Golden Village</title>
@@ -15,6 +15,12 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
+        
+        if (isset($_SESSION['name']) == "BookingAnonymus") 
+        {
+            echo "<h3>Please login before you book your ticket</h3>";
+        }
+        
         $resultCarousel = mysqli_query($MySQLiconn, "SELECT movie_id,movie_carousel FROM `movie` WHERE movie_carousel IS NOT NULL");
         $resultMovie = mysqli_query($MySQLiconn, "select movie_id,movie_name,movie_type,movie_runningTime,movie_carousel,movie_poster from movie");
         ?>
