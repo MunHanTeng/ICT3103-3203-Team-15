@@ -35,7 +35,7 @@ $showInfoResult = $showInfoQuery->get_result();
 $showinfo = mysqli_fetch_assoc($showInfoResult);
 
 //Retrieve the Movie ID    
-$movieQuery = $MySQLiconn->prepare("SELECT movie_name, movie_poster, movie_websiteLink FROM movie WHERE movie_id = ?");
+$movieQuery = $MySQLiconn->prepare("SELECT movie_name, movie_id, movie_poster, movie_websiteLink FROM movie WHERE movie_id = ?");
 $movieQuery->bind_param('i', $showinfo['movie_id']);
 if (!$movieQuery->execute()) {
     ?>
@@ -49,7 +49,7 @@ if (!$movieQuery->execute()) {
 $movieResult = $movieQuery->get_result();
 $movie = mysqli_fetch_assoc($movieResult);
 
-$check_list = $_POST['check_list'];
+$check_list = $_SESSION["session_check_list"];
 foreach ($check_list as $seat)
 {
     $resExists = $MySQLiconn->prepare("SELECT movie_name FROM locked_seat WHERE movie_name = ? and showinfo_id = ? and seat_no = ?");
@@ -64,27 +64,7 @@ foreach ($check_list as $seat)
         <?php
     }
     $resExists->store_result();
-    
-    //Check Booking
-    $bookQuery = $MySQLiconn->prepare("SELECT booking_id FROM booking WHERE showInfo_id = ? and movie_id = ? and seat_no = ?");
-    $bookQuery->bind_param('i', $_COOKIE['showinfoID'], $movie['movie_name'], $seat);
-    if (!$bookQuery->execute()) 
-    {
-        ?>
-        <script>
-            alert('Error Displaying Ticket Information!');
-            window.location.href = 'errorPage.php';
-        </script>
-        <?php
-    }
-    $bookQuery->store_result();
-    
-    if ($bookQuery-> num_rows != 0)
-    {
-        header( "Location:index.php" );
-        exit;
-    }
-                
+      
     if ($resExists->num_rows == 0) 
     {
         //For Insert
@@ -115,28 +95,13 @@ foreach ($check_list as $seat)
 }
 
 if ($result == true) { // check payment first then seats
-    $PaymentMode = explode(("- $"), trim_input($_POST['BuyTicket']));
+    $PaymentMode = explode(("- $"), trim_input($_SESSION["buy_ticket"]));
     if ($PaymentMode[1] == 12.00 || $PaymentMode[1] == 12.50 || $PaymentMode[1] == 7.50) {
         $_SESSION['PaymentMode'] = $PaymentMode[1];
-        $checkseats = true;
-        for ($i = 0; $i < sizeof($check_list); $i++) {
-            if (!preg_match('/^[A-E0-9]{2,3}$/', $check_list[$i])) {
-                $checkseats = false;
-                break;
-            }
-        }
-        if ($checkseats == true) {
-
-            $_SESSION['check_list'] = $check_list;
-            $showInfoID = trim_input($_POST['show_id']);
-            $_SESSION['show_id'] = $showInfoID;
-            header("Location: Payment.php");
-        } else {
-            echo "<script>
-            alert('An error has occurred. Please try again1!');
-            window.location.href = 'MainMovie.php';
-            </script>";
-        }
+        $_SESSION['check_list'] = $check_list;
+        $showInfoID = trim_input($_COOKIE['showinfoID']);
+        $_SESSION['show_id'] = $showInfoID;
+        header("Location: Payment.php");
     } else {
         echo "<script>
            alert('An error has occurred. Please try again!');

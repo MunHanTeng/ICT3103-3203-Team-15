@@ -28,6 +28,60 @@
             <?php
         }
         
+        if (isset($_POST['submit'])) 
+        {
+            $arraySeat = $_POST["check_list"];
+            $_SESSION["session_check_list"] = $arraySeat;
+            $_SESSION["buy_ticket"] = $_POST["BuyTicket"];
+            
+            //Make Sure seat start with letter and follow by alphabet
+            $checkseats = true;
+            for ($i = 0; $i < sizeof($arraySeat); $i++) 
+            {
+                if (!preg_match('/^[ABCDE](\d{1}|10)$/', $arraySeat[$i])) {
+                    $checkseats = false;
+                    break;
+                }
+            }
+        
+            if ($checkseats == true) {
+
+                //Make sure seat not booked
+                foreach ($arraySeat as $seat)
+                {
+                    //Check Booking
+                    $bookQuery2 = $MySQLiconn->prepare("SELECT booking_id FROM booking WHERE showInfo_id = ? and movie_id = ? and seat_no = ?");
+                    $bookQuery2->bind_param('sss', $_COOKIE['showinfoID'], $movie['movie_id'], $seat);
+                    if (!$bookQuery2->execute()) 
+                    {
+                        ?>
+                        <script>
+                            alert('Error Displaying Ticket Information!');
+                            window.location.href = 'errorPage.php';
+                        </script>
+                        <?php
+                    }
+                    $bookQuery2->store_result();
+    
+                    if ($bookQuery2-> num_rows != 0)
+                    {
+                        header( "Location:index.php" );
+                        exit;
+                    }
+                    else 
+                    {
+                        header( "Location:proccessBookTicket.php" );
+                    }
+                }
+               
+            } else {
+                echo "<script>
+                    alert('An error has occurred. Please try again!');
+                    window.location.href = 'MainMovie.php';
+                    </script>";
+            }
+        }
+        
         if (!isset($_SESSION['name'])) 
         {
             $_SESSION['name'] = "BookingAnonymus";
@@ -99,7 +153,7 @@
                 <div class="col-md-8 text-center">
                     <div class="container-fluid" style="width:475px;height:235px">
                         <!--Create Button-->
-                        <form action="proccessBookTicket.php" method="POST">
+                        <form method="POST">
                             <div class="btn-toolbar" name="SeatSelection" data-toggle="buttons" name="SelectedSeats" style="padding:10px">   
                                 <?PHP
                                 $dic = array(0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D', 4 => 'E');

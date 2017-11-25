@@ -114,37 +114,8 @@
                         echo '<p>Date:<span style="font-size:1em;color:yellow;">' . $day . ',' . $showinfo['showInfo_date'] . '</span>&nbsp&nbsp&nbsp&nbsp&nbsp';
                         echo 'Time:<span style="font-size:1em;color:yellow;">' . $showinfo['showInfo_time'] . '</span>&nbsp&nbsp&nbsp&nbsp&nbsp';
                         echo 'Cinema:<span style="font-size:1em;color:yellow;">' . $cinema['cinema_name'] . '</span></p>';
-                        
-                        foreach ($check_list as $seat)
-                        {
-                            $resExists = $MySQLiconn->prepare("SELECT seat_no FROM locked_seat WHERE movie_name = ? and showinfo_id = ? and seat_no = ?");
-                            $resExists->bind_param('sss', $movie['movie_name'], $_COOKIE['showinfoID'], $seat);
-                            if (!$resExists->execute()) 
-                            {
-                            ?>
-                                <script>
-                                    alert('We encounter some errors!');
-                                    window.location.href = 'errorPage.php'
-                                </script>
-                            <?php
-                            }
-                            $RecResult = $resExists->get_result();
-                            $Rec = mysqli_fetch_assoc($RecResult);
-                
-                            if ($seat == $Rec["seat_no"]) 
-                            {
-                                $result = false;
-                            }
-                            else 
-                            {
-                                header( "Location:index.php" );
-                            }
-                        }
-                        ?>
-                                
-                                <?php
-                echo '<p>Seats Selected:<span style="font-size:1em;color:yellow;">' . trim_input(implode(', ', $check_list)) . '</span></p>';
-?>
+                        echo '<p>Seats Selected:<span style="font-size:1em;color:yellow;">' . trim_input(implode(', ', $check_list)) . '</span></p>';
+                    ?>
                     </div> 
                 </div>
                 
