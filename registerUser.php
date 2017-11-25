@@ -30,6 +30,12 @@
             $nameErr = "Name is required";
             $okay = False;
         }
+        else if(!preg_match('/^[a-zA-Z0-9]+$/', trim_input($_POST["name"])))
+        {
+            $nameErr = "Only accept alphanumeric username!";
+            $okay = False;
+        }
+        
         $email = trim_input($_POST["email"]);
     
         if (empty(trim_input($_POST["email"]))) 
@@ -55,6 +61,11 @@
             $passwordErr = "Password must be longer than 8 characters";
             $okay = False;
         }
+        else if(!preg_match('/^[a-zA-Z0-9]+$/', trim_input($_POST["pwd"])))
+        {
+            $passwordErr = "Only accept alphanumeric password!";
+            $okay = False;
+        }
     
         if (empty(trim_input($_POST["confirmpwd"]))) 
         {
@@ -66,6 +77,12 @@
             $confirmPwdErr = "Passwords must match";
             $okay = False;
         }
+        else if(!preg_match('/^[a-zA-Z0-9]+$/', trim_input($_POST["confirmpwd"])))
+        {
+            $confirmPwdErr = "Only accept alphanumeric password!";
+            $okay = False;
+        }
+        
         if (empty(trim_input($_POST["phone"]))) 
         {
             $phoneNoErr = "Phone is required";
@@ -93,7 +110,7 @@
             $NRIC = "NRIC format incorrect";
             $okay = False;
         }
-    
+            
         //Check Duplicate EMAIL
         $email = mysqli_real_escape_string($MySQLiconn, trim_input($_POST['email']));
         $stmtCount = $MySQLiconn->prepare("SELECT COUNT(user_email) As RegisteredEmail FROM user_list where user_email = ?");

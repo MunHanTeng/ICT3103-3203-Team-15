@@ -99,7 +99,7 @@
                     <div class="form-group">
                         <label class="control-label col-md-2" for="otpcode"><p>OTP Code:</p></label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" id="otpcode" name="otpcode">
+                            <input type="text" class="form-control" id="otpcode" autocomplete="off" name="otpcode">
                         </div>
                     </div>
                     <button type="submit" name="submit" class="btn btn-primary">Submit</button>

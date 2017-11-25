@@ -13,6 +13,13 @@
         include 'header.inc';
         include_once 'dbconnect.php';
         
+        function trim_input($data) {
+            $data = trim($data);
+            $data = stripslashes($data);
+            $data = htmlspecialchars($data);
+            return $data;
+        }
+        
         if (!isset($_SESSION['name'])) {
             echo '<script language="javascript">';
             echo 'alert("Please Login in order to be able to buy ticket sucessfully"); location.href="index.php"';
@@ -114,7 +121,7 @@
                         echo 'Time:<span style="font-size:1em;color:yellow;">' . $showinfo['showInfo_time'] . '</span>&nbsp&nbsp&nbsp&nbsp&nbsp';
                         $_SESSION['BookTime'] = $showinfo['showInfo_time'];
                         echo 'Cinema:<span style="font-size:1em;color:yellow;">' . $cinema['cinema_name'] . '</span></p>';
-                        echo '<p>Seats Selected:<span style="font-size:1em;color:yellow;">' . implode(', ', $check_list) . '</span></p>';
+                        echo '<p>Seats Selected:<span style="font-size:1em;color:yellow;">' . trim_input(implode(', ', $check_list)) . '</span></p>';
                         ?>
                     </div> 
                 </div>
@@ -148,7 +155,7 @@
                             <input type="hidden" name="email" id="email" value="<?php echo $Email ?>">
                             <div class="form-group" >
                                 <label for="CreditCardNo" style="color:white; text-align: right;float:left;">Credit Card No.:</label>
-                                <input type="number" min="1" class="form-control" id="CreditCardNo" name="CreditCardNo" placeholder="Credit Card No">
+                                <input type="number" min="1" class="form-control" id="CreditCardNo" name="CreditCardNo" autocomplete="off" placeholder="Credit Card No">
 
                                 <span class="text-danger">
                                     <?php
@@ -161,7 +168,7 @@
                             </div>
                             <div class="form-group" >
                                 <label for="CreditCardName" style="color:white; text-align: right;float:left;">Name as in Credit Card:</label>
-                                <input type="text" class="form-control" id="CreditCardName" name="CreditCardName" placeholder="Credit Card Name">
+                                <input type="text" class="form-control" id="CreditCardName" name="CreditCardName" autocomplete="off" placeholder="Credit Card Name">
 
                                 <span class="text-danger">
                                     <?php
@@ -174,7 +181,7 @@
                             </div>
                             <div class="form-group" >
                                 <label for="CreditCardExpiry" style="color:white; text-align: right;float:left;">Credit Card Expiry Date</label>
-                                <input type="input" class="form-control" id="CreditCardExpiry" name="CreditCardExpiry" placeholder="mm/yy">
+                                <input type="input" class="form-control" id="CreditCardExpiry" name="CreditCardExpiry" autocomplete="off" placeholder="mm/yy">
                                 <span class="text-danger"> <?php
                                     if ($_SESSION['CCE'] == "") {
                                         echo "";
@@ -185,7 +192,7 @@
                             </div>
                             <div class="form-group" >
                                 <label for="CVV2" style="color:white; text-align: right;float:left;">CVV2/CVC2</label>
-                                <input type="text" class="form-control" id="CVV2" name="CVV2" placeholder="CVV2/CVC2">
+                                <input type="text" class="form-control" id="CVV2" name="CVV2" autocomplete="off" placeholder="CVV2/CVC2">
                                 <span class="text-danger"><?php
                                     if ($_SESSION['CVV2'] == "") {
                                         echo "";
