@@ -17,9 +17,9 @@
         include 'header.inc';
         
         //After 15 Min delete the record
-        $stmtDelete = $MySQLiconn->prepare("DELETE FROM locked_seat WHERE user_id = ? and timestamp <= (now() - interval 15 minute)");
-        $stmtDelete->bind_param('i', $_SESSION['user']);
-        if (!$stmtDelete->execute()) {
+        $stmtDelete = $MySQLiconn->prepare("DELETE FROM locked_seat WHERE timestamp <= (now() - interval 15 minute)");
+        if (!$stmtDelete->execute()) 
+        {
             ?>
             <script>
                 alert('Error Login!');
@@ -36,39 +36,39 @@
         }
         else 
         {
-        
-        
-        include_once 'dbconnect.php';
+            include_once 'dbconnect.php';
 
-        // RETRIEVE SHOW INFO
-        $showInfoQuery = $MySQLiconn->prepare("SELECT showInfo_date, showInfo_time, movie_id FROM showinfo WHERE showInfo_id = ?");
-        $showInfoQuery->bind_param('i', $_COOKIE['showinfoID']);
-        if (!$showInfoQuery->execute()) {
-            ?>
-            <script>
-                alert('Error Displaying Ticket Information!');
-                window.location.href = 'errorPage.php';
-            </script>
-            <?php
-        }
-        $showInfoResult = $showInfoQuery->get_result();
+            // RETRIEVE SHOW INFO
+            $showInfoQuery = $MySQLiconn->prepare("SELECT showInfo_date, showInfo_time, movie_id FROM showinfo WHERE showInfo_id = ?");
+            $showInfoQuery->bind_param('i', $_COOKIE['showinfoID']);
+            if (!$showInfoQuery->execute()) 
+            {
+                ?>
+                <script>
+                    alert('Error Displaying Ticket Information!');
+                    window.location.href = 'errorPage.php';
+                </script>
+                <?php
+            }
+            $showInfoResult = $showInfoQuery->get_result();
 
-        $showinfo = mysqli_fetch_assoc($showInfoResult);
+            $showinfo = mysqli_fetch_assoc($showInfoResult);
 
-        // RETRIEVE MOVIE 
-        $movieQuery = $MySQLiconn->prepare("SELECT movie_name, movie_poster, movie_websiteLink FROM movie WHERE movie_id = ?");
-        $movieQuery->bind_param('i', $showinfo['movie_id']);
-        if (!$movieQuery->execute()) {
-            ?>
-            <script>
-                alert('Error Displaying Ticket Information!');
-                window.location.href = 'errorPage.php';
-            </script>
-            <?php
-        }
-        $movieResult = $movieQuery->get_result();
+            // RETRIEVE MOVIE 
+            $movieQuery = $MySQLiconn->prepare("SELECT movie_name, movie_poster, movie_websiteLink FROM movie WHERE movie_id = ?");
+            $movieQuery->bind_param('i', $showinfo['movie_id']);
+            if (!$movieQuery->execute()) 
+            {
+                ?>
+                <script>
+                    alert('Error Displaying Ticket Information!');
+                    window.location.href = 'errorPage.php';
+                </script>
+                <?php
+            }
+            $movieResult = $movieQuery->get_result();
 
-        $movie = mysqli_fetch_assoc($movieResult);
+            $movie = mysqli_fetch_assoc($movieResult);
         }
         ?>
         <ul class="breadcrumb">
@@ -77,7 +77,6 @@
             <li class="active"><?php echo $movie['movie_name'] ?></li>
         </ul>
         <div class="container">
-
             <div class="col-md-4 text-center">
                 <img src="data:image/jpeg;base64,<?php echo base64_encode($movie['movie_poster']); ?>"> 
                 <br /><br />
@@ -188,5 +187,6 @@
                     </div>
                 </div> 
             </div>
+        </div>
     </body>
 </html>

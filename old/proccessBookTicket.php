@@ -5,11 +5,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-if (session_status() == PHP_SESSION_NONE) {
+if (session_status() == PHP_SESSION_NONE) 
+{
     session_start();
 }
 
-function trim_input($data) {
+function trim_input($data) 
+{
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
@@ -17,38 +19,39 @@ function trim_input($data) {
 }
 
 include_once 'dbconnect.php';
-
 // RETRIEVE SHOW INFO
 $showInfoQuery = $MySQLiconn->prepare("SELECT showInfo_date, showInfo_time, movie_id FROM showinfo WHERE showInfo_id = ?");
 $showInfoQuery->bind_param('i', $_COOKIE['showinfoID']);
-if (!$showInfoQuery->execute()) {
+if (!$showInfoQuery->execute()) 
+{
     ?>
     <script>
         alert('Error Displaying Ticket Information!');
         window.location.href = 'errorPage.php';
     </script>
     <?php
-
 }
+
 $showInfoResult = $showInfoQuery->get_result();
-
 $showinfo = mysqli_fetch_assoc($showInfoResult);
-
-//Retrieve the Movie ID    
+        
+//Retrieve the Movie ID        
 $movieQuery = $MySQLiconn->prepare("SELECT movie_name, movie_poster, movie_websiteLink FROM movie WHERE movie_id = ?");
 $movieQuery->bind_param('i', $showinfo['movie_id']);
-if (!$movieQuery->execute()) {
+if (!$movieQuery->execute()) 
+{
     ?>
     <script>
         alert('Error Displaying Ticket Information!');
         window.location.href = 'errorPage.php';
     </script>
-    <?php
 
+   <?php
 }
+
 $movieResult = $movieQuery->get_result();
 $movie = mysqli_fetch_assoc($movieResult);
-
+        
 $check_list = $_POST['check_list'];
 foreach ($check_list as $seat)
 {
@@ -114,34 +117,30 @@ foreach ($check_list as $seat)
     }
 }
 
-if ($result == true) { // check payment first then seats
-    $PaymentMode = explode(("- $"), trim_input($_POST['BuyTicket']));
-    if ($PaymentMode[1] == 12.00 || $PaymentMode[1] == 12.50 || $PaymentMode[1] == 7.50) {
-        $_SESSION['PaymentMode'] = $PaymentMode[1];
-        $checkseats = true;
-        for ($i = 0; $i < sizeof($check_list); $i++) {
-            if (!preg_match('/^[A-E0-9]{2,3}$/', $check_list[$i])) {
-                $checkseats = false;
-                break;
-            }
-        }
-        if ($checkseats == true) {
 
-            $_SESSION['check_list'] = $check_list;
-            $showInfoID = trim_input($_POST['show_id']);
-            $_SESSION['show_id'] = $showInfoID;
-            header("Location: Payment.php");
-        } else {
-            echo "<script>
-            alert('An error has occurred. Please try again1!');
-            window.location.href = 'MainMovie.php';
-            </script>";
-        }
-    } else {
+
+
+            
+if ($result == true)
+{
+    $PaymentMode = explode(("- $"), trim_input($_POST['BuyTicket']));
+    if ($PaymentMode[1] == 12.00 || $PaymentMode[1] == 12.50 || $PaymentMode[1] == 7.50) 
+    {
+        $_SESSION['PaymentMode'] = $PaymentMode[1];
+
+        $check_list = $_POST['check_list'];
+        $_SESSION['check_list'] = $check_list;
+
+        $showInfoID = trim_input($_POST['show_id']);
+        $_SESSION['show_id'] = $showInfoID;
+        header("Location: Payment.php");
+    } 
+    else 
+    {
         echo "<script>
-           alert('An error has occurred. Please try again!');
-           window.location.href = 'MainMovie.php';
-        </script>";
+                alert('An error has occurred. Please try again!');
+                window.location.href = 'MainMovie.php';
+            </script>";
     }
 }
 ?>
