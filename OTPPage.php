@@ -28,12 +28,7 @@ $tfa = new TwoFactorAuth('ICT3203');
 		if (!$stmt5->execute())
 		{
                     unset($_SESSION['OTPSecret']);
-	?>
-		   <script>
-                        alert('Error Displaying Sucess Information!');
-                        window.location.href='errorPage.php'
-                    </script>
-	<?php
+                    header( "Location:errorPage.php" );	
 		}
                 
                 else 
@@ -49,12 +44,7 @@ $tfa = new TwoFactorAuth('ICT3203');
                 if (!$stmt2->execute())
 		{
                     unset($_SESSION['OTPSecret']);
-	?>
-		   <script>
-                        alert('Error Displaying Sucess Information!');
-                        window.location.href='errorPage.php';
-                    </script>
-	<?php
+                    header( "Location:errorPage.php" );
 		}
                 if ($stmt2->execute() && $stmt5->affected_rows == 1) {
                     echo '<center><img src="images/successbutton.png" align="middle" alt="Sucess Image" style="margin-top: 10%; width: 10%; height: 10%;"></center>';
@@ -71,12 +61,7 @@ $tfa = new TwoFactorAuth('ICT3203');
                     if (!$stmt3->execute())
                     {
                         unset($_SESSION['OTPSecret']);
-                    ?>
-                        <script>
-                            alert('Error Displaying Sucess Information!');
-                            window.location.href='errorPage.php';
-                        </script>
-                    <?php
+                        header( "Location:errorPage.php" );
                     }
                     $result3 = $stmt3->get_result();
                     $userResult = mysqli_fetch_assoc($result3);
@@ -85,12 +70,7 @@ $tfa = new TwoFactorAuth('ICT3203');
                     $stmt4->bind_param('s', $userResult['collection_id']);
                     if (!$stmt4->execute())
                     {
-                    ?>
-                        <script>
-                            alert('Error Displaying Sucess Information!');
-                            window.location.href='errorPage.php';
-                        </script>
-                    <?php
+                        header( "Location:errorPage.php" );
                     }
                     else 
                     {

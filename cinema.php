@@ -16,17 +16,11 @@
         include_once 'dbconnect.php';
         $sqlCinema = "SELECT cinema_id,cinema_name,No_Of_Screen,cinema_address,cinema_mrt,cinema_bus,cinema_googleMap FROM cinema WHERE cinema_id = ?";
         $stmt = $MySQLiconn->prepare($sqlCinema);
-        $stmt->bind_param('i', $_COOKIE['cinemaid']);       
-		if (!$stmt->execute())
-        {
-    ?>
-           <script>
-                alert('Error Retrieving Cinema!');
-                window.location.href='errorPage.php'
-            </script>
-    <?php
+        $stmt->bind_param('i', $_COOKIE['cinemaid']);
+        if (!$stmt->execute()) {
+            header("Location:errorPage.php");
         }
-        $result= $stmt->get_result();       
+        $result = $stmt->get_result();
         $cinema = mysqli_fetch_assoc($result)
         ?>
         <form id="myform" action="bookTicket.php" method="POST">
@@ -41,7 +35,7 @@
         <div class="container">
             <div class="row"> <!--Main Header-->
                 <div class="col-md-12">
-                    <h2><?php echo $cinema['cinema_name'];?></h2>
+                    <h2><?php echo $cinema['cinema_name']; ?></h2>
                 </div>
             </div>
             <hr /> <!--White Line-->
@@ -51,7 +45,7 @@
                         <p>No of Screens</p>
                     </div>
                     <div class="col-xs-9">
-                        <p><?php echo $cinema['No_Of_Screen'];?></p>
+                        <p><?php echo $cinema['No_Of_Screen']; ?></p>
                     </div>
                 </div>
                 <div class="row">
@@ -59,8 +53,8 @@
                         <p>Address</p>
                     </div>
                     <div class="col-xs-9">
-                        <p><?php echo $cinema['cinema_address'];?></p>
-                        <?php echo $cinema['cinema_googleMap'];?>
+                        <p><?php echo $cinema['cinema_address']; ?></p>
+                        <?php echo $cinema['cinema_googleMap']; ?>
                     </div>
                 </div>
                 <div class="row">
@@ -73,7 +67,7 @@
                                 <p>MRT</p>
                             </div>
                             <div class="col-xs-10">
-                                <p><?php echo $cinema['cinema_mrt'];?></p>
+                                <p><?php echo $cinema['cinema_mrt']; ?></p>
                             </div>
                         </div>
                         <div class="row">
@@ -81,7 +75,7 @@
                                 <p>BUS</p>
                             </div>
                             <div class="col-xs-10">
-                                <p><?php echo $cinema['cinema_bus'];?></p>
+                                <p><?php echo $cinema['cinema_bus']; ?></p>
                             </div>
                         </div>
                     </div>
@@ -96,68 +90,55 @@
                             $sql = "SELECT DISTINCT showInfo_date from showinfo where cinema_id = ?";
                             $stmt = $MySQLiconn->prepare($sql);
                             $stmt->bind_param('s', $_COOKIE['cinemaid']);
-							if (!$stmt->execute())
-							{
-						?>
-							   <script>
-									alert('Error Displaying Showtime Information!');
-									window.location.href='errorPage.php'
-								</script>
-						<?php
-							}
-                            $resultDate= $stmt->get_result();
-                            
+                            if (!$stmt->execute()) {
+                                header("Location:errorPage.php");
+                            }
+                            $resultDate = $stmt->get_result();
+
                             while ($date = mysqli_fetch_assoc($resultDate)) {
                                 echo '<h4 class="Collapseh4">';
-                                echo '<a data-toggle="collapse" data-parent="#accordion" class="activeLink" href="#collapse'.$date['showInfo_date'].'" class="">';
-                                    echo'<span class="glyphicon glyphicon-collapse-down"></span>'.$date['showInfo_date']; 
+                                echo '<a data-toggle="collapse" data-parent="#accordion" class="activeLink" href="#collapse' . $date['showInfo_date'] . '" class="">';
+                                echo'<span class="glyphicon glyphicon-collapse-down"></span>' . $date['showInfo_date'];
                                 echo '</a>';
-                            echo'</h4>';
+                                echo'</h4>';
                             }
                             ?>
                         </div>
                         <div id="collapse" class="panel-collapse collapse">
                             <div class="panel-body"></div>
                         </div>                        
-                        <?php
-                            mysqli_data_seek($resultDate, 0);
-                        while ($date = mysqli_fetch_assoc($resultDate)) {
-                            echo '<div id="collapse'.$date['showInfo_date'].'" class="panel-collapse collapse">';
-                            echo '<div class="panel-body">';
-                            echo '<table class="tickets">';
-                            $sqlMovie = "SELECT DISTINCT movie.movie_id, movie.movie_name, movie.movie_type FROM movie WHERE movie.movie_id in (SELECT showinfo.movie_id FROM showinfo WHERE showinfo.cinema_id =? AND showinfo.showInfo_date =?)";
-                            $stmt = $MySQLiconn->prepare($sqlMovie);
-                            $stmt->bind_param('ss', $_COOKIE['cinemaid'],$date['showInfo_date']);
-                            $stmt->execute();
-							if (!$stmt->execute())
-							{
-						?>
-							   <script>
-									alert('Error Displaying Movie Information!');
-									window.location.href='errorPage.php'
-								</script>
-						<?php
-							}
-                            $resultMovie = $stmt->get_result();
-                            while ($Movie = mysqli_fetch_assoc($resultMovie)) {
-                                echo '<tr><td>';
-                                echo '<a href="movie.php?q='.$Movie['movie_id'].'"><h4>'.$Movie['movie_name'].'</h4></a>';
-                                echo '<p class="Rating">'.$Movie['movie_type'].'</p>';
-                                $sqlTime = "Select showInfo_id, showInfo_time from showinfo where cinema_id='".$_COOKIE['cinemaid']."' and movie_id='".$Movie['movie_id']."' and showInfo_date='".$date['showInfo_date']."'";
-                                $resultTime = mysqli_query($MySQLiconn, $sqlTime);
-                                while ($time = mysqli_fetch_assoc($resultTime)) {
-                                    echo '<a href="javascript:redirectPaymentPage('. $time['showInfo_id'] .')" class="btn btn-primary">'.$time['showInfo_time'].'</a>';
-                                }
-                                echo '</td></tr>';
-                            }
-                            echo '</div>';
-                            echo '</table>';
-                            echo '</div>';
-                            echo '</div>';
-                        }
-
-                        ?>
+<?php
+mysqli_data_seek($resultDate, 0);
+while ($date = mysqli_fetch_assoc($resultDate)) {
+    echo '<div id="collapse' . $date['showInfo_date'] . '" class="panel-collapse collapse">';
+    echo '<div class="panel-body">';
+    echo '<table class="tickets">';
+    $sqlMovie = "SELECT DISTINCT movie.movie_id, movie.movie_name, movie.movie_type FROM movie WHERE movie.movie_id in (SELECT showinfo.movie_id FROM showinfo WHERE showinfo.cinema_id =? AND showinfo.showInfo_date =?)";
+    $stmt = $MySQLiconn->prepare($sqlMovie);
+    $stmt->bind_param('ss', $_COOKIE['cinemaid'], $date['showInfo_date']);
+    $stmt->execute();
+    if (!$stmt->execute()) {
+        header("Location:errorPage.php");
+    }
+    $resultMovie = $stmt->get_result();
+    while ($Movie = mysqli_fetch_assoc($resultMovie)) {
+        echo '<tr><td>';
+        echo '<a href="movie.php?q=' . $Movie['movie_id'] . '"><h4>' . $Movie['movie_name'] . '</h4></a>';
+        echo '<p class="Rating">' . $Movie['movie_type'] . '</p>';
+        $sqlTime = "Select showInfo_id, showInfo_time from showinfo where cinema_id='" . $_COOKIE['cinemaid'] . "' and movie_id='" . $Movie['movie_id'] . "' and showInfo_date='" . $date['showInfo_date'] . "'";
+        $resultTime = mysqli_query($MySQLiconn, $sqlTime);
+        while ($time = mysqli_fetch_assoc($resultTime)) {
+            echo '<a href="javascript:redirectPaymentPage(' . $time['showInfo_id'] . ')" class="btn btn-primary">' . $time['showInfo_time'] . '</a>';
+        }
+        echo '</td></tr>';
+    }
+    echo '</div>';
+    echo '</table>';
+    echo '</div>';
+    echo '</div>';
+}
+?>
                     </div>
                 </div>
-    </body>
-</html>
+                </body>
+                </html>

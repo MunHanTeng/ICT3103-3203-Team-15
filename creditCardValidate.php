@@ -99,12 +99,7 @@ if (isset($_POST['submit'])) {
             $ticketCollectQuery = $MySQLiconn->prepare("INSERT INTO ticketcollection( ticket_collected, booking_time, CreditCardNum, CreditCardName, user_id, booking_date) VALUES (0, ?, ?, ?, ?, ?)");
             $ticketCollectQuery->bind_param('sssss', $Formattime, $CCNum, $CCName, $userid, $Formaydate);
             if (!$ticketCollectQuery->execute()) {
-                ?>
-                <script>
-                   alert('Error Displaying Payment Summary!');
-                    window.location.href = 'errorPage.php';
-                </script>
-                <?php
+                header( "Location:errorPage.php" );
 
             }
 
@@ -119,12 +114,7 @@ if (isset($_POST['submit'])) {
                 $bookingQuery = $MySQLiconn->prepare("INSERT INTO booking( showInfo_id, seat_no, showInfo_row, showInfo_column, movie_id, collection_id) VALUES (?, ?, ?, ?, ?, ?)");
                 $bookingQuery->bind_param('ssssss', $showInfoID, $seat, $row, $col, $movieID, $id);
                 if (!$bookingQuery->execute()) {
-                    ?>
-                    <script>
-                       alert('Error Displaying Payment Summary!');
-                        window.location.href = 'errorPage.php';
-                    </script>
-                    <?php
+                   header( "Location:errorPage.php" );
 
                 }
 
@@ -138,12 +128,7 @@ if (isset($_POST['submit'])) {
                 $QRQuery = $MySQLiconn->prepare("UPDATE ticketcollection SET qrValue=? WHERE collection_id=?");
                 $QRQuery->bind_param('si', $hashedfile, $id);
                 if (!$QRQuery->execute()) {
-                    ?>
-                    <script>
-                      alert('Error Displaying Payment Summary!');
-                        window.location.href = 'errorPage.php';
-                    </script>
-                    <?php
+                   header( "Location:errorPage.php" );
 
                 }
             }
@@ -157,12 +142,7 @@ if (isset($_POST['submit'])) {
                 $showInfoQuery->bind_param('i', $_SESSION['show_id']);
                 if (!$showInfoQuery->execute()) {
                     unset($_SESSION['show_id']);
-                    ?>
-                    <script>
-                       alert('Error Displaying Payment Summary!');
-                        window.location.href = 'errorPage.php'
-                    </script>
-                    <?php
+                    header( "Location:errorPage.php" );
 
                 }
                 $showInfoResult = $showInfoQuery->get_result();
@@ -172,12 +152,7 @@ if (isset($_POST['submit'])) {
                 $movieQuery = $MySQLiconn->prepare("SELECT movie_name FROM movie WHERE movie_id = ?");
                 $movieQuery->bind_param('i', $showinfo['movie_id']);
                 if (!$movieQuery->execute()) {
-                    ?>
-                    <script>
-                       alert('Error Displaying Payment Summary!');
-                        window.location.href = 'errorPage.php';
-                    </script>
-                    <?php
+                   header( "Location:errorPage.php" );
 
                 }
                 $movieResult = $movieQuery->get_result();

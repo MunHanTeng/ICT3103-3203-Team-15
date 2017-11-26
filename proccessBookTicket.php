@@ -22,13 +22,17 @@ include_once 'dbconnect.php';
 $showInfoQuery = $MySQLiconn->prepare("SELECT showInfo_date, showInfo_time, movie_id FROM showinfo WHERE showInfo_id = ?");
 $showInfoQuery->bind_param('i', $_COOKIE['showinfoID']);
 if (!$showInfoQuery->execute()) {
-    ?>
-    <script>
-        alert('Error Displaying Ticket Information!');
-        window.location.href = 'errorPage.php';
-    </script>
-    <?php
-
+    unset($_SESSION['PaymentMode']);
+    unset($_SESSION['check_list']);
+    unset($_SESSION['show_id']);
+    unset($_SESSION['CCN']);
+    unset($_SESSION['CCE']);
+    unset($_SESSION['CVV2']);
+    unset($_SESSION['CCName']);
+    unset($_SESSION['payment']);
+    unset($_SESSION["session_check_list"]);
+    unset($_SESSION["buy_ticket"]);
+    header("Location:errorPage.php");
 }
 $showInfoResult = $showInfoQuery->get_result();
 
@@ -38,58 +42,67 @@ $showinfo = mysqli_fetch_assoc($showInfoResult);
 $movieQuery = $MySQLiconn->prepare("SELECT movie_name, movie_id, movie_poster, movie_websiteLink FROM movie WHERE movie_id = ?");
 $movieQuery->bind_param('i', $showinfo['movie_id']);
 if (!$movieQuery->execute()) {
-    ?>
-    <script>
-        alert('Error Displaying Ticket Information!');
-        window.location.href = 'errorPage.php';
-    </script>
-    <?php
-
+    unset($_SESSION['PaymentMode']);
+    unset($_SESSION['check_list']);
+    unset($_SESSION['show_id']);
+    unset($_SESSION['CCN']);
+    unset($_SESSION['CCE']);
+    unset($_SESSION['CVV2']);
+    unset($_SESSION['CCName']);
+    unset($_SESSION['payment']);
+    unset($_SESSION["session_check_list"]);
+    unset($_SESSION["buy_ticket"]);
+    header("Location:errorPage.php");
 }
 $movieResult = $movieQuery->get_result();
 $movie = mysqli_fetch_assoc($movieResult);
 
 $check_list = $_SESSION["session_check_list"];
-foreach ($check_list as $seat)
-{
+foreach ($check_list as $seat) {
     $resExists = $MySQLiconn->prepare("SELECT movie_name FROM locked_seat WHERE movie_name = ? and showinfo_id = ? and seat_no = ?");
     $resExists->bind_param('sss', $movie['movie_name'], $_COOKIE['showinfoID'], $seat);
-    if (!$resExists->execute()) 
-    {
-        ?>
-        <script>
-            alert('We encounter some errors!');
-            window.location.href = 'errorPage.php'
-        </script>
-        <?php
+    if (!$resExists->execute()) {
+        unset($_SESSION['PaymentMode']);
+        unset($_SESSION['check_list']);
+        unset($_SESSION['show_id']);
+        unset($_SESSION['CCN']);
+        unset($_SESSION['CCE']);
+        unset($_SESSION['CVV2']);
+        unset($_SESSION['CCName']);
+        unset($_SESSION['payment']);
+        unset($_SESSION["session_check_list"]);
+        unset($_SESSION["buy_ticket"]);
+        header("Location:errorPage.php");
     }
     $resExists->store_result();
-      
-    if ($resExists->num_rows == 0) 
-    {
+
+    if ($resExists->num_rows == 0) {
         //For Insert
         $stmt3 = $MySQLiconn->prepare("INSERT INTO locked_seat(movie_name, showinfo_id, seat_no, user_id, timestamp) VALUES(?, ?, ?, ?, now())");
         $stmt3->bind_param('ssss', $movie['movie_name'], $_COOKIE['showinfoID'], $seat, $_SESSION['user']);
-        if (!$stmt3->execute()) 
-        {
-            ?>
-            <script>
-                alert('We encounter some error!');
-                window.location.href = 'errorPage.php'
-            </script>
-            <?php
+        if (!$stmt3->execute()) {
+            unset($_SESSION['PaymentMode']);
+            unset($_SESSION['check_list']);
+            unset($_SESSION['show_id']);
+            unset($_SESSION['CCN']);
+            unset($_SESSION['CCE']);
+            unset($_SESSION['CVV2']);
+            unset($_SESSION['CCName']);
+            unset($_SESSION['payment']);
+            unset($_SESSION["session_check_list"]);
+            unset($_SESSION["buy_ticket"]);
+            header("Location:errorPage.php");
             $result = false;
         }
         $result = true;
-    }
-    else 
-    {
+    } else {
         ?>
         <script>
             alert('The seat has already been locked please try again later');
             window.location.href = 'bookTicket.php'
         </script>
         <?php
+
         $result = false;
     }
 }
@@ -103,10 +116,17 @@ if ($result == true) { // check payment first then seats
         $_SESSION['show_id'] = $showInfoID;
         header("Location: Payment.php");
     } else {
-        echo "<script>
-           alert('An error has occurred. Please try again!');
-           window.location.href = 'MainMovie.php';
-        </script>";
+        unset($_SESSION['PaymentMode']);
+        unset($_SESSION['check_list']);
+        unset($_SESSION['show_id']);
+        unset($_SESSION['CCN']);
+        unset($_SESSION['CCE']);
+        unset($_SESSION['CVV2']);
+        unset($_SESSION['CCName']);
+        unset($_SESSION['payment']);
+        unset($_SESSION["session_check_list"]);
+        unset($_SESSION["buy_ticket"]);
+        header("Location:errorPage.php");
     }
 }
 ?>

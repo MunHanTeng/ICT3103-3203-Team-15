@@ -117,12 +117,7 @@
         $stmtCount->bind_param('s', $email);
         if (!$stmtCount->execute())
         {
-    ?>
-           <script>
-                alert('Error Login!');
-                window.location.href='errorPage.php'
-            </script>
-    <?php
+            header("Location:errorPage.php");
         }
         $result = $stmtCount->get_result();
         $row = mysqli_fetch_assoc($result);
@@ -143,12 +138,7 @@
         $stmtCount->bind_param('s', $nric);
         if (!$stmtCount->execute())
         {
-    ?>
-           <script>
-                alert('Error Login!');
-                window.location.href='errorPage.php'
-            </script>
-    <?php
+            header("Location:errorPage.php");
         }
         $result = $stmtCount->get_result();
         $row = mysqli_fetch_assoc($result);
@@ -190,18 +180,13 @@
     ?>
                 <script>
                     alert('You may proceed to second step!');
-                    window.location.href='afterRegister.php'
+                    window.location.href='afterRegister.php';
                 </script>
     <?php
             }
             else 
             {
-    ?>
-                <script>
-                    alert('Error registered!');
-                    window.location.href='errorPage.php'
-                </script>
-    <?php 
+   header("Location:errorPage.php");
             }
     ?>
 

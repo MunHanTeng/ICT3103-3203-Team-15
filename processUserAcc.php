@@ -36,12 +36,7 @@ $result = $stmt->get_result();
 $userResult = mysqli_fetch_assoc($result);
 
 if (!$stmt->execute()) {
-    ?>
-
-    <script>
-        alert('Error');
-    </script>
-    <?php
+   header("Location:errorPage.php");
 }
 
 $stmt->free_result();
@@ -75,12 +70,7 @@ if ($result == 'OK') {
         $stmt2->execute();
 
         if (!$stmt2->execute()) {
-            ?>
-            <script>
-                alert('Error');
-                window.location.href = 'errorPage.php'
-            </script>
-            <?php
+            header("Location:errorPage.php");
         } else {
             ?>    
             <script>
@@ -94,11 +84,7 @@ if ($result == 'OK') {
         }
     } else {
         echo $stmt3->error;
-        ?>
-        <script>
-            alert('Error registered!');
-        </script>
-        <?php
+        header("Location:errorPage.php");
     }
     ?>               
     <?php

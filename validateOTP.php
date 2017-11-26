@@ -41,23 +41,13 @@ if (isset($_POST["submit"])) {
         $stmtDelete = $MySQLiconn->prepare("DELETE FROM failed_logins WHERE User = ? and Timestamp <= (now() - interval 15 minute)");
         $stmtDelete->bind_param('s', $username);
         if (!$stmtDelete->execute()) {
-            ?>
-            <script>
-                alert('Error Login!');
-                window.location.href = 'errorPage.php'
-            </script>
-            <?php
+            header("Location:errorPage.php");
         }
         //Check row count of failed login, if >5, notify user login attempts too many
         $stmtCount = $MySQLiconn->prepare("SELECT COUNT(User) as userFails FROM failed_logins WHERE User = ?");
         $stmtCount->bind_param('s', $username);
         if (!$stmtCount->execute()) {
-            ?>
-            <script>
-                alert('Error Login!');
-                window.location.href = 'errorPage.php'
-            </script>
-            <?php
+            header("Location:errorPage.php");
         }
         $result = $stmtCount->get_result();
         $row = mysqli_fetch_assoc($result);
@@ -75,12 +65,7 @@ if (isset($_POST["submit"])) {
             $resSelect = $MySQLiconn->prepare("SELECT status, password, user_id FROM user_list WHERE user_email = ? and user_role = ?");
             $resSelect->bind_param('ss', $username, $accType);
             if (!$resSelect->execute()) {
-                ?>
-                <script>
-                    alert('Error Login!');
-                    window.location.href = 'errorPage.php'
-                </script>
-                <?php
+                header("Location:errorPage.php");
             }
             $result = $resSelect->get_result();
             $row = mysqli_fetch_assoc($result);
@@ -97,12 +82,7 @@ if (isset($_POST["submit"])) {
                 $stmtDeleteFL = $MySQLiconn->prepare("DELETE FROM failed_logins WHERE User = ?");
                 $stmtDeleteFL->bind_param('s', $username);
                 if (!$stmtDeleteFL->execute()) {
-                    ?>
-                    <script>
-                        alert('Error Login!');
-                        window.location.href = 'errorPage.php'
-                    </script>
-                    <?php
+                    header("Location:errorPage.php");
                 }
 
                 echo "<script type='text/javascript'>";
@@ -113,12 +93,7 @@ if (isset($_POST["submit"])) {
                 $resExists = $MySQLiconn->prepare("SELECT user_id FROM user_list WHERE user_email = ?");
                 $resExists->bind_param('s', $username);
                 if (!$resExists->execute()) {
-                    ?>
-                    <script>
-                        alert('Error Login!');
-                        window.location.href = 'errorPage.php'
-                    </script>
-                    <?php
+                    header("Location:errorPage.php");
                 }
                 $resExists->store_result();
 
@@ -131,12 +106,7 @@ if (isset($_POST["submit"])) {
                     $stmt3->bind_param('s', $username);
 
                     if (!$stmt3->execute()) {
-                        ?>
-                        <script>
-                            alert('Error Login!');
-                            window.location.href = 'errorPage.php'
-                        </script>
-                        <?php
+                       header("Location:errorPage.php");
                     }
 
                     $id = $stmt3->insert_id;
@@ -163,12 +133,7 @@ if (isset($_POST['validate'])) {
     $userQuery = $MySQLiconn->prepare("SELECT username, user_email, otpSecretKey FROM user_list WHERE user_id=?");
     $userQuery->bind_param('i', $userid);
     if (!$userQuery->execute()) {
-        ?>
-        <script>
-            alert('Error Login!');
-            window.location.href = 'errorPage.php'
-        </script>
-        <?php
+        header("Location:errorPage.php");
     }
 
     $userResult = $userQuery->get_result();

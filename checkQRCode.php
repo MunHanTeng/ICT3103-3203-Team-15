@@ -27,12 +27,7 @@
             $stmt->bind_param('s', $qrValue);
 		if (!$stmt->execute())
 		{
-	?>
-		   <script>
-                        alert('Error Displaying Sucess Information!');
-                        window.location.href='errorPage.php'
-                    </script>
-	<?php
+                    header( "Location:errorPage.php" );
 		}
             $stmt->store_result();
 
@@ -44,12 +39,7 @@
             $stmt2->bind_param('s', $qrValue);
 		if (!$stmt2->execute())
 		{
-	?>
-		   <script>
-                        alert('Error Displaying Sucess Information!');
-                        window.location.href='errorPage.php'
-                    </script>
-	<?php
+                    header( "Location:errorPage.php" );
 		}
             $result2 = $stmt2->get_result();
             $userResult = mysqli_fetch_assoc($result2);

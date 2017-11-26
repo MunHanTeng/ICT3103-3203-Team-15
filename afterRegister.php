@@ -51,12 +51,7 @@
             else 
             {
                 unset($_SESSION['dummy_id']);
-            ?>
-                <script>
-                    alert('Error');
-                    window.location.href='errorPage.php'
-                </script>
-            <?php 
+                header( "Location:errorPage.php" );
             }
             ?>
                 

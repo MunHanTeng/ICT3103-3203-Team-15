@@ -16,15 +16,9 @@
         $movid = $_COOKIE['movieID'];
         $stmt = $MySQLiconn->prepare("SELECT movie_name,movie_type,movie_cast,movie_director,movie_genre,movie_release,movie_runningTime,movie_distributor,movie_language,movie_synopsis,movie_TNC,movie_trailerLink,movie_websiteLink,movie_poster,movie_carousel FROM movie WHERE movie_id = ?");
         $stmt->bind_param('s', $movid);
-		if (!$stmt->execute())
-		{
-	?>
-		   <script>
-				alert('Error Displaying Movie Information!');
-				window.location.href='errorPage.php'
-			</script>
-	<?php
-		}
+        if (!$stmt->execute()) {
+            header("Location:errorPage.php");
+        }
         $result = $stmt->get_result();
         $movie = mysqli_fetch_assoc($result);
         ?>
@@ -132,15 +126,9 @@
                             $sql = "SELECT DISTINCT cinema.cinema_id, cinema.cinema_name FROM `cinema` WHERE cinema.cinema_id in (SELECT showinfo.cinema_id FROM showinfo WHERE showinfo.movie_id =?)";
                             $stmt = $MySQLiconn->prepare($sql);
                             $stmt->bind_param('s', $movid);
-							if (!$stmt->execute())
-							{
-						?>
-							   <script>
-									alert('Error Displaying Cinema Information!');
-									window.location.href='errorPage.php'
-								</script>
-						<?php
-							}
+                            if (!$stmt->execute()) {
+                                header("Location:errorPage.php");
+                            }
                             $resultCinema = $stmt->get_result();
                             while ($row = mysqli_fetch_assoc($resultCinema)) {
                                 echo '<h4 class="Collapseh4">';
@@ -154,62 +142,49 @@
                         <div id="collapse" class="panel-collapse collapse">
                             <div class="panel-body"></div>
                         </div>                        
-                        <?php
-                        mysqli_data_seek($resultCinema, 0);
-                        while ($row = mysqli_fetch_assoc($resultCinema)) {
-                            echo '<div id="collapse' . $row['cinema_id'] . '" class="panel-collapse collapse">';
-                            echo '<div class="panel-body">';
-                            echo '<table class="tickets">';
-                            //echo '<tr><td><h4>'.$row['cinema_name'].'</h4></td></tr>';
-                            $sqlDate = "Select DISTINCT showInfo_date from showinfo where movie_id=? and cinema_id=?";
-                            $resultShow = mysqli_query($MySQLiconn, $sqlDate);
-                            $stmt = $MySQLiconn->prepare($sqlDate);
-                            $stmt->bind_param('ss', $movid, $row['cinema_id']);
-							if (!$stmt->execute())
-							{
-						?>
-							   <script>
-									alert('Error Displaying Showtime Information!');
-									window.location.href='errorPage.php'
-								</script>
-						<?php
-							}
-                            $resultShow = $stmt->get_result();
+<?php
+mysqli_data_seek($resultCinema, 0);
+while ($row = mysqli_fetch_assoc($resultCinema)) {
+    echo '<div id="collapse' . $row['cinema_id'] . '" class="panel-collapse collapse">';
+    echo '<div class="panel-body">';
+    echo '<table class="tickets">';
+    //echo '<tr><td><h4>'.$row['cinema_name'].'</h4></td></tr>';
+    $sqlDate = "Select DISTINCT showInfo_date from showinfo where movie_id=? and cinema_id=?";
+    $resultShow = mysqli_query($MySQLiconn, $sqlDate);
+    $stmt = $MySQLiconn->prepare($sqlDate);
+    $stmt->bind_param('ss', $movid, $row['cinema_id']);
+    if (!$stmt->execute()) {
+        header("Location:errorPage.php");
+    }
+    $resultShow = $stmt->get_result();
 
-                            while ($date = mysqli_fetch_assoc($resultShow)) {
-                                echo '<tr><td>';
-                                echo '<p>' . $date['showInfo_date'] . '</p>';
-                                
-                                $sqlTime = "Select showInfo_id, showInfo_time from showinfo where movie_id=? and cinema_id=? and showInfo_date=?";
-                                $stmt = $MySQLiconn->prepare($sqlTime);
-                                $stmt->bind_param('sss', $movid, $row['cinema_id'], $date['showInfo_date']);
-                                $stmt->execute();
-								if (!$stmt->execute())
-								{
-							?>
-								   <script>
-										alert('Error Displaying Showtime Information!');
-										window.location.href='errorPage.php'
-									</script>
-							<?php
-								}
-                                $resultTime = $stmt->get_result();
+    while ($date = mysqli_fetch_assoc($resultShow)) {
+        echo '<tr><td>';
+        echo '<p>' . $date['showInfo_date'] . '</p>';
 
-                                while ($time = mysqli_fetch_assoc($resultTime)) {
-                                    echo '<a href="javascript:redirectPaymentPage(' . $time['showInfo_id'] . ')" class="btn btn-primary">' . $time['showInfo_time'] . '</a>';
-                                   
-                                }
-                                echo '</td></tr>';
-                            }
-                            echo '</div>';
-                            echo '</table>';
-                            echo '</div>';
-                            echo '</div>';
-                        }
-                        ?>
+        $sqlTime = "Select showInfo_id, showInfo_time from showinfo where movie_id=? and cinema_id=? and showInfo_date=?";
+        $stmt = $MySQLiconn->prepare($sqlTime);
+        $stmt->bind_param('sss', $movid, $row['cinema_id'], $date['showInfo_date']);
+        $stmt->execute();
+        if (!$stmt->execute()) {
+            header("Location:errorPage.php");
+        }
+        $resultTime = $stmt->get_result();
+
+        while ($time = mysqli_fetch_assoc($resultTime)) {
+            echo '<a href="javascript:redirectPaymentPage(' . $time['showInfo_id'] . ')" class="btn btn-primary">' . $time['showInfo_time'] . '</a>';
+        }
+        echo '</td></tr>';
+    }
+    echo '</div>';
+    echo '</table>';
+    echo '</div>';
+    echo '</div>';
+}
+?>
                     </div>
                 </div>
             </div>
-            <?php include "footer.inc"; ?>
+                        <?php include "footer.inc"; ?>
     </body>
 </html>

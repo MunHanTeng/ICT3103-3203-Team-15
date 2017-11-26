@@ -11,12 +11,7 @@ if(session_status() == PHP_SESSION_NONE) {
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
-            <script type= "text/javascript">
-                function redirectCinemaPage(cinemaid){
-                    document.cookie = "cinemaid =" + cinemaid;
-                    window.location = "cinema.php";
-                }
-            </script>
+           <script src="js/override.js" type="text/javascript"></script> 
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-controls="navbar">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
