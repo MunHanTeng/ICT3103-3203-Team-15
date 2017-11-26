@@ -39,7 +39,7 @@ if (isset($_POST["submit"])) {
 
         //Delete rows older than 5 minutes
         $stmtDelete = $MySQLiconn->prepare("DELETE FROM failed_logins WHERE User = ? and Timestamp <= (now() - interval 15 minute)");
-        $stmtDelete->bind_param('i', $username);
+        $stmtDelete->bind_param('s', $username);
         if (!$stmtDelete->execute()) {
             ?>
             <script>
@@ -95,7 +95,7 @@ if (isset($_POST["submit"])) {
                 //If login successful, delete from fail logins
 
                 $stmtDeleteFL = $MySQLiconn->prepare("DELETE FROM failed_logins WHERE User = ?");
-                $stmtDeleteFL->bind_param('i', $username);
+                $stmtDeleteFL->bind_param('s', $username);
                 if (!$stmtDeleteFL->execute()) {
                     ?>
                     <script>
