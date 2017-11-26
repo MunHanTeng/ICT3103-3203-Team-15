@@ -61,9 +61,9 @@
             $passwordErr = "Password must be longer than 8 characters";
             $okay = False;
         }
-        else if(!preg_match('/^[a-zA-Z0-9]+$/', trim_input($_POST["pwd"])))
+        else if(!preg_match('/^[a-zA-Z0-9@!#$%^&*._]+$/', trim_input($_POST["pwd"])))
         {
-            $passwordErr = "Only accept alphanumeric password!";
+            $passwordErr = "Password only can contain alphanumeric and @!#$%^&*._";
             $okay = False;
         }
     
@@ -77,9 +77,9 @@
             $confirmPwdErr = "Passwords must match";
             $okay = False;
         }
-        else if(!preg_match('/^[a-zA-Z0-9]+$/', trim_input($_POST["confirmpwd"])))
+        else if(!preg_match('/^[a-zA-Z0-9@!#$%^&*._]+$/', trim_input($_POST["confirmpwd"])))
         {
-            $confirmPwdErr = "Only accept alphanumeric password!";
+            $confirmPwdErr = "Password only can contain alphanumeric and @!#$%^&*._";
             $okay = False;
         }
         
