@@ -26,6 +26,7 @@
                 window.location.href = 'errorPage.php'
             </script>
             <?php
+            header( "Location:errorPage.php" );
         }
         
         if (isset($_POST['submit'])) 
@@ -51,21 +52,21 @@
                 {
                     //Check Booking
                     $bookQuery2 = $MySQLiconn->prepare("SELECT booking_id FROM booking WHERE showInfo_id = ? and movie_id = ? and seat_no = ?");
-                    $bookQuery2->bind_param('sss', $_COOKIE['showinfoID'], $movie['movie_id'], $seat);
+                    $bookQuery2->bind_param('sss', $_COOKIE['showinfoID'], $_POST['movie_id'], $seat);
                     if (!$bookQuery2->execute()) 
                     {
                         ?>
                         <script>
-                            alert('Error Displaying Ticket Information!');
                             window.location.href = 'errorPage.php';
                         </script>
                         <?php
+                        header( "Location:errorPage.php" );
                     }
                     $bookQuery2->store_result();
     
                     if ($bookQuery2-> num_rows != 0)
                     {
-                        header( "Location:index.php" );
+                        header( "Location:errorPage.php" );
                         exit;
                     }
                     else 
@@ -76,8 +77,7 @@
                
             } else {
                 echo "<script>
-                    alert('An error has occurred. Please try again!');
-                    window.location.href = 'MainMovie.php';
+                    window.location.href = 'errorPage.php';
                     </script>";
             }
         }
@@ -102,13 +102,14 @@
                     window.location.href = 'errorPage.php';
                 </script>
                 <?php
+                header( "Location:errorPage.php" );
             }
             $showInfoResult = $showInfoQuery->get_result();
 
             $showinfo = mysqli_fetch_assoc($showInfoResult);
 
             // RETRIEVE MOVIE 
-            $movieQuery = $MySQLiconn->prepare("SELECT movie_name, movie_poster, movie_websiteLink FROM movie WHERE movie_id = ?");
+            $movieQuery = $MySQLiconn->prepare("SELECT movie_name, movie_id, movie_poster, movie_websiteLink FROM movie WHERE movie_id = ?");
             $movieQuery->bind_param('i', $showinfo['movie_id']);
             if (!$movieQuery->execute()) 
             {
@@ -118,6 +119,7 @@
                     window.location.href = 'errorPage.php';
                 </script>
                 <?php
+                header( "Location:errorPage.php" );
             }
             $movieResult = $movieQuery->get_result();
 
@@ -232,6 +234,7 @@
                                     </tr>
                                 </table>    
                                 <input type="hidden" name="show_id" value="<?php echo $_COOKIE['showinfoID']; ?>">
+								<input type="hidden" name="movie_id" id="movie_id" value="<?php echo $movie['movie_id']; ?>">
                                 <br>
                                 <button type="submit" name="submit" class="btn btn-primary">Start Payment</button>
                             </div>
