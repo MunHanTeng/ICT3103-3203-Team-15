@@ -50,6 +50,7 @@
             }
             else 
             {
+                unset($_SESSION['dummy_id']);
             ?>
                 <script>
                     alert('Error');

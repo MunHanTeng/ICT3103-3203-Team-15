@@ -5,5 +5,10 @@
  */
 
  $(document).ready(function () {
-    $("#myModal").modal("show");
+//    $("#myModal").modal("show");
+    alert('LOL');
+});
+
+$("#myModal").on("hidden", function () {
+  $('#result').html('yes,result');
 });

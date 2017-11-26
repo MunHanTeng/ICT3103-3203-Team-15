@@ -198,13 +198,14 @@ if (isset($_POST['validate'])) {
         <link href="css/style.css" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
-
     </head>
     <body>
         <?php
         include 'header.inc';
+        
         ?>
 
+    <script src="js/validateOTPModal.js" type="text/javascript"></script> 
         <div id="myModal" class="modal fade">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -231,5 +232,4 @@ if (isset($_POST['validate'])) {
 
 
     </body>
-    <script src="js/validateOTPModal.js" type="text/javascript"></script> 
 </html>

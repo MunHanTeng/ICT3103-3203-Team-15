@@ -30,7 +30,6 @@
         
         if (!isset($_SESSION['name'])) 
         {
-            $_SESSION['name'] = "BookingAnonymus";
             header( "Location:index.php" );
             exit;
         }

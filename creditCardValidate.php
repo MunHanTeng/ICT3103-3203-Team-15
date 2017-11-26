@@ -150,6 +150,7 @@ if (isset($_POST['submit'])) {
                 $showInfoQuery = $MySQLiconn->prepare("SELECT showInfo_date, showInfo_time, movie_id FROM showinfo WHERE showInfo_id = ?");
                 $showInfoQuery->bind_param('i', $_SESSION['show_id']);
                 if (!$showInfoQuery->execute()) {
+                    unset($_SESSION['show_id']);
                     ?>
                     <script>
                        alert('Error Displaying Payment Summary!');

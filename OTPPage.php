@@ -27,6 +27,7 @@ $tfa = new TwoFactorAuth('ICT3203');
             $stmt5->bind_param('s', $qrValue);
 		if (!$stmt5->execute())
 		{
+                    unset($_SESSION['OTPSecret']);
 	?>
 		   <script>
                         alert('Error Displaying Sucess Information!');
@@ -47,6 +48,7 @@ $tfa = new TwoFactorAuth('ICT3203');
                 $stmt2->bind_param('s',$qrValue);
                 if (!$stmt2->execute())
 		{
+                    unset($_SESSION['OTPSecret']);
 	?>
 		   <script>
                         alert('Error Displaying Sucess Information!');
@@ -68,6 +70,7 @@ $tfa = new TwoFactorAuth('ICT3203');
                     $stmt3->bind_param('s', $qrValue);
                     if (!$stmt3->execute())
                     {
+                        unset($_SESSION['OTPSecret']);
                     ?>
                         <script>
                             alert('Error Displaying Sucess Information!');
