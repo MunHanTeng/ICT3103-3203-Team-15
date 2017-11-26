@@ -14,9 +14,13 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
-	include_once __DIR__ .'../csrfp/libs/csrf/csrfprotector.php';
-	csrfProtector::init();
-        $resultMovie = mysqli_query($MySQLiconn, "select movie_id, movie_poster, movie_name, movie_type, movie_runningTime  from movie");
+	//include_once '/csrfp/libs/csrf/csrfprotector.php';
+	//csrfProtector::init();
+        $stmt = $MySQLiconn->prepare("SELECT movie_id, movie_poster, movie_name, movie_type, movie_runningTime FROM movie");
+        if (!$stmt->execute()) {
+            header("Location:errorPage.php");
+        }
+        $resultMovie = $stmt->get_result();
         ?>
         <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>

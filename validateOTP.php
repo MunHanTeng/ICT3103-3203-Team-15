@@ -58,7 +58,6 @@ if (isset($_POST["submit"])) {
             echo "alert('Incorrect Username or Password, please try again later');";
             echo 'window.location = "index.php";';
             echo '</script>';
-            header("Location:index.php");
         }
         else {
             $accType = 'User';
@@ -76,7 +75,6 @@ if (isset($_POST["submit"])) {
                 echo "alert('This account has not yet validatd');";
                 echo 'window.location = "index.php";';
                 echo '</script>';
-                header("Location:index.php");
             } else if ((password_verify($upass, $row['password']))) {
                 $_SESSION['user'] = $row['user_id'];
                 //If login successful, delete from fail logins
@@ -90,7 +88,6 @@ if (isset($_POST["submit"])) {
                 echo "<script type='text/javascript'>";
                 echo 'window.location = "validateOTP.php";';
                 echo '</script>';
-                header("Location:validateOTP.php");
             } else {
                 //If login not successful, create new row in fail logins
                 $resExists = $MySQLiconn->prepare("SELECT user_id FROM user_list WHERE user_email = ?");
@@ -118,14 +115,12 @@ if (isset($_POST["submit"])) {
                     echo "alert('Incorrect Username or Password, $remainingTry attempts left');";
                     echo 'window.location = "index.php";';
                     echo '</script>';
-                    header("Location:index.php");
                 } else {
                     $passwordErr = "Incorrect Username/Password or Account has not been activated yet";
                     echo "<script>";
                     echo "alert('Incorrect Username or Password');";
                     echo 'window.location = "index.php";';
                     echo '</script>';
-                    header("Location:index.php");
                 }
             }
         }
@@ -150,7 +145,6 @@ if (isset($_POST['validate'])) {
         echo 'alert("Login successfully");';
         echo 'window.location.href = "index.php";';
         echo '</script>';
-        header("Location:index.php");
         $_SESSION['name'] = $userRow['username'];
         $_SESSION['email'] = $userRow['user_email'];
     } else {

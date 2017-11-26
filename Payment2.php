@@ -24,6 +24,7 @@
             echo '<script language="javascript">';
             echo 'alert("Please Login in order to be able to buy ticket sucessfully"); location.href="index.php"';
             echo '</script>';
+            header("Location:index.php");
         }
 
         //Print error message not working!

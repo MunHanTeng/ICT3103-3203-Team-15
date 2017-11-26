@@ -4,8 +4,8 @@
     use \RobThree\Auth\TwoFactorAuth;
     $tfa = new TwoFactorAuth('ICT3203');
     session_start();
-	include_once __DIR__ .'/libs/csrf/csrfprotector.php';
-	csrfProtector::init();
+    //include_once __DIR__ .'/libs/csrf/csrfprotector.php';
+    //csrfProtector::init();
 	
     include_once 'dbconnect.php';
    
@@ -59,10 +59,8 @@
         {
             $_SESSION['OTPSecret'] = '';
         }
-        
-        echo "<script>";
-        echo 'window.location = "OTPPage.php";';
-        echo '</script>';
+        header( "Location:OTPPage.php" );
+
                         
     }    
 ?>

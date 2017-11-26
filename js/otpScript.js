@@ -88,7 +88,7 @@ $(function()
         $(".submit").click(function()
         {
             $_SESSION['enteredOTP'] = document.getElementById("otpcode");
-            location.href = "../processUserAcc.php";
+            header("Location: ../processUserAcc.php");
         })
     });
 

@@ -13,8 +13,8 @@
         <script src="js/scripts.js"></script>
         <?php
         include 'header.inc';
-	include_once __DIR__ .'../csrfp/libs/csrf/csrfprotector.php';
-	csrfProtector::init();
+	//include_once __DIR__ .'../csrfp/libs/csrf/csrfprotector.php';
+	//csrfProtector::init();
         include_once 'dbconnect.php';
         $sqlCinema = "SELECT cinema_id,cinema_name,No_Of_Screen,cinema_address,cinema_mrt,cinema_bus,cinema_googleMap FROM cinema WHERE cinema_id = ?";
         $stmt = $MySQLiconn->prepare($sqlCinema);

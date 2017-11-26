@@ -11,8 +11,8 @@
         <script src="js/bootstrap.min.js"></script>
         <script src="js/scripts.js"></script>
         <?php
-	include_once __DIR__ .'../csrfp/libs/csrf/csrfprotector.php';	
-	csrfProtector::init();
+	//include_once __DIR__ .'../csrfp/libs/csrf/csrfprotector.php';	
+	//csrfProtector::init();
         include 'header.inc';
         include_once 'dbconnect.php';
         $movid = $_COOKIE['movieID'];

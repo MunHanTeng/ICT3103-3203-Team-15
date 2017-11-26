@@ -16,11 +16,15 @@
         <script src="js/bootstrap.min.js"></script>
         <script src="js/scripts.js"></script>
         <?php
-	include_once __DIR__ .'../csrfp/libs/csrf/csrfprotector.php';
-	csrfProtector::init();
+	//include_once '/csrfp/libs/csrf/csrfprotector.php';
+	//csrfProtector::init();
         include 'header.inc';
         include_once 'dbconnect.php';
-        $resultCinema = mysqli_query($MySQLiconn, "SELECT cinema_id,cinema_name,cinema_address,cinema_image FROM cinema");
+        $stmt = $MySQLiconn->prepare("SELECT cinema_id,cinema_name,cinema_address,cinema_image FROM cinema");
+        if (!$stmt->execute()) {
+            header("Location:errorPage.php");
+        }
+        $resultCinema = $stmt->get_result();
         ?>
         <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>

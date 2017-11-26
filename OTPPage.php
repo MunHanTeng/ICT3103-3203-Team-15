@@ -12,15 +12,15 @@
 
     use \RobThree\Auth\TwoFactorAuth;
 
-$tfa = new TwoFactorAuth('ICT3203');
+    $tfa = new TwoFactorAuth('ICT3203');
     include_once 'dbconnect.php';
     include 'header.inc';
     ?>
     <body>
 	
         <?php
-		include_once __DIR__ .'/libs/csrf/csrfprotector.php';
-		csrfProtector::init();
+	//include_once __DIR__ .'/libs/csrf/csrfprotector.php';
+	//csrfProtector::init();
         if ($_SESSION['OTPSecret'] != '') {
             
             $qrValue = $_SESSION['OTPSecret'];

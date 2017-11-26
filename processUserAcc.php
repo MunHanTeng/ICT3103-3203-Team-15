@@ -79,7 +79,7 @@ if ($result == 'OK') {
                 }, 5);
             </script>
             <?php
-            header("Location:index.php");
+            //header("Location:index.php");
         }
     } else {
         echo $stmt3->error;

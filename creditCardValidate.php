@@ -1,8 +1,8 @@
 <?php
 
 include "qrcodelib/qrlib.php";
-include_once __DIR__ .'/libs/csrf/csrfprotector.php';
-csrfProtector::init();
+//include_once __DIR__ .'/libs/csrf/csrfprotector.php';
+//csrfProtector::init();
 
 
 require('mod10.php');
@@ -191,8 +191,8 @@ if (isset($_POST['submit'])) {
                 } else {
                     echo '<script language="javascript">';
                     echo 'alert("Success! We will be sending an email to you shortly");';
-                    echo 'window.location.href = "Success.php";';
                     echo '</script>';
+                    header("Location:Success.php");
                     $_SESSION['message2'] = 'Success! We will be sending an email to you shortly!';
                 }
             }
@@ -201,6 +201,7 @@ if (isset($_POST['submit'])) {
             echo 'alert("Please ensure that all details are correct");';
             echo 'window.location.href = "Payment2.php";';
             echo '</script>';
+            header("Location:Payment2.php");
             echo $_SESSION['message1'];
         }
     }

@@ -15,17 +15,28 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
-	include_once __DIR__ .'../csrfp/libs/csrf/csrfprotector.php';
-	csrfProtector::init();
+	//include_once __DIR__ .'../csrfp/libs/csrf/csrfprotector.php';
+	//csrfProtector::init();
         
-        $resultCarousel = mysqli_query($MySQLiconn, "SELECT movie_id,movie_carousel FROM `movie` WHERE movie_carousel IS NOT NULL");
-        $resultMovie = mysqli_query($MySQLiconn, "select movie_id,movie_name,movie_type,movie_runningTime,movie_carousel,movie_poster from movie");
+        
+        $resultCarousel = $MySQLiconn->prepare("SELECT movie_id,movie_carousel FROM `movie` WHERE movie_carousel IS NOT NULL");
+        if (!$resultCarousel->execute()) {
+                header("Location:errorPage.php");
+        }
+        $result = $resultCarousel->get_result();
+        
+        $resultMovie = $MySQLiconn->prepare("select movie_id,movie_name,movie_type,movie_runningTime,movie_carousel,movie_poster from movie");
+        if (!$resultMovie->execute()) {
+                header("Location:errorPage.php");
+        }
+        $result2 = $resultMovie->get_result();
+        
         ?>
         <div id="homeCarousel" class="carousel slide">
             <ol class="carousel-indicators">
                 <?php
                 $i = 0;
-                while ($row = mysqli_fetch_assoc($resultCarousel)) {
+                while ($row = mysqli_fetch_assoc($result)) {
                     if ($i == 0) {
                         echo '<li data-target="#homeCarousel" data-slide-to="' . $i . '" class="active"></li>';
                     } else {
@@ -39,8 +50,8 @@
             <div class="carousel-inner">
                 <?php
                 $i = 0;
-                mysqli_data_seek($resultCarousel, 0);
-                while ($row = mysqli_fetch_assoc($resultCarousel)) {
+                mysqli_data_seek($result, 0);
+                while ($row = mysqli_fetch_assoc($result)) {
                     if ($i == 0) {
                         echo '<div class="item active">';
                         $i++;
@@ -66,7 +77,7 @@
         <div class="container">
             <?php
             $position = 0;
-            while ($row = mysqli_fetch_assoc($resultMovie)) {
+            while ($row = mysqli_fetch_assoc($result2)) {
 
                 if ($position == 0) {
                     echo '<div class="row row-eq-height">';

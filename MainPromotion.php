@@ -14,9 +14,13 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
-	include_once __DIR__ .'../csrfp/libs/csrf/csrfprotector.php';
-	csrfProtector::init();
-        $resultPromotion = mysqli_query($MySQLiconn, "SELECT promotionInfo_title, promotionInfo_image, promotionInfo_description  FROM promotion");
+	//include_once '/csrfp/libs/csrf/csrfprotector.php';
+	//csrfProtector::init();
+        $stmt = $MySQLiconn->prepare("SELECT promotionInfo_title, promotionInfo_image, promotionInfo_description  FROM promotion");
+        if (!$stmt->execute()) {
+            header("Location:errorPage.php");
+        }
+        $resultPromotion = $stmt->get_result();
         ?>
         <ul class="breadcrumb">
             <li><a href="index.php" class="activeLink">Home</a> <span class="divider"></span></li>
