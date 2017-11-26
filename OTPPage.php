@@ -17,7 +17,10 @@ $tfa = new TwoFactorAuth('ICT3203');
     include 'header.inc';
     ?>
     <body>
+	
         <?php
+		include_once __DIR__ .'/libs/csrf/csrfprotector.php';
+		csrfProtector::init();
         if ($_SESSION['OTPSecret'] != '') {
             
             $qrValue = $_SESSION['OTPSecret'];

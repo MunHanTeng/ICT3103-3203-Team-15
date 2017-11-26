@@ -4,6 +4,9 @@
     use \RobThree\Auth\TwoFactorAuth;
     $tfa = new TwoFactorAuth('ICT3203');
     session_start();
+	include_once __DIR__ .'/libs/csrf/csrfprotector.php';
+	csrfProtector::init();
+	
     include_once 'dbconnect.php';
    
     if (!isset($_GET['qrCode'])) 

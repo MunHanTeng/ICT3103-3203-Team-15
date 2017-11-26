@@ -15,6 +15,8 @@
 
         <?php
         include 'header.inc';
+		include_once __DIR__ .'/libs/csrf/csrfprotector.php';
+		csrfProtector::init();
 
         function trim_input($data) {
             $data = trim($data);

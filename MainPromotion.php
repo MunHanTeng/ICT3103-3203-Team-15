@@ -14,6 +14,8 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
+		include_once __DIR__ .'/libs/csrf/csrfprotector.php';
+		csrfProtector::init();
         $resultPromotion = mysqli_query($MySQLiconn, "SELECT promotionInfo_title, promotionInfo_image, promotionInfo_description  FROM promotion");
         ?>
         <ul class="breadcrumb">

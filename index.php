@@ -15,6 +15,8 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
+		include_once __DIR__ .'/libs/csrf/csrfprotector.php';
+		csrfProtector::init();
         
         $resultCarousel = mysqli_query($MySQLiconn, "SELECT movie_id,movie_carousel FROM `movie` WHERE movie_carousel IS NOT NULL");
         $resultMovie = mysqli_query($MySQLiconn, "select movie_id,movie_name,movie_type,movie_runningTime,movie_carousel,movie_poster from movie");

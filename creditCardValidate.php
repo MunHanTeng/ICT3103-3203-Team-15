@@ -1,6 +1,8 @@
 <?php
 
 include "qrcodelib/qrlib.php";
+include_once __DIR__ .'/libs/csrf/csrfprotector.php';
+csrfProtector::init();
 
 
 require('mod10.php');
