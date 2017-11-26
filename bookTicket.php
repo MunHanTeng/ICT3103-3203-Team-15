@@ -17,15 +17,69 @@
         include 'header.inc';
         
         //After 15 Min delete the record
-        $stmtDelete = $MySQLiconn->prepare("DELETE FROM locked_seat WHERE user_id = ? and timestamp <= (now() - interval 15 minute)");
-        $stmtDelete->bind_param('i', $_SESSION['user']);
-        if (!$stmtDelete->execute()) {
+        $stmtDelete = $MySQLiconn->prepare("DELETE FROM locked_seat WHERE timestamp <= (now() - interval 15 minute)");
+        if (!$stmtDelete->execute()) 
+        {
             ?>
             <script>
                 alert('Error Login!');
                 window.location.href = 'errorPage.php'
             </script>
             <?php
+        }
+        
+        if (isset($_POST['submit'])) 
+        {
+            $arraySeat = $_POST["check_list"];
+            $_SESSION["session_check_list"] = $arraySeat;
+            $_SESSION["buy_ticket"] = $_POST["BuyTicket"];
+            
+            //Make Sure seat start with letter and follow by alphabet
+            $checkseats = true;
+            for ($i = 0; $i < sizeof($arraySeat); $i++) 
+            {
+                if (!preg_match('/^[ABCDE](\d{1}|10)$/', $arraySeat[$i])) {
+                    $checkseats = false;
+                    break;
+                }
+            }
+        
+            if ($checkseats == true) {
+
+                //Make sure seat not booked
+                foreach ($arraySeat as $seat)
+                {
+                    //Check Booking
+                    $bookQuery2 = $MySQLiconn->prepare("SELECT booking_id FROM booking WHERE showInfo_id = ? and movie_id = ? and seat_no = ?");
+                    $bookQuery2->bind_param('sss', $_COOKIE['showinfoID'], $movie['movie_id'], $seat);
+                    if (!$bookQuery2->execute()) 
+                    {
+                        ?>
+                        <script>
+                            alert('Error Displaying Ticket Information!');
+                            window.location.href = 'errorPage.php';
+                        </script>
+                        <?php
+                    }
+                    $bookQuery2->store_result();
+    
+                    if ($bookQuery2-> num_rows != 0)
+                    {
+                        header( "Location:index.php" );
+                        exit;
+                    }
+                    else 
+                    {
+                        header( "Location:proccessBookTicket.php" );
+                    }
+                }
+               
+            } else {
+                echo "<script>
+                    alert('An error has occurred. Please try again!');
+                    window.location.href = 'MainMovie.php';
+                    </script>";
+            }
         }
         
         if (!isset($_SESSION['name'])) 
@@ -35,39 +89,39 @@
         }
         else 
         {
-        
-        
-        include_once 'dbconnect.php';
+            include_once 'dbconnect.php';
 
-        // RETRIEVE SHOW INFO
-        $showInfoQuery = $MySQLiconn->prepare("SELECT showInfo_date, showInfo_time, movie_id FROM showinfo WHERE showInfo_id = ?");
-        $showInfoQuery->bind_param('i', $_COOKIE['showinfoID']);
-        if (!$showInfoQuery->execute()) {
-            ?>
-            <script>
-                alert('Error Displaying Ticket Information!');
-                window.location.href = 'errorPage.php';
-            </script>
-            <?php
-        }
-        $showInfoResult = $showInfoQuery->get_result();
+            // RETRIEVE SHOW INFO
+            $showInfoQuery = $MySQLiconn->prepare("SELECT showInfo_date, showInfo_time, movie_id FROM showinfo WHERE showInfo_id = ?");
+            $showInfoQuery->bind_param('i', $_COOKIE['showinfoID']);
+            if (!$showInfoQuery->execute()) 
+            {
+                ?>
+                <script>
+                    alert('Error Displaying Ticket Information!');
+                    window.location.href = 'errorPage.php';
+                </script>
+                <?php
+            }
+            $showInfoResult = $showInfoQuery->get_result();
 
-        $showinfo = mysqli_fetch_assoc($showInfoResult);
+            $showinfo = mysqli_fetch_assoc($showInfoResult);
 
-        // RETRIEVE MOVIE 
-        $movieQuery = $MySQLiconn->prepare("SELECT movie_name, movie_poster, movie_websiteLink FROM movie WHERE movie_id = ?");
-        $movieQuery->bind_param('i', $showinfo['movie_id']);
-        if (!$movieQuery->execute()) {
-            ?>
-            <script>
-                alert('Error Displaying Ticket Information!');
-                window.location.href = 'errorPage.php';
-            </script>
-            <?php
-        }
-        $movieResult = $movieQuery->get_result();
+            // RETRIEVE MOVIE 
+            $movieQuery = $MySQLiconn->prepare("SELECT movie_name, movie_poster, movie_websiteLink FROM movie WHERE movie_id = ?");
+            $movieQuery->bind_param('i', $showinfo['movie_id']);
+            if (!$movieQuery->execute()) 
+            {
+                ?>
+                <script>
+                    alert('Error Displaying Ticket Information!');
+                    window.location.href = 'errorPage.php';
+                </script>
+                <?php
+            }
+            $movieResult = $movieQuery->get_result();
 
-        $movie = mysqli_fetch_assoc($movieResult);
+            $movie = mysqli_fetch_assoc($movieResult);
         }
         ?>
         <ul class="breadcrumb">
@@ -76,7 +130,6 @@
             <li class="active"><?php echo $movie['movie_name'] ?></li>
         </ul>
         <div class="container">
-
             <div class="col-md-4 text-center">
                 <img src="data:image/jpeg;base64,<?php echo base64_encode($movie['movie_poster']); ?>"> 
                 <br /><br />
@@ -99,7 +152,7 @@
                 <div class="col-md-8 text-center">
                     <div class="container-fluid" style="width:475px;height:235px">
                         <!--Create Button-->
-                        <form action="proccessBookTicket.php" method="POST">
+                        <form method="POST">
                             <div class="btn-toolbar" name="SeatSelection" data-toggle="buttons" name="SelectedSeats" style="padding:10px">   
                                 <?PHP
                                 $dic = array(0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D', 4 => 'E');
@@ -187,5 +240,6 @@
                     </div>
                 </div> 
             </div>
+        </div>
     </body>
 </html>

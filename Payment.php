@@ -5,9 +5,9 @@
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
         <link href="images/gv32x32.ico" rel="shortcut icon" />
-        <script src="js/override.js" type="text/javascript"></script> 
-
+        <script src="js/override.js" type="text/javascript"></script>
     </head>
+    
     <body onLoad="backButtonOverride()">
         <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
@@ -17,7 +17,8 @@
         include 'header.inc';
         include_once 'dbconnect.php';
 
-        if (!isset($_SESSION['name'])) {
+        if (!isset($_SESSION['name'])) 
+        {
             echo '<script language="javascript">';
             echo 'alert("Please Login in order to be able to buy ticket sucessfully"); location.href="index.php"';
             echo '</script>';
@@ -36,6 +37,7 @@
         ?>
 
         <?php
+        
         // RETRIEVE SHOW INFO
         $showInfoQuery = $MySQLiconn->prepare("SELECT showInfo_date, showInfo_time, cinema_id, movie_id FROM showinfo WHERE showInfo_id = ?");
         $showInfoQuery->bind_param('i', $showInfoID);
@@ -113,7 +115,7 @@
                         echo 'Time:<span style="font-size:1em;color:yellow;">' . $showinfo['showInfo_time'] . '</span>&nbsp&nbsp&nbsp&nbsp&nbsp';
                         echo 'Cinema:<span style="font-size:1em;color:yellow;">' . $cinema['cinema_name'] . '</span></p>';
                         echo '<p>Seats Selected:<span style="font-size:1em;color:yellow;">' . trim_input(implode(', ', $check_list)) . '</span></p>';
-                        ?>
+                    ?>
                     </div> 
                 </div>
                 
