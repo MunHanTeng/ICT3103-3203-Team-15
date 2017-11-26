@@ -14,8 +14,8 @@
         <?php
         include 'header.inc';
         include_once 'dbconnect.php';
-		include_once __DIR__ .'/libs/csrf/csrfprotector.php';
-		csrfProtector::init();
+	include_once __DIR__ .'../csrfp/libs/csrf/csrfprotector.php';
+	csrfProtector::init();
         $resultMovie = mysqli_query($MySQLiconn, "select movie_id, movie_poster, movie_name, movie_type, movie_runningTime  from movie");
         ?>
         <ul class="breadcrumb">

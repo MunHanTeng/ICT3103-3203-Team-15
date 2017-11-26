@@ -99,9 +99,9 @@ foreach ($check_list as $seat) {
         ?>
         <script>
             alert('The seat has already been locked please try again later');
-            window.location.href = 'bookTicket.php'
         </script>
         <?php
+        header("Location:bookTicket.php");
 
         $result = false;
     }

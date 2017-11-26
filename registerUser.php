@@ -177,16 +177,11 @@
             {
                 $id = $stmt->insert_id;
                 $_SESSION['dummy_id'] = $id;
-    ?>
-                <script>
-                    alert('You may proceed to second step!');
-                    window.location.href='afterRegister.php';
-                </script>
-    <?php
+                header("Location:afterRegister.php");
             }
             else 
             {
-   header("Location:errorPage.php");
+                header("Location:errorPage.php");
             }
     ?>
 

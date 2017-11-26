@@ -75,12 +75,11 @@ if ($result == 'OK') {
             ?>    
             <script>
                 alert('Sucessfully registered!');
-                window.setTimeout(function () {
-                    window.location.href = 'index.php';
+                    window.setTimeout(function () {
                 }, 5);
             </script>
-
             <?php
+            header("Location:index.php");
         }
     } else {
         echo $stmt3->error;
@@ -99,6 +98,7 @@ if ($result == 'OK') {
         }, 5);
     </script>
     <?php
+    header("Location:afterRegister.php");
 }
 ?>           
 </body>

@@ -5,8 +5,7 @@
  */
 
  $(document).ready(function () {
-//    $("#myModal").modal("show");
-    alert('LOL');
+    $("#myModal").modal("show");
 });
 
 $("#myModal").on("hidden", function () {
